@@ -14,7 +14,7 @@ const nonAuthNavItems = [
 	},
 	{
 		label: "Login",
-		relative_url: "/",
+		relative_url: "/login",
 		style: 'border border-white'
 	},
 	{
@@ -35,8 +35,10 @@ const NonAuthNavbar = () => {
 		<>
 			<div className="bg-nav-color px-2 md:px-6 sticky top-0 flex  justify-between items-center text-white">
 				{/* logo */}
-				<Link href='/' >
-					<Image src="/logo.svg" height={40} width={150} />
+				<Link href='/'>
+					<div className='cursor-pointer'>
+						<Image src="/logo.svg" height={40} width={150} />
+					</div>
 				</Link>
 
 				<nav className='hidden md:flex items-center justify-between'>
@@ -65,13 +67,15 @@ export default NonAuthNavbar;
 const NavItems = () => {
 	return (
 		<>
-			{nonAuthNavItems.map(e => {
+			{nonAuthNavItems.map((e, indx) => {
 				return (
-					<Link href={e.relative_url}>
-						<div className={`rounded-lg m-2 py-1 px-2 cursor-pointer ${e.style} text-center`}>
-							{e.label}
-						</div>
-					</Link>
+					<div key={e.label}>
+						<Link href={e.relative_url}>
+							<div className={`rounded-lg m-2 py-1 px-2 cursor-pointer ${e.style} text-center`}>
+								{e.label}
+							</div>
+						</Link>
+					</div>
 				)
 			})}
 		</>
