@@ -1,50 +1,119 @@
-import { fastify } from 'fastify';
-import { Client } from "cassandra-driver";
-import path from 'path';
-import { CASSANDRA_KEYSPACE, CASSANDRA_PASSWORD, CASSANDRA_USERNAME } from './config/constants';
-import { resolvers, schema } from './schema/todo';
-import { ApolloServer } from 'apollo-server-fastify';
+import Express from 'express';
+import { BACKEND_SERVER_PORT, CASSANDRA_KEYSPACE, CASSANDRA_PASSWORD, CASSANDRA_USERNAME, SESSION_SECRET_KEY } from './config/constants';
+import { ApolloServer } from 'apollo-server-express';
+import session from 'express-session';
+import CassandraStore from 'cassandra-store';
+import passport from 'passport';
+import { dbClient } from './db';
+import { UserModelType } from './models/User';
+import { localStrategyConfig } from './config/auth/localStrategyConfig';
+import { mergedResolvers } from './resolvers';
+import http from 'http';
+import { UserSchema } from './schema/User';
+import { types } from 'cassandra-driver';
+import cookie_parser from 'cookie-parser';
+import cors from 'cors';
+import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core/dist/plugin/landingPage/default';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core/dist/plugin/landingPage/graphqlPlayground';
+import { navMenuSchema } from './schema/NavMenu';
 
-const server = new ApolloServer({
-    typeDefs: schema,
-    resolvers
+
+const app = Express();
+declare global {
+	namespace Express {
+		interface User extends UserModelType {
+
+		}
+	}
+}
+
+// express session
+app.set('trust proxy', 1) // trust first proxy
+
+app.use(cors({
+	origin: process.env.CLIENT_URL as string ?? '/',
+	credentials: true,
+}))
+
+
+app.use(session({
+	secret: SESSION_SECRET_KEY,
+	name: 'uni_id',
+	saveUninitialized: false,
+	resave: true,
+	cookie: {
+		// secure: true,
+		httpOnly: true,
+		maxAge: 365 * 24 * 60 * 60 * 1000,
+	},
+	store: new CassandraStore({
+		"table": "sessions",
+		"client": dbClient,
+		"clientOptions": {
+			"contactPoints": ["localhost"],
+			"keyspace": CASSANDRA_KEYSPACE,
+			"queryOptions": {
+				"prepare": true
+			}
+		}
+	})
+}))
+// TODO:
+
+app.use(cookie_parser())
+app.use(Express.json())
+
+// Passport config
+passport.use(localStrategyConfig);
+
+
+passport.serializeUser<UserModelType, any>((user: UserModelType, done: any) => {
+	console.log("Serialize user?");
+	done(null, user.email_address);
 })
 
+passport.deserializeUser(async (email, done) => {
+	try {
+		console.log("New deserial?");
+		const instance = await dbClient.execute('SELECT * FROM user WHERE email_address=?', [email]);
+		if (instance.rowLength !== 1) {
+			throw Error("Invalid email");
+		}
+		let user = instance.rows[0] as unknown as UserModelType;
+		done(null, user);
 
-const client = new Client({
-    cloud: {
-        secureConnectBundle: path.join(__dirname, "..", "secure-connect-creds.zip"),
-    },
-    credentials: {
-        username: CASSANDRA_USERNAME,
-        password: CASSANDRA_PASSWORD,
-    },
-    keyspace: CASSANDRA_KEYSPACE
+	} catch (err) {
+		done(err, false);
+	}
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
 
-const app = fastify()
 
-
-app.get('/', async (request, reply) => {
-    await client.connect();
-    const rs = await client.execute(`CREATE TABLE user1(
-        user_id UUID,
-        PRIMARY KEY(user_id)
-    )`);
-    return { hello: rs }
+app.get('/', async (req, res) => {
+	res.send({
+		error: false,
+		status: "GREAT"
+	})
 });
 
 
 (async () => {
-    try {
-        await server.start(); // apollo server
-        app.register(server.createHandler());
-        let res = await app.listen(4201) // fastify
-        console.log(`Server running at ${res}`)
-    } catch (err) {
-        app.log.error(err)
-        process.exit(1)
-    }
+	const server = new ApolloServer({
+		typeDefs: [UserSchema, navMenuSchema],
+		resolvers: mergedResolvers,
+		context: ({ req, res }) => ({ req, res }),
+		plugins: [
+			ApolloServerPluginLandingPageGraphQLPlayground
+		]
+	});
+	const httpServer = http.createServer(app);
+	await server.start();
+	server.applyMiddleware({ app });
+
+
+	await new Promise(resolve => httpServer.listen({ port: BACKEND_SERVER_PORT }, resolve as any));
+	console.log(`🚀 Server ready at http://localhost:${BACKEND_SERVER_PORT}${server.graphqlPath}`);
 })();
 
