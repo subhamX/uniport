@@ -1,6 +1,7 @@
 -- to store the menu items for an access role
 -- note: It won't have /s/profile/ in it. We shall see in frontend if [has_student_profile] is true or false.
 -- based on which we shall show that
+-- NOTE: we are not denomalizing for now. It can be done in future.
 CREATE TABLE navigation_menu_item (
 	access_role TEXT,
 	items set<frozen<navigation_menu_item_type>>,
@@ -8,21 +9,25 @@ CREATE TABLE navigation_menu_item (
 );
 
 -- to store the user minimal data to allow authentication
+-- query: login a user. (get a user with a given email address)
+-- query: get all the users for a org. () [It will hit multi nodes] [Paginated results only]
 CREATE TABLE user (
 	user_id UUID,
 	first_name TEXT,
 	last_name TEXT,
 	email_address TEXT,
-	organization_id UUID,
+	hashed_password TEXT,
+	org_id UUID,
 	access_role TEXT,
 	-- for now we have "ADMIN" and "STUDENT"
 	refresh_token TEXT,
 	has_student_profile boolean,
-	PRIMARY KEY((organization_id, user_id), first_name, last_name)
+	PRIMARY KEY((email_address), first_name)
 );
 
 -- to store the organization details.
 -- TODO: ADD some aggregate fields!
+-- query: [in Admin Dash] -> Get me some stats.
 CREATE TABLE organization (
 	org_name TEXT,
 	org_id UUID,
@@ -40,8 +45,11 @@ CREATE TABLE organization (
 -- Also, this can manually be done by ADMIN!
 
 -- Also, convey that first_name, last_name, registered_email is already part of user!
+
+-- query: give me the student profile definition of my org
+-- query: give me the profile definition of some attribute id (while filtering on server we might use it)
 CREATE TABLE student_profile_definition (
-	organization_id UUID,
+	org_id UUID,
 	attribute_id UUID,
 	attribute_type TEXT,
 	is_array Boolean, -- defines if we shall take an array
@@ -50,7 +58,7 @@ CREATE TABLE student_profile_definition (
 	required Boolean,
 	options set<TEXT>, -- notice that we only support strings as options
 	requiresProof Boolean,
-	PRIMARY KEY((organization_id), attribute_id)
+	PRIMARY KEY((org_id), attribute_id)
 );
 
 
@@ -58,29 +66,34 @@ CREATE TABLE student_profile_definition (
 -- table to store the [StudentProfile]
 -- every field will be like date_of_birth[0], 12th_education[0], 10th_education etc
 -- for array fields we will have work_experience[0], work_experience[1] ... and so on
+
+-- query: give me the student profile of mine (as user is authentited. we can easily get org_id nd user_id)
+-- Note: we have put both org_id and user_id as partiton key so that even if an org get's tonns of users it will get evenly distributed.(check the claim)
+-- query: give me all users of my org. (while filtering)
 CREATE TABLE student_profile(
 	user_id UUID,
 	org_id UUID,
-	date_type_map 						map<TEXT, frozen<date_type_1>>,
-	number_type_map 					map<TEXT, frozen<number_type_2>>,
-	single_select_type_map 		map<TEXT, frozen<single_select_type_3>>,
-	phone_number_type_map 		map<TEXT, frozen<phone_number_type_4>>,
-	address_type_map 					map<TEXT, frozen<address_type_5>>,
-	email_type_map 						map<TEXT, frozen<email_type_6>>,
-	current_course_type_map 	map<TEXT, frozen<current_course_type_7>>,
-	education_type_map 				map<TEXT, frozen<education_type_8>>,
-	work_experience_type_map 	map<TEXT, frozen<work_experience_type_9>>,
-	project_type_map 					map<TEXT, frozen<project_type_10>>,
-	resume_type_map 					map<TEXT, frozen<resume_type_11>>,
-	multi_select_type_map 		map<TEXT, frozen<multi_select_type_12>>,
+	date_type_1_map 						map<TEXT, frozen<date_type_1>>,
+	number_type_2_map 					map<TEXT, frozen<number_type_2>>,
+	single_select_3_type_map 		map<TEXT, frozen<single_select_type_3>>,
+	phone_number_type_4_map 		map<TEXT, frozen<phone_number_type_4>>,
+	address_type_5_map 					map<TEXT, frozen<address_type_5>>,
+	email_type_6_map 						map<TEXT, frozen<email_type_6>>,
+	current_course_type_7_map 	map<TEXT, frozen<current_course_type_7>>,
+	education_type_8_map 				map<TEXT, frozen<education_type_8>>,
+	work_experience_type_9_map 	map<TEXT, frozen<work_experience_type_9>>,
+	project_type_10_map 				map<TEXT, frozen<project_type_10>>,
+	resume_type_11_map 					map<TEXT, frozen<resume_type_11>>,
+	multi_select_type_12_map 		map<TEXT, frozen<multi_select_type_12>>,
 
 	PRIMARY KEY((org_id, user_id))
 );
 
 
--- query: get the campaign rules
 -- these are like global rules.
 -- and similar rules can be applied while adding a job_profile
+-- query: get me all the campaigns of my org
+-- query: get me the details of the campaign by [campaign_id]
 CREATE TABLE campaign(
 	campaign_id UUID,
 	org_id UUID,
@@ -95,7 +108,7 @@ CREATE TABLE invited_user(
 	email TEXT,
 	org_id UUID,
 	joining_token TEXT,
-	accessRole TEXT,
+	access_role TEXT,
 	PRIMARY KEY(email)
 );
 
@@ -118,6 +131,7 @@ CREATE TABLE company(
 -- query: give me detailed info of a job profile (org_id, campaign_id, job_profile_id)
 -- query: give me all profiles of the company (using orgid and companyid)
 -- how to find if I am eligible or not?
+-- Note: In later stage make buckets with date_added (a new field). To balance things.
 CREATE TABLE job_profile(
 	job_profile_id TIMEUUID,
 	company_id UUID, -- We can do denormalization here and copy the data. But we won't for now. :)
@@ -128,7 +142,7 @@ CREATE TABLE job_profile(
 	stipend_high DOUBLE,
 	stipend_breakdown TEXT,
 	profile_description TEXT,
-	filters set<frozen<filtering_rule>>
+	filters set<frozen<filtering_rule>>,
 	deadline TIMESTAMP,
 	created_by TEXT,
 	created_at TIMESTAMP,
@@ -148,6 +162,13 @@ CREATE TABLE applied_candidate(
 	candidate_id UUID,
 	applied_resume_link TEXT,
 
-	PRIMARY KEY ((org_id),job_id,candidate_id);
+	PRIMARY KEY ((org_id),job_profile_id,candidate_id)
 );
 
+-- for sessions
+CREATE TABLE IF NOT EXISTS sessions (
+   sid text,
+   session text,
+   expires timestamp,
+   PRIMARY KEY(sid)
+);
