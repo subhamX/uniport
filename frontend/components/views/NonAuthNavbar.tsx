@@ -46,7 +46,7 @@ const NonAuthNavbar = () => {
 				</nav>
 
 				<div className='md:hidden btn' onClick={toggleSideNav}>
-					<Image src={require('../../assets/images/menu.svg')} width={30} height={40} />
+					<Image src={require('../../assets/images/menu.svg')} width={25} height={25} />
 				</div>
 			</div>
 

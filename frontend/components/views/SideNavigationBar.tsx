@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useSideNavStore } from '../../global-stores/useSideNavStore';
 
 
 // Small screen: Fullpage
 // Large screen: Sidenav
-const AuthNavbar = () => {
+const SideNavigationBar = () => {
 
 	// this will be pulled from the database
 	const authNavItems = [
@@ -91,47 +92,34 @@ const AuthNavbar = () => {
 		},
 	]
 
-	const [isNavbarOpen, setisNavbarOpen] = useState(false);
 
-	const toggleSideNav = () => {
-		setisNavbarOpen(!isNavbarOpen);
-	}
+	const isSideNavOpen=useSideNavStore(state => state.status)
+
+
 	return (
 		<>
-			<div className="bg-nav-color md:h-screen overflow-y-auto sticky top-0 flex md:flex-col justify-between md:justify-start  text-white">
-				{/* logo */}
-				<Link href='/'>
-					<div className='cursor-pointer md:pt-2'>
-						<Image src="/logo.svg" height={40} width={150} />
-					</div>
-				</Link>
-
-				{/* for mobile: full screen nav */}
-				{/* for md and above: sidenav */}
-				<nav className={`${isNavbarOpen ? 'flex': 'hidden'} md:flex md:mt-8 flex-col justify-between`}>
-					<NavItems items={authNavItems} globalStyle='md:text-left font-normal text-sm' />
+			<div className={`uniport-sidenav text-sm absolute z-30 inset-y-0 left-0 w-52  bg-side-nav-color text-custom-grey overflow-y-scroll max-h-screen rounded-br-md transform  ${isSideNavOpen? null: '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out`}>
+				<nav className="my-10">
+					<NavItems items={authNavItems} globalStyle='flex items-center mt-1 px-4' activeRoute='/security' />
 				</nav>
-
-				<div className='md:hidden btn' onClick={toggleSideNav}>
-					<Image src={require('../../assets/images/menu.svg')} width={30} height={40} />
-				</div>
 			</div>
 		</>
 	)
 }
 
-export default AuthNavbar;
+export default SideNavigationBar;
 
 
 
-const NavItems = ({ items, globalStyle }) => {
+const NavItems = ({ items, globalStyle, activeRoute }) => {
 	return (
 		<>
 			{items.map((e, indx) => {
 				return (
 					<div key={indx}>
+						{/* hover:font-semibold */}
 						<Link href={e.relative_url}>
-							<div className={`rounded-lg m-2 py-1 px-2 cursor-pointer ${e.style} text-center ${globalStyle}`}>
+							<div className={`rounded-lg m-2 py-1 px-2 cursor-pointer ${e.style} ${globalStyle}  ${activeRoute===e.relative_url ? 'bg-custom-btn-color-bg-active': 'hover:bg-custom-btn-color-bg-hover'}`}>
 								{e.label}
 							</div>
 						</Link>
