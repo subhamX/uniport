@@ -1,5 +1,5 @@
 import Express from 'express';
-import { BACKEND_SERVER_PORT, CASSANDRA_KEYSPACE, CASSANDRA_PASSWORD, CASSANDRA_USERNAME, SESSION_SECRET_KEY } from './config/constants';
+import { BACKEND_SERVER_PORT, CASSANDRA_KEYSPACE, SESSION_SECRET_KEY } from './config/constants';
 import { ApolloServer } from 'apollo-server-express';
 import session from 'express-session';
 import CassandraStore from 'cassandra-store';
@@ -10,12 +10,11 @@ import { localStrategyConfig } from './config/auth/localStrategyConfig';
 import { mergedResolvers } from './resolvers';
 import http from 'http';
 import { UserSchema } from './schema/User';
-import { types } from 'cassandra-driver';
 import cookie_parser from 'cookie-parser';
 import cors from 'cors';
-import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core/dist/plugin/landingPage/default';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core/dist/plugin/landingPage/graphqlPlayground';
 import { navMenuSchema } from './schema/NavMenu';
+import { studentProfileDefinitionSchema } from './schema/StudentProfileDefinition';
 
 
 const app = Express();
@@ -101,7 +100,7 @@ app.get('/', async (req, res) => {
 
 (async () => {
 	const server = new ApolloServer({
-		typeDefs: [UserSchema, navMenuSchema],
+		typeDefs: [UserSchema, navMenuSchema,studentProfileDefinitionSchema],
 		resolvers: mergedResolvers,
 		context: ({ req, res }) => ({ req, res }),
 		plugins: [
