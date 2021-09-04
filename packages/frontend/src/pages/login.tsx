@@ -53,7 +53,7 @@ const Login = () => {
 					</div>
 
 					{error ?
-						<div className='my-3 text-sm text-left text-purple-600 bg-purple-500 bg-opacity-10 border border-purple-400 flex items-center p-4 rounded-md'>
+						<div className='my-3 text-sm text-left text-red-600 bg-red-500 bg-opacity-10 border border-red-400 flex items-center p-4 rounded-md'>
 							{error.message}
 						</div> : null}
 

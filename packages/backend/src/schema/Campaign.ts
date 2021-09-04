@@ -7,13 +7,13 @@ export const campaignSchema = gql`
 		campaign_name: String!
 	}
 
-	type Query{
-		# for students we will check the [campaign_by_user] table to get the campaigns
-		# for admin we will directly fetch all the campaigns registered for the org
-		getMyCampaigns: [Campaign]!
+	type CampaignDetails{
+		campaign_id: ID!
+		campaign_name: String!
+		rules: [FilteringRule]!
 	}
 
-	input FilteringRule{
+	type FilteringRule{
 		attribute_id: String!
 		operator: String!
 		threshold_value: Int!
@@ -21,23 +21,44 @@ export const campaignSchema = gql`
 		multi_select_threshold: [String]!
 	}
 
-	input CreateANewCampaignInput{
-		campaign_name: String!
-		# a campaign can have 0 rules.
-		# but we need to have this array. (that's why it's imp)
-		rules: [FilteringRule]!
+	type Query{
+		# for students we will check the [campaign_by_user] table to get the campaigns
+		# for admin we will directly fetch all the campaigns registered for the org
+		getMyCampaigns: [Campaign]!
+
+		# only authenticated users can access it. (and they need to enrolled in that campaign or must be an admin)
+		getCampaignDetailsById(campaign_id: String!): CampaignDetails!
 	}
 
+	# input FilteringRuleInput{
+	# 	attribute_id: String!
+	# 	operator: String!
+	# 	threshold_value: Int!
+	# 	prefix_multiplier: Int!
+	# 	multi_select_threshold: [String]!
+	# }
 
-	type inviteNewUsersToCampaign{
-		user_email: String!
+	# input CreateANewCampaignInput{
+	# 	# Campaign rules should be set afterwards. Anyhow we have a mutation to add/edit rules
+	# 	# rules: [FilteringRule]!
+	# }
+
+
+	input InviteNewUsersToCampaignInput{
+		user_emails: [String!]!
+		access_role: AccessRoleEnum!
+		campaign_id: String!
 	}
 
+	enum AccessRoleEnum{
+		ADMIN
+		STUDENT
+	}
 
 	type Mutation{
 		# TODO:
 		# for admin to create a new campaign
-		createANewCampaign(campaign_details: CreateANewCampaignInput!): Campaign!
+		createANewCampaign(campaign_name: String!): Campaign!
 
 		# for now we can only invite people either for
 		# ADMIN role or for STUDENT role
@@ -47,7 +68,8 @@ export const campaignSchema = gql`
 		# In future we shall add multiple roles like PLACEMENT_ADMIN, COORDINATOR etc which will make this possible
 		# invite new students to the new campaign
 		# TODO:
-		# inviteNewUsersToCampaign(users: ): Boolean
+		inviteNewUsersToCampaign(payload: InviteNewUsersToCampaignInput): Boolean!
+
 
 	}
 `

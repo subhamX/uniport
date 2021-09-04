@@ -11,5 +11,8 @@ export const dbClient = new Client({
 		username: CASSANDRA_USERNAME,
 		password: CASSANDRA_PASSWORD,
 	},
-	keyspace: CASSANDRA_KEYSPACE
+	keyspace: CASSANDRA_KEYSPACE,
+	encoding: {
+		useUndefinedAsUnset: false,
+	}
 })

@@ -1,28 +1,108 @@
+import { useQuery } from '@apollo/client';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useSideNavStore } from '../../global-stores/useSideNavStore';
+import { FETCH_CURRENT_USER } from '../../graphql/FetchCurrentUser';
+import { FETCH_SIDE_BAR_ITEMS } from '../../graphql/FetchSideBarItems';
+import { CREATE_NEW_CAMPAIGN, MANAGE_CAMP } from '../../routes-config';
+import Router from 'next/router';
+
 
 
 // Small screen: Fullpage
 // Large screen: Sidenav
-// TODO: This is only for authenticated users (enforce by Layout)
+// TODO: This is only for authenticated users.
 const SideNavigationBar = () => {
 	// TODO: this will be pulled from the database
-	const authNavItems = [
-		{
-			label: "Job Profiles",
-			relative_url: "/security",
-		}
-	]
+
+	// if we are here then we are authenticated
+	const { data: user } = useQuery(FETCH_CURRENT_USER);
+	const { data, loading } = useQuery(FETCH_SIDE_BAR_ITEMS);
+
+	const accessRole = user.getUserDetails.access_role as string;
+
 
 	const isSideNavOpen = useSideNavStore(state => state.status)
+
+
+	if (loading) {
+		return (
+			<SideMenuWrapper isSideNavOpen={isSideNavOpen}>
+				Loading...
+			</SideMenuWrapper>
+		)
+	}
+
+	let campaigns = data.getMyCampaigns; // this is an array
+	// const accessRole=user.
+
+	// fetch the nav items
+	// common
+	// all campaigns
+
+
+	// admin
+	// invite
+
+	const authNavItems =
+		[
+			{
+				label: "My Profile",
+				relative_url: "/security",
+			},
+			{
+				label: "Dashboard",
+				relative_url: "/a/dash/",
+			},
+			{
+				label: "Manage Student Profile Schema",
+				relative_url: "/a/dash/",
+			},
+			{
+				label: "Students",
+				relative_url: "/a/dash/",
+			}
+
+		];
+
+	// Not possible since anyone(except admin) will always join into some campaign
+
+
+	// campaings are defined
+	// TODO: Fix the styling of campaigns
 	return (
 		<>
-			<div className={`uniport-sidenav text-sm absolute z-30 inset-y-0 left-0 w-52  bg-side-nav-color text-custom-grey overflow-y-scroll min-h-screen max-h-screen rounded-br-md transform  ${isSideNavOpen ? null : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out`}>
-				<nav className="my-10">
-					<NavItems items={authNavItems} globalStyle='flex items-center mt-1 px-4' activeRoute='/security' />
-				</nav>
-			</div>
+			<SideMenuWrapper isSideNavOpen={isSideNavOpen}>
+				{/* TODO: FIX IT */}
+				<div>
+					<div className='py-1 px-3 my-2 mx-1 text-sm uppercase font-bold'>
+						Campaigns
+					</div>
+					<div>
+						{campaigns ? campaigns.map((e, indx) => {
+							return (
+								<div key={indx}>
+									<NavItem
+										label={e.campaign_name}
+										relative_url={MANAGE_CAMP(e.campaign_id)}
+									/>
+								</div>
+							)
+						}) : null}
+						{/* Create new campaign btn */}
+						{accessRole === 'ADMIN' ? <NavItem
+							label='Create New Campaign'
+							relative_url={CREATE_NEW_CAMPAIGN}
+						/> : null}
+
+						<hr className='border-t-gray-400' />
+					</div>
+				</div>
+
+				<NavItems items={authNavItems} globalStyle='' />
+			</SideMenuWrapper>
 		</>
+
 	)
 }
 
@@ -30,20 +110,45 @@ export default SideNavigationBar;
 
 
 
-const NavItems = ({ items, globalStyle, activeRoute }) => {
+
+
+
+const SideMenuWrapper = ({ children, isSideNavOpen }) => {
+	return (<>
+		<div className={`uniport-sidenav text-sm absolute z-30 inset-y-0 left-0 w-52  bg-side-nav-color text-custom-grey overflow-y-scroll min-h-screen max-h-screen rounded-br-md transform  ${isSideNavOpen ? null : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out`}>
+			<nav className="my-10">
+				{children}
+			</nav>
+		</div>
+	</>);
+}
+
+const NavItems = ({ items, globalStyle }) => {
 	return (
 		<>
 			{items.map((e, indx) => {
 				return (
 					<div key={indx}>
-						<Link href={e.relative_url}>
-							<div className={`rounded-lg m-2 py-1 px-2 cursor-pointer ${e.style} ${globalStyle}  ${activeRoute === e.relative_url ? 'bg-custom-btn-color-bg-active' : 'hover:bg-custom-btn-color-bg-hover'}`}>
-								{e.label}
-							</div>
-						</Link>
+						<NavItem
+							relative_url={e.relative_url}
+							label={e.label}
+						/>
 					</div>
 				)
 			})}
 		</>
+	)
+}
+
+
+const NavItem = ({ relative_url, label }: { relative_url: string, label: string }) => {
+	const activeRoute = Router.pathname;
+	// console.log(activeRoute);
+	return (
+		<Link href={relative_url}>
+			<div className={`rounded-lg my-2 mx-1 py-1 px-3 cursor-pointer flex items-center mt-1 ${activeRoute === relative_url ? 'bg-custom-btn-color-bg-active' : 'hover:bg-custom-btn-color-bg-hover'}`}>
+				{label}
+			</div>
+		</Link>
 	)
 }

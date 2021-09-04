@@ -5,9 +5,10 @@ import Navbar from "./NonAuthNavbar";
 import { useSideNavStore } from "../../global-stores/useSideNavStore";
 import UniportLogo from "./Logo";
 import Image from "next/image";
+import withAuth from "../../HOC/withAuth";
 
 // For Authenticated Users;
-const Layout = ({ children }) => {
+const AuthLayout = ({ children }) => {
 	const isSideNavOpen = useSideNavStore(state => state.status)
 	const toggleSideNavStatus = useSideNavStore(state => state.toggleSideNavStatus)
 	const closeSideNav = useSideNavStore(state => state.close)
@@ -39,7 +40,7 @@ const Layout = ({ children }) => {
 	)
 }
 
-export default Layout;
+export default withAuth(AuthLayout);
 
 
 const DropdownProfileMenu = () => {

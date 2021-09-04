@@ -188,8 +188,12 @@ export const UserResolver = {
 			nonAuthenticatedUsersOnly(ctx.req);
 
 			// Validate
-			await yup.string().email().isValid(email);
-			await yup.string().min(6).isValid(password);
+			let a = await yup.string().email().isValid(email);
+			let b = await yup.string().min(6).isValid(password);
+
+			if (!a || !b) {
+				throw new UserInputError("Bad email or password")
+			}
 
 			let userInstance = await dbClient.execute(`SELECT * FROM user WHERE email_address=?`, [email]);
 			if (userInstance.rowLength !== 1) {

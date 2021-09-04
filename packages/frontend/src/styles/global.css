@@ -6,7 +6,7 @@
 
 body {
 	/* Give it at right places only */
-	/* overflow-y: hidden; */
+	overflow-y: hidden;
 }
 
 .uniport-sidenav::-webkit-scrollbar-track,
