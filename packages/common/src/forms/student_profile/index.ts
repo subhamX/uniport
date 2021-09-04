@@ -31,3 +31,19 @@ export * from './AddressTypeA';
 export * from './CurrentEducationTypeA';
 export * from './EducationTypeA';
 
+
+
+export const LEGOIdToTypeName: { [key in SupportedLEGOsTypes]: string } = {
+	"date_type_1": "Date",
+	"number_type_2": "Number/Integer",
+	"single_select_type_3": "Single Select (Multiple choice)",
+	"multi_select_type_12": "Multi Select (Multiple choice)",
+	"phone_number_type_4": "Phone Number",
+	"address_type_5": "Address",
+	"email_type_6": "Email",
+	"current_course_type_7": "Current Course",
+	"education_type_8": "Education",
+	"work_experience_type_9": "Work Experience",
+	"project_type_10": "Project",
+	"resume_type_11": "Resume",
+}

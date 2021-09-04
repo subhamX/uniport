@@ -157,9 +157,10 @@ export const UserResolver = {
 				]
 			);
 
+
 			if (!insertResponse.rows[0]['[applied]']) {
 				// already used. Somehow we didn't delete the from invited user table. [Strange.]
-				throw Error("Something went wrong!");
+				throw Error("Something went wrong! Maybe the user is already a user.");
 			}
 
 			let newUser: UserModelType = {
@@ -176,6 +177,34 @@ export const UserResolver = {
 
 			// delete the invite
 			await dbClient.execute(`DELETE FROM invited_user WHERE email=?`, [payload.email_address]);
+
+
+			// update the [campaign_stats_by_org]
+			await dbClient.execute(`UPDATE campaign_stats_by_org
+				SET number_of_invited_student = number_of_invited_student -1,
+				number_of_registered_student = number_of_registered_student +1
+				WHERE org_id=? AND campaign_id=?
+				`, [invitedUserData['org_id'], invitedUserData['campaign_id']])
+
+			// add an entry to [campaign_by_user]
+			// we need campaign_name; So we shall find that from campaign_by_org
+			let campaignDetails = await dbClient.execute(`SELECT campaign_name
+				FROM campaign_by_org
+				WHERE org_id=? AND campaign_id=?`, [invitedUserData['org_id'], invitedUserData['campaign_id']]);
+
+			if (campaignDetails.rowLength !== 1) {
+				throw Error("Something went wrong. Things are out of sync");
+			}
+
+			let campaignName = campaignDetails.rows[0]['campaign_name'];
+
+
+			await dbClient.execute(`INSERT INTO campaign_by_user(
+				campaign_id,
+				campaign_name,
+				org_id,
+				user_id)
+				VALUES(?,?,?,?)`, [invitedUserData['campaign_id'], campaignName, invitedUserData['org_id'], userUid])
 
 			// logIn the user
 			await setAuthCookieAndLogIn(ctx.req, newUser);

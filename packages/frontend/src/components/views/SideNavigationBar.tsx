@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useSideNavStore } from '../../global-stores/useSideNavStore';
 import { FETCH_CURRENT_USER } from '../../graphql/FetchCurrentUser';
 import { FETCH_SIDE_BAR_ITEMS } from '../../graphql/FetchSideBarItems';
-import { CREATE_NEW_CAMPAIGN, MANAGE_CAMP } from '../../routes-config';
-import Router from 'next/router';
+import { CREATE_NEW_CAMPAIGN, MANAGE_CAMP, MANAGE_STUDENT_PROFILE_DEFINITIONS, VIEW_CAMP_ALL_PROFILES, VIEW_CAMP_DASH } from '../../routes-config';
+import Router, { useRouter } from 'next/router';
 
 
 
@@ -14,6 +14,10 @@ import Router from 'next/router';
 // TODO: This is only for authenticated users.
 const SideNavigationBar = () => {
 	// TODO: this will be pulled from the database
+
+
+	const router = useRouter();
+	const { camp_id } = router.query;
 
 	// if we are here then we are authenticated
 	const { data: user } = useQuery(FETCH_CURRENT_USER);
@@ -41,14 +45,33 @@ const SideNavigationBar = () => {
 	// all campaigns
 
 
+	const campaignRoutes = {
+		"ADMIN": [
+			{
+				label: "All profiles",
+				relative_url: VIEW_CAMP_ALL_PROFILES(camp_id as string, accessRole),
+			},
+		], "STUDENT": [
+			{
+				label: "Applied Profiles",
+				relative_url: "/s/camp/:id/appliedprofiles",
+			},
+			{
+				label: "All profiles",
+				relative_url: VIEW_CAMP_ALL_PROFILES(camp_id as string, accessRole),
+			},
+		]
+	}
+
 	// admin
 	// invite
 
-	const authNavItems =
-		[
+	const authNavItems = {
+		"ADMIN": [
 			{
 				label: "My Profile",
 				relative_url: "/security",
+
 			},
 			{
 				label: "Dashboard",
@@ -56,14 +79,25 @@ const SideNavigationBar = () => {
 			},
 			{
 				label: "Manage Student Profile Schema",
-				relative_url: "/a/dash/",
+				relative_url: MANAGE_STUDENT_PROFILE_DEFINITIONS,
 			},
 			{
 				label: "Students",
 				relative_url: "/a/dash/",
 			}
+		],
+		"STUDENT": [
+			{
+				label: "My Profile",
+				relative_url: "/s/profile",
+			},
+			// if campaign
+			// ! For now instead of having a dashboard of camp where we show all [posts] we will current make the all profiles as the standard one
 
-		];
+		]
+	}
+
+
 
 	// Not possible since anyone(except admin) will always join into some campaign
 
@@ -84,7 +118,7 @@ const SideNavigationBar = () => {
 								<div key={indx}>
 									<NavItem
 										label={e.campaign_name}
-										relative_url={MANAGE_CAMP(e.campaign_id)}
+										relative_url={accessRole === 'ADMIN' ? MANAGE_CAMP(e.campaign_id) : VIEW_CAMP_DASH(e.campaign_id)}
 									/>
 								</div>
 							)
@@ -99,7 +133,7 @@ const SideNavigationBar = () => {
 					</div>
 				</div>
 
-				<NavItems items={authNavItems} globalStyle='' />
+				<NavItems items={[...authNavItems[accessRole], ...(camp_id ? campaignRoutes[accessRole] : [])]} globalStyle='' />
 			</SideMenuWrapper>
 		</>
 

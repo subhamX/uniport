@@ -2,7 +2,7 @@
 import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
-export default function GenericModal({ actions, content, open, setOpen }) {
+export default function GenericModal({ children, open, setOpen }) {
 
 
 	return (
@@ -34,20 +34,23 @@ export default function GenericModal({ actions, content, open, setOpen }) {
 						leaveFrom="opacity-100 translate-y-0 sm:scale-100"
 						leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 					>
+
 						<div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+
+							{children}
+						</div>
+
+
+						{/* <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
 							<div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 								<div className="sm:flex sm:items-start">
-									{/* MAIN CONTENT GOES HERE */}
-									{content}
+									MAIN CONTENT GOES HERE
 								</div>
 							</div>
 							<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-								{/* ACTION BUTTON GOES HERE */}
-								{actions}
-
-
+								ACTION BUTTON GOES HERE
 							</div>
-						</div>
+						</div> */}
 					</Transition.Child>
 				</div>
 			</Dialog>

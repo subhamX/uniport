@@ -30,7 +30,7 @@ export const campaignResolvers = {
 			} else {
 				// if student
 				let data = await dbClient.execute(`
-					SELECT campaign_name, org_id
+					SELECT campaign_name, campaign_id
 					FROM campaign_by_user
 					WHERE user_id=?`, [ctx.req.user?.user_id]);
 

@@ -74,10 +74,10 @@ passport.serializeUser<UserModelType, any>((user: UserModelType, done: any) => {
 
 passport.deserializeUser(async (email, done) => {
 	try {
-		console.log("New deserial?");
+		console.log("New deserial?", email);
 		const instance = await dbClient.execute('SELECT * FROM user WHERE email_address=?', [email]);
 		if (instance.rowLength !== 1) {
-			throw Error("Invalid email");
+			throw Error("Passport: Invalid email");
 		}
 		let user = instance.rows[0] as unknown as UserModelType;
 		done(null, user);

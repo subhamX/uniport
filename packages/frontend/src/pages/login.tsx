@@ -46,7 +46,7 @@ const Login = () => {
 		<div>
 			<HeadMeta title='UniPort | Login' />
 			<NonAuthNavbar />
-			<div className='w-full mt-4'>
+			<div className='w-full mt-4 overflow-y-scroll'>
 				<div className="mx-auto p-4 max-w-md shadow-md rounded-md text-left">
 					<div className='text-gray-700 text-3xl font-semibold text-center'>
 						Login
