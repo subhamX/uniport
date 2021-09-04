@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { intToRomanNum } from "../../../helpers/IntToRomanNum";
-import { ActionsBar } from "../Utils/ActionsBar";
+import { VerificationInfo } from "../Utils/VerificationInfo";
 
 
 export const CurrentCourseView = ({ label, data, isBlocked, elementIndex, fieldId, requiresProof }) => {

@@ -6,7 +6,7 @@ import LEGOActionDialog from "../../LegoActionDialog";
 import { VerificationInfo } from "../Utils/VerificationInfo";
 
 
-export const EducationBlock = ({ meta, data }) => {
+export const AddressBlock = ({ meta, data }) => {
 	let {
 		attribute_id,
 		attribute_type,
@@ -85,52 +85,46 @@ export const EducationBlock = ({ meta, data }) => {
 				</div>
 
 				{open && <LEGOActionDialog
-					title='Add Education Details'
+					title='Add Address'
 					formSchema={[
 						{
-							"label": "school",
+							"label": "Address Line",
 							"type": "text",
-							"id": "school",
-							"placeholder": "ABC School"
+							"id": "address_line",
+							"placeholder": "House No. 7 .. "
 						},
 						{
-							"label": "program",
+							"label": "District",
 							"type": "text",
-							"id": "program",
-							"placeholder": "Science"
+							"id": "district",
+							"placeholder": "South West Delhi"
 						},
+
 						{
-							"label": "board",
+							"label": "City",
 							"type": "text",
-							"id": "board",
-							"placeholder": "Central Board of Secondary Education"
+							"id": "city",
+							"placeholder": "Delhi"
 						},
 						{
-							"label": "education_type",
+							"label": "State",
 							"type": "text",
-							"id": "education_type",
-							"placeholder": "Full Time | Part Time"
+							"id": "state",
+							"placeholder": "Delhi"
+						},
+
+
+						{
+							"label": "Pincode / Zipcode",
+							"type": "text",
+							"id": "pincode",
+							"placeholder": "110001"
 						},
 						{
-							"label": "percent_score",
-							"type": "number",
-							"id": "percent_score",
-							"placeholder": "98.9",
-							additionalEntries: {
-								step: "0.01"
-							}
-						},
-						{
-							"label": "course_start_date",
-							"type": "date",
-							"id": "course_start_date",
-							"placeholder": ""
-						},
-						{
-							"label": "course_end_date",
-							"type": "date",
-							"id": "course_end_date",
-							"placeholder": ""
+							"label": "Country",
+							"type": "text",
+							"id": "country",
+							"placeholder": "India"
 						},
 					]}
 					loading={loading}
@@ -140,13 +134,12 @@ export const EducationBlock = ({ meta, data }) => {
 					open={open}
 					setOpen={setOpen}
 					initialValues={{
-						school: '',
-						program: '',
-						board: '',
-						education_type: '',
-						percent_score: '',
-						course_start_date: '',
-						course_end_date: '',
+						country: '',
+						pincode: '',
+						state: '',
+						district: '',
+						city: '',
+						address_line: '',
 					}}
 				/>
 				}
@@ -159,41 +152,24 @@ export const EducationBlock = ({ meta, data }) => {
 
 
 
-// TODO: Add [description]
+
 const Single = ({ data }) => {
-	let { school,
-		program,
-		board,
-		education_type,
-		percent_score,
-		course_start_date,
-		// description,
-		course_end_date, file_url, verification_info } = data;
+	let { country,
+		pincode,
+		state,
+		district,
+		city,
+		address_line, file_url, verification_info } = data;
+	let formattedValue = `${address_line} ${city} ${district} ${state} ${country} ${pincode}`
 
 	return (
 		<div className='flex flex-col text-sm  py-0.4 border-b'>
 			<div className='flex justify-between items-center gap-4 md:gap-0 md:grid md:grid-cols-2'>
-				<div className='flex-shrink'>
-					<Image src={require('../../../assets/images/school.svg')} width={70} height={70} />
-				</div>
-				<div className='flex flex-col flex-grow'>
-					<div className='flex gap-2 text-gray-600'>
-						<div>{school}</div>
-					</div>
-					<div>{program}</div>
-					<div>{board} | <span>{education_type}</span></div>
-
-					<div className='flex gap-2 text-gray-500'>
-						<div>{course_start_date}</div>
-						-
-						<div>{course_end_date}</div>
-					</div>
-					<div className='flex text-gray-500'>
-						<div>{percent_score}%</div>
-					</div>
-				</div>
+				<p className='text-gray-700'>
+					{formattedValue}
+				</p>
 			</div>
-			{/* <div className='text-gray-400 pt-2'>{description}</div> */}
+
 			<div className='flex justify-end gap-3 pb-0.5'>
 				<VerificationInfo verification_info={verification_info} />
 			</div >

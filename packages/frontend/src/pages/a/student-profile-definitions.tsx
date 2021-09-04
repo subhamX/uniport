@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { AddStudentProfileDefinitionsInput, allSupportedLEGOs, LEGOIdToTypeName } from "@uniport/common";
+import { allSupportedLEGOs, LEGOIdToTypeName } from "@uniport/common";
 import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik";
 import { Dispatch, SetStateAction, useState } from "react";
 import GenericModal from "../../components/views/GenericModal";
@@ -7,7 +7,6 @@ import HeadMeta from "../../components/views/HeadMeta";
 import Layout from "../../components/views/Layout";
 import { ADD_STUDENT_PROFILE_DEFINITIONS } from "../../graphql/AddStudentProfileDefinitions";
 import { GET_STUDENT_PROFILE_DEFINITIONS } from "../../graphql/GetStudentProfileDefinitions";
-import withAuth from "../../HOC/withAuth";
 
 
 const ManageStudentProfileDefinitions = () => {
@@ -76,6 +75,10 @@ const ManageStudentProfileDefinitions = () => {
 											<div className="text-sm font-medium text-gray-500">Attribute Type</div>
 											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{LEGOIdToTypeName[e.attribute_type]}</div>
 										</div>
+										<div className='bg-gray-50 px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
+											<div className="text-sm font-medium text-gray-500">Is Blocked</div>
+											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{e.is_blocked ? "YES" : "NO"}</div>
+										</div>
 										{/*<div className='bg-gray-50 px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
 											<div className="text-sm font-medium text-gray-500">is Array?</div>
 											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{e.is_array ? "YES" : "NO"}</div>
@@ -88,15 +91,12 @@ const ManageStudentProfileDefinitions = () => {
 											<div className="text-sm font-medium text-gray-500">Required Attribute</div>
 											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{e.required ? "YES" : "NO"}</div>
 										</div>
-										<div className='bg-white px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
-											<div className="text-sm font-medium text-gray-500">Is Blocked</div>
-											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{e.is_blocked ? "YES" : "NO"}</div>
-										</div>
+
 										<div className='bg-gray-50 px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
 											<div className="text-sm font-medium text-gray-500">Requires Proof</div>
 											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{e.requires_proof ? "YES" : "NO"}</div>
 										</div> */}
-										<div className='bg-gray-50 flex justify-end'>
+										<div className='bg-white flex justify-end'>
 											<div className='px-4 py-2 sm:px-6'>
 												<div className='btn bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'>
 													Edit Block
@@ -125,9 +125,9 @@ export default ManageStudentProfileDefinitions;
 // component which shows the modal and asks the user to add a rule to the [campaign_id] passed as parameter
 // have put [any] instead of [AddStudentProfileDefinitionsInput] as [options] is a string and not an array
 const AddNewStudentDefinitionModal = ({ setOpen, open, initialValues }: { setOpen: Dispatch<SetStateAction<boolean>>, open: boolean, initialValues: any }) => {
+	// TODO: make the data as null in consecutive renders. Currently it retains that data is true
 	const [mutationFn, { data, loading, error }] = useMutation(ADD_STUDENT_PROFILE_DEFINITIONS, {
 		fetchPolicy: 'no-cache',
-		refetchQueries: ["ReallyImportantQuery"]
 	});
 	const handleSubmit = async (e: any) => {
 		console.log(e);
@@ -143,12 +143,6 @@ const AddNewStudentDefinitionModal = ({ setOpen, open, initialValues }: { setOpe
 		})
 
 		console.log(e);
-		if (data && data.addStudentProfileDefinitions) {
-			// block added successfully
-			setTimeout(() => {
-				setOpen(false);
-			}, 200);
-		}
 	}
 
 

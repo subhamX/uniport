@@ -16,7 +16,7 @@ import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-co
 import { navMenuSchema } from './schema/NavMenu';
 import { studentProfileDefinitionSchema } from './schema/StudentProfileDefinition';
 import { campaignSchema } from './schema/Campaign';
-
+import studentProfileRoutes from './routes/StudentProfile';
 
 const app = Express();
 declare global {
@@ -97,6 +97,8 @@ app.get('/', async (req, res) => {
 		status: "GREAT"
 	})
 });
+
+app.use('/s/', studentProfileRoutes);
 
 
 (async () => {

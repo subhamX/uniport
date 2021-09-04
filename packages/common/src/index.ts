@@ -12,14 +12,14 @@ export * from './mockdata'
 
 
 export type OrgSchemaInstanceBlock = {
-	attributeType: SupportedLEGOsTypes,
-	isArray?: Boolean, // defines if we shall take an array
+	attribute_type: SupportedLEGOsTypes,
+	is_array?: Boolean, // defines if we shall take an array
 	// [key: string]: any
-	"label": string,
-	"isBlocked": boolean,
-	"required": boolean,
-	"options"?: string[] // notice that we only support strings as options
-	"requiresProof": boolean,
+	label: string,
+	is_blocked: boolean,
+	required: boolean,
+	options?: string[] // notice that we only support strings as options
+	requires_proof: boolean,
 }
 
 export type verificationInfo = {

@@ -206,6 +206,18 @@ export const UserResolver = {
 				user_id)
 				VALUES(?,?,?,?)`, [invitedUserData['campaign_id'], campaignName, invitedUserData['org_id'], userUid])
 
+
+
+			// add a student profile
+			const addStudentProfileQuery = `
+				INSERT INTO student_profile(user_id,org_id)
+				VALUES(?,?)`;
+
+
+			await dbClient.execute(addStudentProfileQuery,
+				[userUid, invitedUserData['org_id']]
+			)
+
 			// logIn the user
 			await setAuthCookieAndLogIn(ctx.req, newUser);
 

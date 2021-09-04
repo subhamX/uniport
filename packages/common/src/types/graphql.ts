@@ -17,7 +17,7 @@ export enum AccessRoleEnum {
 }
 
 export type AddStudentProfileDefinitionsInput = {
-  attribute_type?: Maybe<Scalars['String']>;
+  attribute_type: Scalars['String'];
   is_array: Scalars['Boolean'];
   label: Scalars['String'];
   required: Scalars['Boolean'];
@@ -134,7 +134,7 @@ export type StudentProfileDefinition = {
   __typename?: 'StudentProfileDefinition';
   org_id: Scalars['String'];
   attribute_id: Scalars['ID'];
-  attribute_type?: Maybe<Scalars['String']>;
+  attribute_type: Scalars['String'];
   is_array: Scalars['Boolean'];
   label: Scalars['String'];
   is_blocked: Scalars['Boolean'];

@@ -72,6 +72,7 @@ CREATE TYPE education_type_8(
 	course_start_date DATE,
 	course_end_date DATE,
 	file_url TEXT,
+	-- TODO: Add [description]
 	verification_info verification_info_type
 );
 
@@ -100,6 +101,7 @@ CREATE TYPE project_type_10(
 );
 
 -- LEGO 11
+-- resume cannot have [hasProof]
 CREATE TYPE resume_type_11(
 	file_name TEXT,
 	file_url TEXT,

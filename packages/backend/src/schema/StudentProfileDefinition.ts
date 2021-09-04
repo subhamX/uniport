@@ -5,7 +5,7 @@ export const studentProfileDefinitionSchema = gql`
 	type StudentProfileDefinition {
 		org_id: String!
 		attribute_id: ID!
-		attribute_type: String
+		attribute_type: String!
 		is_array: Boolean!
 		label: String!
 		is_blocked: Boolean!
@@ -15,7 +15,7 @@ export const studentProfileDefinitionSchema = gql`
 	}
 
 	input AddStudentProfileDefinitionsInput {
-		attribute_type: String
+		attribute_type: String!
 		is_array: Boolean!
 		label: String!
 		required: Boolean!

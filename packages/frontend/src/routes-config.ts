@@ -29,3 +29,31 @@ export const VIEW_CAMP_ALL_PROFILES = (campaign_id: string, accessRole: string) 
 
 // for now we don't have posts page so using [VIEW_CAMP_ALL_PROFILES] route
 export const CAMPAIGN_DASHBOARD = (campaign_id: string, accessRole: string) => VIEW_CAMP_ALL_PROFILES(campaign_id, accessRole)
+
+
+
+// Actually it's not a route config thing. Just placed it here cuz I am lazy.
+export const STUDENT_PROFILE_ROUTE = (student_id: string) => `/s/profile/${student_id}`;
+
+
+// don;t add trailing slash.
+export const FETCH_STUDENT_PROFILE_DATA_ENDPOINT = 'http://localhost:4201/s/profile'
+
+// ensure that [payload] contains [student_id]
+// add [block_index] too if you want to edit
+export const ADD_STUDENT_PROFILE_BLOCK = async (payload: any) => {
+	console.log("PUSHING", payload);
+	let res = await fetch(`http://localhost:4201/s/profile/add`, {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json'
+			// 'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: JSON.stringify(payload)
+	})
+
+	let json = await res.json();
+
+	return json
+}

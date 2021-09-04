@@ -18,7 +18,7 @@ export const LEGOsWithoutOptions = [
 	"resume_type_11",
 ] as const;
 
-
+// ! keep it in sync with [StudentProfile] resolver
 export const allSupportedLEGOs = <const>[
 	...LEGOsWithOptions,
 	...LEGOsWithoutOptions

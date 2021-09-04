@@ -189,6 +189,10 @@ export const campaignResolvers = {
 			await dbClient.execute(updateStatsQuery,
 				[org_id, payload.campaign_id]
 			)
+
+
+
+
 			return true;
 		}
 	}

@@ -1,5 +1,7 @@
 // TODO: Work on single select and multi select
 
+// ! DEPRECATED
+
 
 let tmp = {
 	"uuid_of_user": {

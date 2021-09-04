@@ -22,8 +22,7 @@ CREATE TABLE user (
 	-- for now we have "ADMIN" and "STUDENT"
 	-- TODO: access role should be campaign based; Remodel it
 	access_role TEXT;
-	-- NOT USING FOR NOW
-	refresh_token TEXT,
+	refresh_token TEXT, 	-- NOT USING FOR NOW
 	has_student_profile boolean,
 	-- isBanned boolean
 	PRIMARY KEY((email_address), first_name, org_id)
@@ -62,6 +61,8 @@ CREATE TABLE student_profile_definition (
 	required Boolean,
 	options set<TEXT>, -- notice that we only support strings as options
 	requires_proof Boolean,
+	-- [NOT DOING]: we will group everything by [attribute_type]. In this way things will be grouped for us
+	-- [REASON]: If needed we will add a sorting logic in the resolver
 	PRIMARY KEY((org_id), attribute_id)
 );
 

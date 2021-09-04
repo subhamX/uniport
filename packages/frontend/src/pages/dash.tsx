@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import router from "next/router";
 import { FETCH_CURRENT_USER } from "../graphql/FetchCurrentUser";
 import withAuth from "../HOC/withAuth";
-import { STUDENT_CAMP_CHOOSE_ROUTE } from "../routes-config";
+import { ADMIN_PRIMARY_DASHBOARD, STUDENT_CAMP_CHOOSE_ROUTE } from "../routes-config";
 
 // Only to redirect the user to correct dashboard
 
@@ -11,7 +11,7 @@ const Dash = () => {
 	let { data } = useQuery(FETCH_CURRENT_USER);
 
 	if (data.getUserDetails.access_role === 'ADMIN') {
-		router.push('/a/dash');
+		router.push(ADMIN_PRIMARY_DASHBOARD);
 	} else {
 		router.push(STUDENT_CAMP_CHOOSE_ROUTE);
 	}

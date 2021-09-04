@@ -4,6 +4,7 @@ import { types } from "cassandra-driver";
 import { authenticatedUsersOnly } from "../config/auth/authCheckers"
 import { dbClient } from "../db";
 import { CustomApolloContext } from "../types/CustomApolloContext";
+import * as yup from 'yup';
 
 
 export const studentProfileDefinitionResolver = {
@@ -39,6 +40,15 @@ export const studentProfileDefinitionResolver = {
 				throw new ForbiddenError("You need to be admin to perform this action")
 			}
 
+			let validationSchema = yup.object().shape({
+				attribute_type: yup.string().required().min(3),
+				is_array: yup.bool().required(),
+				label: yup.string().required(),
+				required: yup.bool().required(),
+				options: yup.array(),
+				requires_proof: yup.bool().required(),
+			})
+
 
 			// push all of them at once
 			let queries: any[] = [];
@@ -61,6 +71,7 @@ export const studentProfileDefinitionResolver = {
 				// TODO: check the attribute type
 				// validate everything. :)
 				validateStudentProfileDefinitionItem(item);
+				await validationSchema.validate(item);
 
 				queries.push({
 					query,
@@ -112,4 +123,10 @@ export const validateStudentProfileDefinitionItem = (item: AddStudentProfileDefi
 			throw new UserInputError(`LEGO ${attribute_type} shouldn't define any options`)
 		}
 	}
+
+	// ! Keeping it logical for now. And not enforcing here.
+	// if(attribute_type==='resume_type_11' && item.requires_proof===false){
+	// 	throw new UserInputError(`LEGO ${attribute_type} will always require proof.`)
+
+	// }
 }

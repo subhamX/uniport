@@ -9,3 +9,4 @@ export const SESSION_SECRET_KEY = process.env.SESSION_SECRET_KEY as string;
 export const BACKEND_SERVER_PORT = process.env.BACKEND_SERVER_PORT as string;
 export const PWD_HASH_ROUNDS = parseInt(process.env.PWD_HASH_ROUNDS as string);
 
+export const STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM='---'

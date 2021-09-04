@@ -2,11 +2,8 @@
 
 
 import { useQuery } from "@apollo/client";
-import Image from 'next/image';
-import Link from 'next/link';
 import HeadMeta from "../../../../components/views/HeadMeta";
 import Layout from "../../../../components/views/Layout";
-import { gql } from 'graphql-tag';
 import { FETCH_CURRENT_USER } from "../../../../graphql/FetchCurrentUser";
 
 
