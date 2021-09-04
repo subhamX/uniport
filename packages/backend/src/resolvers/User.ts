@@ -1,19 +1,14 @@
 import bcrypt from 'bcrypt';
 import { PWD_HASH_ROUNDS } from "../config/constants";
 import { types } from "cassandra-driver";
-import { RegisterWithValidInviteInput, RegisterAdminInput, User } from '../types/graphql';
+import { RegisterWithValidInviteInput, RegisterAdminInput, registerAdminInputValidationSchema, registerWithValidInviteInputValidationSchema } from '@uniport/common';
 import { dbClient } from '../db/index';
 import { CustomApolloContext } from 'src/types/CustomApolloContext';
 import { UserInputError } from 'apollo-server-core';
 import { UserModelType } from 'src/models/User';
-import { Request } from 'express';
 import * as yup from 'yup';
 import { authenticatedUsersOnly, nonAuthenticatedUsersOnly } from '../config/auth/authCheckers';
 import { setAuthCookieAndLogIn } from '../config/auth/setAuthCookieAndLogIn';
-
-
-
-const onlyAlphaBets = yup.string().required().matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ");
 
 
 
@@ -28,12 +23,12 @@ export const UserResolver = {
 			}
 		},
 
-		getUserDetails: async (_:any, __:any, ctx: CustomApolloContext) => {
+		getUserDetails: async (_: any, __: any, ctx: CustomApolloContext) => {
 			// only for authenticated users
 			authenticatedUsersOnly(ctx.req);
 
 			// I am very sure of the conversion.
-			let user=ctx.req.user;
+			let user = ctx.req.user;
 			return user;
 		}
 
@@ -46,14 +41,8 @@ export const UserResolver = {
 				nonAuthenticatedUsersOnly(ctx.req);
 
 				// validate the inputs
-				const registerAdminInputSchema: yup.SchemaOf<RegisterAdminInput> = yup.object({
-					first_name: onlyAlphaBets,
-					last_name: onlyAlphaBets,
-					email_address: yup.string().required().email(),
-					password: yup.string().required().min(5),
-					org_name: yup.string().required(),
-				})
-				await registerAdminInputSchema.validate(payload);
+
+				await registerAdminInputValidationSchema.validate(payload);
 
 				// push the email
 				let orgUid = types.Uuid.random();
@@ -113,7 +102,7 @@ export const UserResolver = {
 
 				await setAuthCookieAndLogIn(ctx.req, userData)
 
-				return true;
+				return userData;
 			} catch (err) {
 				console.log("Error:", err.message)
 				throw new UserInputError(err.message);
@@ -126,6 +115,9 @@ export const UserResolver = {
 			nonAuthenticatedUsersOnly(ctx.req);
 
 			// TODO: Validate
+			await registerWithValidInviteInputValidationSchema.validate(payload);
+
+
 			// check if the email is actually invited or not
 			let res = await dbClient.execute(`SELECT * FROM invited_user WHERE email=?`, [payload.email_address]);
 			if (res.rowLength !== 1) {
@@ -134,6 +126,12 @@ export const UserResolver = {
 
 			let invitedUserData = res.rows[0];
 			let hashedPassword = await bcrypt.hash(payload.password, PWD_HASH_ROUNDS);
+
+			let shouldHaveStudentProfile = false;
+			if (invitedUserData['access_role'] === 'STUDENT') {
+				// ! Ensure that if you add PLACEMENT_COORDINATOR etc. Then you change it here.
+				shouldHaveStudentProfile = true;
+			}
 
 			let userUid = types.Uuid.random();
 			let insertResponse = await dbClient.execute(
@@ -154,7 +152,7 @@ export const UserResolver = {
 					payload.email_address,
 					invitedUserData['org_id'],
 					invitedUserData['access_role'],
-					false,
+					shouldHaveStudentProfile,
 					hashedPassword
 				]
 			);
@@ -182,7 +180,7 @@ export const UserResolver = {
 			// logIn the user
 			await setAuthCookieAndLogIn(ctx.req, newUser);
 
-			return true;
+			return newUser;
 		},
 
 		loginExistingUser: async (_: any, { email, password }: { email: string, password: string }, ctx: CustomApolloContext) => {
@@ -206,7 +204,7 @@ export const UserResolver = {
 			}
 
 			await setAuthCookieAndLogIn(ctx.req, user);
-			return true;
+			return user;
 		}
 
 	},

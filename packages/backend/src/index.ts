@@ -30,7 +30,7 @@ declare global {
 app.set('trust proxy', 1) // trust first proxy
 
 app.use(cors({
-	origin: process.env.CLIENT_URL as string ?? '/',
+	origin: 'http://localhost:3000',
 	credentials: true,
 }))
 
@@ -100,7 +100,7 @@ app.get('/', async (req, res) => {
 
 (async () => {
 	const server = new ApolloServer({
-		typeDefs: [UserSchema, navMenuSchema,studentProfileDefinitionSchema],
+		typeDefs: [UserSchema, navMenuSchema, studentProfileDefinitionSchema],
 		resolvers: mergedResolvers,
 		context: ({ req, res }) => ({ req, res }),
 		plugins: [
@@ -109,7 +109,7 @@ app.get('/', async (req, res) => {
 	});
 	const httpServer = http.createServer(app);
 	await server.start();
-	server.applyMiddleware({ app });
+	server.applyMiddleware({ app, cors: false });
 
 
 	await new Promise(resolve => httpServer.listen({ port: BACKEND_SERVER_PORT }, resolve as any));

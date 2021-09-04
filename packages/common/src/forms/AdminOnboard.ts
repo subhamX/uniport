@@ -1,29 +1,29 @@
-import * as Yup from 'yup';
+import { RegisterAdminInput } from '../';
+import * as yup from 'yup';
+import { onlyAlphaBets } from './RegisterWithInvite';
 
 
-export type SignupFields = {
-    firstName: string,
-    lastName: string,
-    email: string,
-    password1: string,
-    password2: string
+
+
+// for backend
+export const registerAdminInputValidationSchema: yup.SchemaOf<RegisterAdminInput> = yup.object().shape({
+	first_name: onlyAlphaBets,
+	last_name: onlyAlphaBets,
+	email_address: yup.string().required().email(),
+	password: yup.string().required().min(5),
+	org_name: yup.string().required(),
+})
+
+
+
+
+// for frontend
+export type RegisterAdminInputForm = RegisterAdminInput & {
+	password_confirm: string;
 }
 
-
-export const SignupSchema = Yup.object().shape({
-    firstName: Yup.string()
-        .min(2, 'Too Short!')
-        .max(50, 'Too Long!')
-        .required('Required'),
-    lastName: Yup.string()
-        .min(2, 'Too Short!')
-        .max(50, 'Too Long!')
-        .required('Required'),
-    email: Yup.string().email('Invalid email').required('Required'),
-    password1: Yup.string()
-        .required('Please enter the password'),
-    password2: Yup.string().oneOf([Yup.ref('password1'), undefined], 'Passwords are different')
-        .required('Please confirm the password')
-});
+export const registerAdminInputFormValidationSchema: yup.SchemaOf<RegisterAdminInputForm> = registerAdminInputValidationSchema.shape({
+	password_confirm: yup.string().oneOf([yup.ref('password'), undefined], 'Passwords are different').required('Please confirm the password'),
+})
 
 

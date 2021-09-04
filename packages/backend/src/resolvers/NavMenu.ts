@@ -5,6 +5,7 @@ import { CustomApolloContext } from "../types/CustomApolloContext";
 
 export const navMenuResolvers = {
 	Query: {
+		// TODO: Deprecate this
 		getNavItems: async (_: any, __: any, ctx: CustomApolloContext) => {
 			authenticatedUsersOnly(ctx.req);
 
