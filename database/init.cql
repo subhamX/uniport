@@ -10,19 +10,23 @@ CREATE TABLE navigation_menu_item (
 
 -- to store the user minimal data to allow authentication
 -- query: login a user. (get a user with a given email address)
--- query: get all the users for a org. () [It will hit multi nodes] [Paginated results only]
+-- query: [CHECK] get all the users for a org. () [It will hit multi nodes] [Paginated results only]
+-- for now let's use allow filtering. Also it's not very frequent. (Unless the admin wants to target some the student profiles. XD)
 CREATE TABLE user (
-	user_id UUID,
+	user_id UUID, -- a dummy thing only
 	first_name TEXT,
 	last_name TEXT,
 	email_address TEXT,
 	hashed_password TEXT,
 	org_id UUID,
-	access_role TEXT,
 	-- for now we have "ADMIN" and "STUDENT"
+	-- TODO: access role should be campaign based; Remodel it
+	access_role TEXT;
+	-- NOT USING FOR NOW
 	refresh_token TEXT,
 	has_student_profile boolean,
-	PRIMARY KEY((email_address), first_name)
+	-- isBanned boolean
+	PRIMARY KEY((email_address), first_name, org_id)
 );
 
 -- to store the organization details.
@@ -57,7 +61,7 @@ CREATE TABLE student_profile_definition (
 	is_blocked Boolean,
 	required Boolean,
 	options set<TEXT>, -- notice that we only support strings as options
-	requiresProof Boolean,
+	requires_proof Boolean,
 	PRIMARY KEY((org_id), attribute_id)
 );
 
@@ -94,12 +98,34 @@ CREATE TABLE student_profile(
 -- and similar rules can be applied while adding a job_profile
 -- query: get me all the campaigns of my org
 -- query: get me the details of the campaign by [campaign_id]
-CREATE TABLE campaign(
+CREATE TABLE campaign_by_org(
 	campaign_id UUID,
 	org_id UUID,
+	campaign_name TEXT,
 	rules set<frozen<filtering_rule>>,
-	PRIMARY KEY((org_id, campaign_id))
+	PRIMARY KEY((org_id), campaign_id)
 );
+
+CREATE TABLE campaign_stats_by_org(
+	org_id UUID,
+	campaign_id UUID,
+	number_of_invited_student COUNTER,
+	number_of_registered_student COUNTER,
+	number_of_placed_student COUNTER,
+	-- org_id is just for additional security. Which will ensure that on my application some other org person never access other's campaign details
+	PRIMARY KEY((org_id),campaign_id)
+);
+
+
+
+CREATE TABLE campaign_by_user(
+	campaign_id UUID,
+	campaign_name TEXT, -- copied attribute (keep it sync with campaign_by_org)
+	org_id UUID,
+	user_id UUID,
+	PRIMARY KEY((user_id), campaign_id)
+);
+
 
 
 
@@ -107,8 +133,9 @@ CREATE TABLE campaign(
 CREATE TABLE invited_user(
 	email TEXT,
 	org_id UUID,
-	joining_token TEXT,
+	-- joining_token TEXT, [Not needed]
 	access_role TEXT,
+	campaign_id UUID,
 	PRIMARY KEY(email)
 );
 
