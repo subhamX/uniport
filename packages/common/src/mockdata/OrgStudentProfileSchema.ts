@@ -14,7 +14,7 @@ export const orgStudentProfileSchema: {
 	"date_of_birth": {
 		"label": "Date of Birth",
 		"isBlocked": true,
-		"attributeType": "date_type",
+		"attributeType": "date_type_1",
 		"required": true,
 		"requiresProof": true,
 		"isArray": false,
@@ -22,7 +22,7 @@ export const orgStudentProfileSchema: {
 	"favorite_number": {
 		"label": "Favorite Number",
 		"isBlocked": true,
-		"attributeType": "number_type",
+		"attributeType": "number_type_2",
 		"required": true,
 		"requiresProof": true,
 		"isArray": false,
@@ -30,7 +30,7 @@ export const orgStudentProfileSchema: {
 	"gender": {
 		"label": "Gender",
 		"isBlocked": true,
-		"attributeType": "single_select_type",
+		"attributeType": "single_select_type_3",
 		"required": true,
 		"options": ["Male", "Female", "Others"],
 		"requiresProof": true,
@@ -42,7 +42,7 @@ export const orgStudentProfileSchema: {
 		"label": "Contact Number",
 		"isBlocked": false,
 		"required": true,
-		"attributeType": "phone_number_type",
+		"attributeType": "phone_number_type_4",
 		"requiresProof": true,
 
 	},
@@ -50,7 +50,7 @@ export const orgStudentProfileSchema: {
 		"label": "Personal Email Address",
 		"isBlocked": true,
 		"required": true,
-		"attributeType": "email_type",
+		"attributeType": "email_type_6",
 		"requiresProof": true,
 
 	},
@@ -58,7 +58,7 @@ export const orgStudentProfileSchema: {
 		"label": "Permanent Address",
 		"isBlocked": false,
 		"required": true,
-		"attributeType": "address_type",
+		"attributeType": "address_type_5",
 		"requiresProof": true,
 
 	},
@@ -67,21 +67,21 @@ export const orgStudentProfileSchema: {
 		"isBlocked": false,
 		"required": true,
 		"requiresProof": true,
-		"attributeType": "address_type"
+		"attributeType": "address_type_5"
 	},
 	"guardian_phone_number": {
 		"label": "Guardian Phone Number",
 		"isBlocked": false,
 		"required": true,
 		"requiresProof": true,
-		"attributeType": "phone_number_type"
+		"attributeType": "phone_number_type_4"
 	},
 	"current_course_details": {
 		"label": "Current Course Details",
 		"isBlocked": false,
 		"required": true,
 		"requiresProof": true,
-		"attributeType": "current_course_type"
+		"attributeType": "current_course_type_7"
 	},
 	"class_12th": {
 		"label": "Class 12th Details",
@@ -89,7 +89,7 @@ export const orgStudentProfileSchema: {
 		"required": true,
 		"requiresProof": true,
 
-		"attributeType": "education_type"
+		"attributeType": "education_type_8"
 	},
 	"class_10th": {
 		"label": "Class 10th Details",
@@ -97,12 +97,12 @@ export const orgStudentProfileSchema: {
 		"required": true,
 		"requiresProof": true,
 
-		"attributeType": "education_type"
+		"attributeType": "education_type_8"
 	},
 	"work_experience": {
 		"label": "Work Experience",
 		"isBlocked": false,
-		"attributeType": "work_experience_type",
+		"attributeType": "work_experience_type_9",
 		"required": false,
 		"requiresProof": true,
 
@@ -118,12 +118,12 @@ export const orgStudentProfileSchema: {
 		"isBlocked": false,
 		"requiresProof": true,
 
-		"attributeType": "project_type"
+		"attributeType": "project_type_10"
 	},
 	"resume": {
 		"label": "Resume",
 		"required": true,
-		"attributeType": "resume_type",
+		"attributeType": "resume_type_11",
 		"requiresProof": true,
 		"isBlocked": false,
 		"isArray": true

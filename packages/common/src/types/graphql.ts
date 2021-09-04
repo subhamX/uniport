@@ -11,11 +11,41 @@ export type Scalars = {
   Float: number;
 };
 
+export type AddStudentProfileDefinitionsInput = {
+  attribute_type?: Maybe<Scalars['String']>;
+  is_array: Scalars['Boolean'];
+  label: Scalars['String'];
+  required: Scalars['Boolean'];
+  options: Array<Maybe<Scalars['String']>>;
+  requires_proof: Scalars['Boolean'];
+};
+
+export type Campaign = {
+  __typename?: 'Campaign';
+  campaign_id: Scalars['ID'];
+  campaign_name: Scalars['String'];
+};
+
+export type CreateANewCampaignInput = {
+  campaign_name: Scalars['String'];
+  rules: Array<Maybe<FilteringRule>>;
+};
+
+export type FilteringRule = {
+  attribute_id: Scalars['String'];
+  operator: Scalars['String'];
+  threshold_value: Scalars['Int'];
+  prefix_multiplier: Scalars['Int'];
+  multi_select_threshold: Array<Maybe<Scalars['String']>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   registerAdmin: User;
   loginExistingUser: User;
   registerWithValidInvite: User;
+  addStudentProfileDefinitions: Scalars['Boolean'];
+  createANewCampaign: Campaign;
 };
 
 
@@ -34,6 +64,16 @@ export type MutationRegisterWithValidInviteArgs = {
   payload?: Maybe<RegisterWithValidInviteInput>;
 };
 
+
+export type MutationAddStudentProfileDefinitionsArgs = {
+  payload: Array<AddStudentProfileDefinitionsInput>;
+};
+
+
+export type MutationCreateANewCampaignArgs = {
+  campaign_details: CreateANewCampaignInput;
+};
+
 export type NavItem = {
   __typename?: 'NavItem';
   label: Scalars['String'];
@@ -46,6 +86,7 @@ export type Query = {
   checkAuthStatus: Scalars['String'];
   getNavItems: Array<Maybe<NavItem>>;
   getStudentProfileDefinitions: Array<Maybe<StudentProfileDefinition>>;
+  getMyCampaigns: Array<Maybe<Campaign>>;
 };
 
 export type RegisterAdminInput = {
@@ -73,7 +114,7 @@ export type StudentProfileDefinition = {
   is_blocked: Scalars['Boolean'];
   required: Scalars['Boolean'];
   options: Array<Maybe<Scalars['String']>>;
-  requiresProof: Scalars['Boolean'];
+  requires_proof: Scalars['Boolean'];
 };
 
 export type User = {
@@ -85,4 +126,9 @@ export type User = {
   org_id: Scalars['String'];
   access_role: Scalars['String'];
   has_student_profile: Scalars['Boolean'];
+};
+
+export type InviteNewUsersToCampaign = {
+  __typename?: 'inviteNewUsersToCampaign';
+  user_email: Scalars['String'];
 };

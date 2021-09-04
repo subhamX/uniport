@@ -1,4 +1,4 @@
-import { SupportedFormFieldTypes } from './forms/student_profile/index';
+import { SupportedLEGOsTypes } from './forms/student_profile/index';
 
 
 export * from './forms/AdminOnboard';
@@ -12,7 +12,7 @@ export * from './mockdata'
 
 
 export type OrgSchemaInstanceBlock = {
-	attributeType: SupportedFormFieldTypes,
+	attributeType: SupportedLEGOsTypes,
 	isArray?: Boolean, // defines if we shall take an array
 	// [key: string]: any
 	"label": string,

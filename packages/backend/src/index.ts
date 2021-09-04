@@ -15,6 +15,7 @@ import cors from 'cors';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core/dist/plugin/landingPage/graphqlPlayground';
 import { navMenuSchema } from './schema/NavMenu';
 import { studentProfileDefinitionSchema } from './schema/StudentProfileDefinition';
+import { campaignSchema } from './schema/Campaign';
 
 
 const app = Express();
@@ -100,7 +101,7 @@ app.get('/', async (req, res) => {
 
 (async () => {
 	const server = new ApolloServer({
-		typeDefs: [UserSchema, navMenuSchema, studentProfileDefinitionSchema],
+		typeDefs: [UserSchema, navMenuSchema, studentProfileDefinitionSchema, campaignSchema],
 		resolvers: mergedResolvers,
 		context: ({ req, res }) => ({ req, res }),
 		plugins: [
