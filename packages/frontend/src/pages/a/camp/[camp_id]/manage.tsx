@@ -9,6 +9,7 @@ import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { INVITE_NEW_USERS_TO_CAMPAIGN_MUTATION } from "../../../../graphql/InviteNewUsersToCampaign";
+import { AddFilteringFormikField } from "./addprofile";
 
 const ManageCampaign = () => {
 	const router = useRouter();
@@ -94,6 +95,12 @@ export default ManageCampaign;
 
 // component which shows the modal and asks the user to add a rule to the [campaign_id] passed as parameter
 const AddNewRuleModal = ({ campaign_id, setOpen, open }: { campaign_id: string, setOpen: Dispatch<SetStateAction<boolean>>, open: boolean }) => {
+	const initialValues = {
+		rules: '',
+	}
+	const handleSubmit = (e) => {
+
+	}
 	return (
 		<div>
 			<GenericModal
@@ -102,13 +109,16 @@ const AddNewRuleModal = ({ campaign_id, setOpen, open }: { campaign_id: string, 
 				<div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
 					<div className="sm:flex sm:items-start">
 						<div>
-							<div className='text-xl font-medium'>
-								Add new rule
+							<div className='text-xl mb-4 font-medium'>
+								Add a new rule
 							</div>
-							{/* TODO: */}
-							Formik form to add a new rule.
-							Fetch all the fields in student definitions which don't have isArray and are numeric or multi_select.
-							We will then ask things
+							<Formik
+								initialValues={initialValues}
+								// validationSchema={formValidationSchema}
+								onSubmit={handleSubmit}
+							>
+								<AddFilteringFormikField />
+							</Formik>
 
 						</div>
 					</div>

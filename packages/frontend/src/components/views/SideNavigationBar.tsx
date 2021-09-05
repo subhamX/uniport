@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSideNavStore } from '../../global-stores/useSideNavStore';
 import { FETCH_CURRENT_USER } from '../../graphql/FetchCurrentUser';
 import { FETCH_SIDE_BAR_ITEMS } from '../../graphql/FetchSideBarItems';
-import { CREATE_NEW_CAMPAIGN, MANAGE_CAMP, MANAGE_STUDENT_PROFILE_DEFINITIONS, VIEW_CAMP_ALL_PROFILES, VIEW_CAMP_DASH } from '../../routes-config';
+import { ADD_A_JOB_PROFILE, ALL_COMPANIES_ROUTE, CREATE_NEW_CAMPAIGN, MANAGE_CAMP, MANAGE_STUDENT_PROFILE_DEFINITIONS, VIEW_CAMP_ALL_PROFILES, VIEW_CAMP_DASH } from '../../routes-config';
 import Router, { useRouter } from 'next/router';
 
 
@@ -51,6 +51,14 @@ const SideNavigationBar = () => {
 				label: "All profiles",
 				relative_url: VIEW_CAMP_ALL_PROFILES(camp_id as string, accessRole),
 			},
+			{
+				label: "Add a company",
+				relative_url: '#',
+			},
+			{
+				label: "Add a job profile",
+				relative_url: ADD_A_JOB_PROFILE(camp_id as string),
+			},
 		], "STUDENT": [
 			{
 				label: "Applied Profiles",
@@ -78,13 +86,17 @@ const SideNavigationBar = () => {
 				relative_url: "/a/dash/",
 			},
 			{
+				label: "Manage Companies",
+				relative_url: ALL_COMPANIES_ROUTE,
+			},
+			{
 				label: "Manage Student Profile Schema",
 				relative_url: MANAGE_STUDENT_PROFILE_DEFINITIONS,
 			},
 			{
-				label: "Students",
+				label: "Enrolled Students",
 				relative_url: "/a/dash/",
-			}
+			},
 		],
 		"STUDENT": [
 			{
@@ -101,6 +113,7 @@ const SideNavigationBar = () => {
 
 	// Not possible since anyone(except admin) will always join into some campaign
 
+	const toBeRenderedCampaignRoutes = camp_id ? campaignRoutes[accessRole] : [];
 
 	// campaings are defined
 	// TODO: Fix the styling of campaigns
@@ -134,8 +147,19 @@ const SideNavigationBar = () => {
 						<hr className='border-t-gray-400' />
 					</div>
 				</div>
-
-				<NavItems items={[...authNavItems[accessRole], ...(camp_id ? campaignRoutes[accessRole] : [])]} globalStyle='' />
+				{toBeRenderedCampaignRoutes && toBeRenderedCampaignRoutes.length ?
+					<>
+						<div className='py-1 px-3 my-2 mx-1 text-sm uppercase font-bold'>
+							Campaign Options
+						</div>
+						<NavItems items={toBeRenderedCampaignRoutes} globalStyle='' />
+						<hr className='border-t-gray-400' />
+					</>
+					: null}
+				<div className='py-1 px-3 my-2 mx-1 text-sm uppercase font-bold'>
+					Additional Options
+				</div>
+				<NavItems items={[...authNavItems[accessRole]]} globalStyle='' />
 			</SideMenuWrapper>
 		</>
 

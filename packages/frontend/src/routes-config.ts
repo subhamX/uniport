@@ -19,6 +19,7 @@ export const MANAGE_STUDENT_PROFILE_DEFINITIONS = '/a/student-profile-definition
 export const STUDENT_CAMP_CHOOSE_ROUTE = '/s/camp'
 
 export const VIEW_CAMP_ALL_PROFILES = (campaign_id: string, accessRole: string) => {
+	return `/camp/profile/details`
 	if (accessRole === 'ADMIN') {
 		return `/a/camp/${campaign_id}/allprofiles`;
 	} else {
@@ -57,3 +58,9 @@ export const ADD_STUDENT_PROFILE_BLOCK = async (payload: any) => {
 
 	return json
 }
+
+
+export const ALL_COMPANIES_ROUTE = `/a/companies/all`;
+
+
+export const ADD_A_JOB_PROFILE = (camp_id:string ) => `/a/camp/${camp_id}/addprofile`
