@@ -108,6 +108,8 @@ const SideNavigationBar = () => {
 		<>
 			<SideMenuWrapper isSideNavOpen={isSideNavOpen}>
 				{/* TODO: FIX IT */}
+
+
 				<div>
 					<div className='py-1 px-3 my-2 mx-1 text-sm uppercase font-bold'>
 						Campaigns

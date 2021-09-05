@@ -18,6 +18,7 @@ import { AddressBlock } from "../../../../components/profile/AddressBlock/Addres
 import { EducationBlock } from "../../../../components/profile/EducationTypeA/view";
 import { ProjectBlock } from "../../../../components/profile/Project/view";
 import { WorkExperienceBlock } from "../../../../components/profile/WorkExperience/view";
+import { FETCH_CURRENT_USER } from "../../../../graphql/FetchCurrentUser";
 
 
 
@@ -29,11 +30,16 @@ const StudentProfile = () => {
 
 	let { data, loading, error } = useQuery(GET_STUDENT_PROFILE_DEFINITIONS);
 
+	const { data: user } = useQuery(FETCH_CURRENT_USER);
+
+	console.log(user);
+
 
 	const [loadingStudentData, setloadingStudentData] = useState(true)
 	// const [studentDataFetchError, setStudentData] = useState(true)
 	const [studentDataFetchError, setstudentDataFetchError] = useState(null);
 	const [studentData, setStudentData] = useState(null);
+	const [basicData, setBasicData] = useState(null);
 	const router = useRouter()
 	let student_id = router.query.student_id as string;
 
@@ -52,9 +58,11 @@ const StudentProfile = () => {
 				if (jsonData['error']) {
 					throw Error(jsonData['message'])
 				}
-				setloadingStudentData(false);
 				// TODO: set the data to zustang state
 				setStudentData(jsonData['data']);
+				setBasicData(jsonData['basic']);
+
+				setloadingStudentData(false);
 			} catch (err) {
 				setstudentDataFetchError(err.message);
 				setloadingStudentData(false);
@@ -81,6 +89,9 @@ const StudentProfile = () => {
 							Student Profile
 						</div>
 
+
+
+
 						{error || studentDataFetchError ?
 							<div className='my-3 text-sm text-left text-red-600 bg-red-500 bg-opacity-10 border border-red-400 flex items-center p-4 rounded-md'>
 								{error ? error.message : null}
@@ -94,6 +105,32 @@ const StudentProfile = () => {
 
 						{/* render only if there is no loading, no errors */}
 						{data && !loadingStudentData && (!error && !studentDataFetchError) && < div >
+
+							<div className="bg-white px-4 py-4 flex my-2 rounded-lg shadow flex-col gap-2">
+								<div >
+									<h2 className="text-base font-bold text-gray-700 my-0"></h2>
+								</div>
+								<div className='grid grid-cols-2'>
+									<div className='text-sm font-bold mt-2'>
+										First Name
+									</div>
+									<div className='text-gray-500 text-sm mt-2'>
+										{basicData.first_name}
+									</div>
+									<div className='text-sm font-bold mt-2'>
+										Last Name
+									</div>
+									<div className='text-gray-500 text-sm mt-2'>
+										{basicData.last_name}
+									</div>
+									<div className='text-sm font-bold mt-2'>
+										Email Address
+									</div>
+									<div className='text-gray-500 text-sm mt-2'>
+										{basicData.email_address}
+									</div>
+								</div>
+							</div>
 							<RenderLEGOs
 								getStudentProfileDefinitions={data.getStudentProfileDefinitions}
 								studentProfileDataBlocks={studentData} />

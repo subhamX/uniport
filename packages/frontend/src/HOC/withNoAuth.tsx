@@ -12,7 +12,7 @@ const withNoAuth = (WrappedComponent) => {
 		if (loading) {
 			return (
 				<div>
-					Auth status resolving
+					{/* Auth status resolving */}
 				</div>
 			)
 		}

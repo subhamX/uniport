@@ -4,6 +4,7 @@ import { authenticatedUsersOnly } from '../config/auth/authCheckers';
 import { allSupportedLEGOs, SupportedLEGOsTypes } from '@uniport/common';
 import { STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM } from '../config/constants';
 import * as Yup from 'yup';
+import { types } from 'cassandra-driver';
 
 
 
@@ -123,6 +124,7 @@ app.post('/profile/add/', async (req, res) => {
 			performed_operation = 'ADD_BLOCK';
 		} else {
 			performed_operation = 'EDIT_BLOCK';
+			throw Error("Edit is disabled for now");
 		}
 
 		let attribute_type: SupportedLEGOsTypes = payload.attribute_type;
@@ -135,12 +137,14 @@ app.post('/profile/add/', async (req, res) => {
 
 		console.log("VALUDATIOn DONE")
 
+		let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${types.Uuid.random().toString()}`
+
+
 		if (attribute_type === 'resume_type_11') {
 			let query = `UPDATE student_profile
 			SET resume_type_11_map[?]={file_name: ?, file_url: ?}
 			WHERE user_id = ? AND org_id=?`
 
-			let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${block_index}`
 			await dbClient.execute(query, [
 				attribute_id_with_block_index,
 				payload.file_name,
@@ -153,7 +157,6 @@ app.post('/profile/add/', async (req, res) => {
 			SET phone_number_type_4_map[?]={country_code: ?, ph_number: ?, file_url: ?}
 			WHERE user_id = ? AND org_id=?`
 
-			let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${block_index}`
 			await dbClient.execute(query, [
 				attribute_id_with_block_index,
 				payload.country_code,
@@ -168,7 +171,6 @@ app.post('/profile/add/', async (req, res) => {
 			SET email_type_6_map[?]={value: ?, file_url: ?}
 			WHERE user_id = ? AND org_id=?`
 
-			let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${block_index}`
 			await dbClient.execute(query, [
 				attribute_id_with_block_index,
 				payload.value,
@@ -181,7 +183,6 @@ app.post('/profile/add/', async (req, res) => {
 			SET address_type_5_map[?]={country: ?, pincode: ?, state: ?, district: ?, city: ?, address_line: ?, file_url:?}
 			WHERE user_id = ? AND org_id=?`
 
-			let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${block_index}`
 			await dbClient.execute(query, [
 				attribute_id_with_block_index,
 				payload.country,
@@ -200,7 +201,6 @@ app.post('/profile/add/', async (req, res) => {
 			SET education_type_8_map[?]={school: ?, program: ?, board: ?, education_type: ?, percent_score: ?, course_start_date: ?, course_end_date:?,  file_url:?}
 			WHERE user_id = ? AND org_id=?`
 
-			let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${block_index}`
 			await dbClient.execute(query, [
 				attribute_id_with_block_index,
 				payload.school,
@@ -220,7 +220,6 @@ app.post('/profile/add/', async (req, res) => {
 			SET project_type_10_map[?]={project_name: ?, start_date:?, end_date:?, project_url:?, description:?,  file_url:?}
 			WHERE user_id = ? AND org_id=?`
 
-			let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${block_index}`
 			await dbClient.execute(query, [
 				attribute_id_with_block_index,
 				payload.project_name,
@@ -238,7 +237,6 @@ app.post('/profile/add/', async (req, res) => {
 			SET work_experience_type_9_map[?]={company_name:?, job_title:?, location:?, position_type:?,job_start_date:?, job_end_date:?, details:?,  file_url:?}
 			WHERE user_id = ? AND org_id=?`
 
-			let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${block_index}`
 			await dbClient.execute(query, [
 				attribute_id_with_block_index,
 				payload.company_name,
@@ -454,13 +452,17 @@ app.get('/profile/:user_id', async (req, res) => {
 		// 	...legoData
 		// }
 
+		let data1 = await dbClient.execute(`SELECT first_name, last_name, email_adress
+		 FROM users
+		 WHERE user_id=`, [user_id]);
 
 
 		// TODO: Edit wala karo for stduent definitions?
 		// NEXT: What?
 		return res.send({
 			error: false,
-			data: finalResponse
+			data: finalResponse,
+			basic: data1.rows[0]
 		})
 	} catch (err) {
 		return res.send({

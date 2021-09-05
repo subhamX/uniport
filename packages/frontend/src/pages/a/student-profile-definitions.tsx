@@ -19,8 +19,8 @@ const ManageStudentProfileDefinitions = () => {
 			<Layout>
 				<div className='p-10'>
 
-					{loading ? <div>Loading Student Profile Definitions</div> : null}
-					{error ? <div>Something went wrong: {error.message}</div> : null}
+					{loading ? <div className='my-3 text-sm text-left text-blue-600 bg-blue-500 bg-opacity-10 border border-blue-400 flex items-center p-4 rounded-md'>Loading Student Profile Definitions</div> : null}
+					{error ? <div className='my-3 text-sm text-left text-red-600 bg-red-500 bg-opacity-10 border border-red-400 flex items-center p-4 rounded-md'>Something went wrong: {error.message}</div> : null}
 
 
 					{data ? <div className='bg-white shadow overflow-hidden sm:rounded-lg px-3 py-5 mx-auto max-w-2xl'>

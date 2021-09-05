@@ -19,7 +19,7 @@ const AuthLayout = ({ children }) => {
 			<div className={`flex-1 flex flex-col md:bg-transparent`}>
 				{isSideNavOpen ?
 					<div className='md:hidden z-20 absolute backdrop-blur-3xl bg-blend-saturation top-0 left-0 right-0 bg-black mix-blend-multiply opacity-50 bottom-0 h-screen' onClick={closeSideNav}></div> : null}
-				<header className="flex justify-between items-center py-1 px-6 bg-nav-color ">
+				<header className="flex justify-between items-center h-14 py-1 px-6 bg-nav-color ">
 					<div className="flex items-center">
 						<button className="text-gray-500 focus:outline-none md:hidden" onClick={toggleSideNavStatus}>
 							<Image src={require('../../assets/images/menu.svg')} width={25} height={25} />

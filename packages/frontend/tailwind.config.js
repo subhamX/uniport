@@ -14,7 +14,9 @@ module.exports = {
         'custom-scroll-color': '#d6d8da'
       },
       fontFamily: {
-        body: ['Noto Sans JP']
+        noto: ['Noto Sans JP'],
+        body: ['Poppins']
+        // body: ['Inter']
       },
 			fontSize: {
 				"xss": '0.55rem'

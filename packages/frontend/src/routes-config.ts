@@ -10,7 +10,7 @@ export const CREATE_NEW_CAMPAIGN = '/a/camp/new';
 
 
 export const MANAGE_CAMP = (campaign_id: string) => `/a/camp/${campaign_id}/manage`;
-export const VIEW_CAMP_DASH = (campaign_id: string) => `/s/camp/${campaign_id}/manage`;
+export const VIEW_CAMP_DASH = (campaign_id: string) => CAMPAIGN_DASHBOARD(campaign_id, 'STUDENT');
 
 export const MANAGE_STUDENT_PROFILE_DEFINITIONS = '/a/student-profile-definitions';
 

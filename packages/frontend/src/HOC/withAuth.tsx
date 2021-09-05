@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { FETCH_CURRENT_USER } from "../graphql/FetchCurrentUser";
-
+import Image from 'next/image';
 
 
 const withAuth = (WrappedComponent) => {
@@ -12,8 +12,8 @@ const withAuth = (WrappedComponent) => {
 		if (loading) {
 			// TODO: move it to some nice UI component. (along with withNoAuth)
 			return (
-				<div>
-					Auth status resolving
+				<div className=''>
+
 				</div>
 			)
 		}
