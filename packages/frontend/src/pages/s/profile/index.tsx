@@ -6,7 +6,7 @@ import { useQuery } from "@apollo/client";
 import withAuth from "../../../HOC/withAuth";
 import router from "next/router";
 import { FETCH_CURRENT_USER } from "../../../graphql/FetchCurrentUser";
-import { ADMIN_PRIMARY_DASHBOARD, STUDENT_PROFILE_ROUTE } from "../../../routes-config";
+import { ADMIN_PRIMARY_DASHBOARD, STUDENT_PROFILE_ROUTE } from "../../../config/routes-config";
 
 // if it's admin then redirect them to admin page
 const StudentProfileBridge = () => {

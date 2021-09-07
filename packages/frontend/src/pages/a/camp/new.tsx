@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { useMutation } from "@apollo/client";
 import { CREATE_A_NEW_CAMPAIGN } from "../../../graphql/CreateANewCampaign";
 import Router from "next/router";
-import { MANAGE_CAMP } from "../../../routes-config";
+import { MANAGE_CAMP } from "../../../config/routes-config";
 
 
 type FormFields = {

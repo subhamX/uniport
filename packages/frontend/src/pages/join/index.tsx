@@ -6,7 +6,7 @@ import { useMutation } from "@apollo/client";
 import { RegisterAdminInputForm, registerAdminInputFormValidationSchema, User } from '@uniport/common';
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from 'next/router'
-import { ADMIN_PRIMARY_DASHBOARD } from "../../routes-config";
+import { ADMIN_PRIMARY_DASHBOARD } from "../../config/routes-config";
 import { registerAdminMutation } from "../../graphql/RegisterAdminMutation";
 import withAuth from "../../HOC/withAuth";
 import withNoAuth from "../../HOC/withNoAuth";

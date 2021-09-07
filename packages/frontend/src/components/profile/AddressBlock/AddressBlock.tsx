@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { ADD_STUDENT_PROFILE_BLOCK } from "../../../routes-config";
+import { ADD_STUDENT_PROFILE_BLOCK } from "../../../config/routes-config";
 import LEGOActionDialog from "../../LegoActionDialog";
 import { VerificationInfo } from "../Utils/VerificationInfo";
 

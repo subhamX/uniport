@@ -1,11 +1,11 @@
 import { useState, Fragment } from "react";
 import { Menu, Transition } from '@headlessui/react'
-import SideNavigationBar from "./SideNavigationBar";
 import Navbar from "./NonAuthNavbar";
 import { useSideNavStore } from "../../global-stores/useSideNavStore";
 import UniportLogo from "./Logo";
 import Image from "next/image";
 import withAuth from "../../HOC/withAuth";
+import SideNavigationBar from "../sidenav/SideNavigationBar";
 
 // For Authenticated Users;
 const AuthLayout = ({ children }) => {
@@ -15,7 +15,7 @@ const AuthLayout = ({ children }) => {
 
 	return (
 		<div className='flex'>
-			<SideNavigationBar />
+			<SideNavigationBar/>
 			<div className={`flex-1 flex flex-col md:bg-transparent`}>
 				{isSideNavOpen ?
 					<div className='md:hidden z-20 absolute backdrop-blur-3xl bg-blend-saturation top-0 left-0 right-0 bg-black mix-blend-multiply opacity-50 bottom-0 h-screen' onClick={closeSideNav}></div> : null}

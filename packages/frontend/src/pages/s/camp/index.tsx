@@ -10,7 +10,7 @@ import Layout from "../../../components/views/Layout";
 import { FETCH_MY_CAMPAIGNS } from "../../../graphql/FetchMyCampaigns";
 import Image from 'next/image';
 import Link from 'next/link';
-import { CAMPAIGN_DASHBOARD } from "../../../routes-config";
+import { CAMPAIGN_DASHBOARD } from "../../../config/routes-config";
 import { FETCH_CURRENT_USER } from "../../../graphql/FetchCurrentUser";
 
 

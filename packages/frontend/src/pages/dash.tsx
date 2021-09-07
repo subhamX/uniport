@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import router from "next/router";
 import { FETCH_CURRENT_USER } from "../graphql/FetchCurrentUser";
 import withAuth from "../HOC/withAuth";
-import { ADMIN_PRIMARY_DASHBOARD, STUDENT_CAMP_CHOOSE_ROUTE } from "../routes-config";
+import { ADMIN_PRIMARY_DASHBOARD, STUDENT_CAMP_CHOOSE_ROUTE } from "../config/routes-config";
 
 // Only to redirect the user to correct dashboard
 

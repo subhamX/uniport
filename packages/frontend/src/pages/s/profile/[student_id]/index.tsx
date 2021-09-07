@@ -11,7 +11,7 @@ import { GET_STUDENT_PROFILE_DEFINITIONS } from "../../../../graphql/GetStudentP
 import { OrgSchemaInstanceBlock, SupportedLEGOsTypes } from "@uniport/common";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { FETCH_STUDENT_PROFILE_DATA_ENDPOINT } from "../../../../routes-config";
+import { FETCH_STUDENT_PROFILE_DATA_ENDPOINT } from "../../../../config/routes-config";
 import { PhoneNumberView } from "../../../../components/profile/PhoneNumber/PhoneNumberBlock";
 import { EmailAddressView } from "../../../../components/profile/EmailAddress/EmailAddressBlock";
 import { AddressBlock } from "../../../../components/profile/AddressBlock/AddressBlock";
