@@ -21,11 +21,11 @@ CREATE TABLE user (
 	org_id UUID,
 	-- for now we have "ADMIN" and "STUDENT"
 	-- TODO: access role should be campaign based; Remodel it
-	access_role TEXT;
+	access_role TEXT,
 	refresh_token TEXT, 	-- NOT USING FOR NOW
 	has_student_profile boolean,
 	-- isBanned boolean
-	PRIMARY KEY((email_address), first_name, org_id)
+	PRIMARY KEY((email_address), first_name)
 );
 
 -- to store the organization details.
@@ -78,6 +78,12 @@ CREATE TABLE student_profile_definition (
 CREATE TABLE student_profile(
 	user_id UUID,
 	org_id UUID,
+	-- copied data from user: begin
+	first_name TEXT,
+	last_name TEXT,
+	email_address TEXT,
+	-- copied data from user: end
+
 	date_type_1_map 						map<TEXT, frozen<date_type_1>>,
 	number_type_2_map 					map<TEXT, frozen<number_type_2>>,
 	single_select_3_type_map 		map<TEXT, frozen<single_select_type_3>>,
@@ -200,3 +206,5 @@ CREATE TABLE IF NOT EXISTS sessions (
    expires timestamp,
    PRIMARY KEY(sid)
 );
+
+

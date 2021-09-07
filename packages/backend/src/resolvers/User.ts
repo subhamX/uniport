@@ -14,7 +14,7 @@ import { setAuthCookieAndLogIn } from '../config/auth/setAuthCookieAndLogIn';
 
 export const UserResolver = {
 	Query: {
-		// just a single route
+		// a test route for debugging purposes
 		checkAuthStatus: (_: any, __: any, ctx: CustomApolloContext) => {
 			if (ctx.req.isAuthenticated()) {
 				return "AUTHENTICATED";
@@ -26,13 +26,11 @@ export const UserResolver = {
 		getUserDetails: async (_: any, __: any, ctx: CustomApolloContext) => {
 			// only for authenticated users
 			authenticatedUsersOnly(ctx.req);
-
-			// I am very sure of the conversion.
 			let user = ctx.req.user;
 			return user;
 		}
-
 	},
+
 	Mutation: {
 		// mutation to register a new "ADMIN"
 		registerAdmin: async (_: any, { payload }: { payload: RegisterAdminInput }, ctx: CustomApolloContext) => {
@@ -41,7 +39,6 @@ export const UserResolver = {
 				nonAuthenticatedUsersOnly(ctx.req);
 
 				// validate the inputs
-
 				await registerAdminInputValidationSchema.validate(payload);
 
 				// push the email
@@ -77,6 +74,7 @@ export const UserResolver = {
 				if (!res.rows[0]['[applied]']) {
 					throw Error("Account already taken!");
 				}
+
 				// create a new org
 				res = await dbClient.execute(
 					`INSERT INTO organization (org_id, org_name)
@@ -100,9 +98,9 @@ export const UserResolver = {
 					hashed_password,
 				}
 
-				await setAuthCookieAndLogIn(ctx.req, userData)
-
+				await setAuthCookieAndLogIn(ctx.req, userData);
 				return userData;
+
 			} catch (err) {
 				console.log("Error:", err.message)
 				throw new UserInputError(err.message);
@@ -114,9 +112,7 @@ export const UserResolver = {
 			// route only for non authenticated users
 			nonAuthenticatedUsersOnly(ctx.req);
 
-			// TODO: Validate
 			await registerWithValidInviteInputValidationSchema.validate(payload);
-
 
 			// check if the email is actually invited or not
 			let res = await dbClient.execute(`SELECT * FROM invited_user WHERE email=?`, [payload.email_address]);
@@ -210,12 +206,18 @@ export const UserResolver = {
 
 			// add a student profile
 			const addStudentProfileQuery = `
-				INSERT INTO student_profile(user_id,org_id)
-				VALUES(?,?)`;
+				INSERT INTO student_profile(user_id,org_id,first_name, last_name, email_address)
+				VALUES(?,?,?,?,?)`;
 
 
 			await dbClient.execute(addStudentProfileQuery,
-				[userUid, invitedUserData['org_id']]
+				[
+					userUid,
+					invitedUserData['org_id'],
+					payload.first_name,
+					payload.last_name,
+					payload.email_address
+				]
 			)
 
 			// logIn the user

@@ -1,10 +1,3 @@
-
--- type to keep the nav menu item
-CREATE TYPE navigation_menu_item_type (
-		label TEXT,
-		relative_url TEXT
-);
-
 -- type to store the verification info of every block
 CREATE TYPE verification_info_type(
 	is_verified Boolean,

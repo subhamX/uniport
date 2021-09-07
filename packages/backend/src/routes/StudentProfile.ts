@@ -1,62 +1,12 @@
 import { Router } from 'express'
 import { dbClient } from '../db';
 import { authenticatedUsersOnly } from '../config/auth/authCheckers';
-import { allSupportedLEGOs, SupportedLEGOsTypes } from '@uniport/common';
+import { allSupportedLEGOs, legoDataValidators, SupportedLEGOsTypes } from '@uniport/common';
 import { STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM } from '../config/constants';
-import * as Yup from 'yup';
 import { types } from 'cassandra-driver';
-
-
+import { formatLEGOData } from '../utils/formatLEGOData';
 
 const app = Router();
-
-
-type GenericObject = {
-	[key: string]: any
-}
-
-
-
-// ! [debug_block_type] is redundant. Since block determination is done by student definitions and not by this
-const formatLEGOData = (data: GenericObject, debug_block_type: string) => {
-	console.log(data);
-	if (!data) return {};
-	let formattedData: any = {}
-
-	Object.entries(data).forEach(e => {
-		let [attribute_id, block_index] = e[0].split(STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM);
-		let data = e[1];
-
-
-		if (!data.verification_info) {
-			data.verification_info = {
-				is_verified: false,
-				verified_by: null,
-				verify_action_timestamp: null
-			}
-		}
-
-		if (!formattedData[attribute_id]) {
-			formattedData[attribute_id] = []
-		}
-
-
-		formattedData[attribute_id] = [
-			...formattedData[attribute_id],
-			{
-				block_index: block_index,
-				...data,
-				debug_block_type
-			}
-		]
-	})
-
-	console.log("RETURN::: ", formattedData)
-
-	return formattedData;
-}
-
-
 
 type ResumePayload = {
 	attribute_type: 'resume_type_11',
@@ -84,8 +34,6 @@ type PhoneNumberPayload = {
 
 
 
-
-// type Payload = ResumePayload ;
 /**
  * Route to add or edit new block to the student profile
  */
@@ -103,8 +51,6 @@ app.post('/profile/add/', async (req, res) => {
 			canAccessThisRecord = true;
 		}
 
-		console.log(req.user?.user_id);
-		console.log(payload);
 
 		if (!canAccessThisRecord) {
 			throw new Error("You don't have sufficient permissions to edit this record")
@@ -129,7 +75,7 @@ app.post('/profile/add/', async (req, res) => {
 
 		let attribute_type: SupportedLEGOsTypes = payload.attribute_type;
 
-		const validator = legoValidators[attribute_type];
+		const validator = legoDataValidators[attribute_type];
 		if (!validator) {
 			throw new Error(`Invalid LEGO type (attribute_type) ${attribute_type}`)
 		}
@@ -140,7 +86,7 @@ app.post('/profile/add/', async (req, res) => {
 		let attribute_id_with_block_index = `${attribute_id}${STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM}${types.Uuid.random().toString()}`
 
 
-		if (attribute_type === 'resume_type_11') {
+		if (payload.attribute_type === 'resume_type_11') {
 			let query = `UPDATE student_profile
 			SET resume_type_11_map[?]={file_name: ?, file_url: ?}
 			WHERE user_id = ? AND org_id=?`
@@ -152,7 +98,7 @@ app.post('/profile/add/', async (req, res) => {
 				user_id,
 				org_id
 			])
-		} else if (attribute_type === 'phone_number_type_4') {
+		} else if (payload.attribute_type === 'phone_number_type_4') {
 			let query = `UPDATE student_profile
 			SET phone_number_type_4_map[?]={country_code: ?, ph_number: ?, file_url: ?}
 			WHERE user_id = ? AND org_id=?`
@@ -166,7 +112,7 @@ app.post('/profile/add/', async (req, res) => {
 				org_id
 			])
 
-		} else if (attribute_type === 'email_type_6') {
+		} else if (payload.attribute_type === 'email_type_6') {
 			let query = `UPDATE student_profile
 			SET email_type_6_map[?]={value: ?, file_url: ?}
 			WHERE user_id = ? AND org_id=?`
@@ -178,7 +124,7 @@ app.post('/profile/add/', async (req, res) => {
 				user_id,
 				org_id
 			])
-		} else if (attribute_type === 'address_type_5') {
+		} else if (payload.attribute_type === 'address_type_5') {
 			let query = `UPDATE student_profile
 			SET address_type_5_map[?]={country: ?, pincode: ?, state: ?, district: ?, city: ?, address_line: ?, file_url:?}
 			WHERE user_id = ? AND org_id=?`
@@ -196,7 +142,7 @@ app.post('/profile/add/', async (req, res) => {
 				org_id
 			])
 
-		} else if (attribute_type === 'education_type_8') {
+		} else if (payload.attribute_type === 'education_type_8') {
 			let query = `UPDATE student_profile
 			SET education_type_8_map[?]={school: ?, program: ?, board: ?, education_type: ?, percent_score: ?, course_start_date: ?, course_end_date:?,  file_url:?}
 			WHERE user_id = ? AND org_id=?`
@@ -215,7 +161,7 @@ app.post('/profile/add/', async (req, res) => {
 				org_id
 			], { prepare: true })
 
-		} else if (attribute_type === 'project_type_10') {
+		} else if (payload.attribute_type === 'project_type_10') {
 			let query = `UPDATE student_profile
 			SET project_type_10_map[?]={project_name: ?, start_date:?, end_date:?, project_url:?, description:?,  file_url:?}
 			WHERE user_id = ? AND org_id=?`
@@ -232,7 +178,7 @@ app.post('/profile/add/', async (req, res) => {
 				org_id
 			], { prepare: true })
 
-		} else if (attribute_type === 'work_experience_type_9') {
+		} else if (payload.attribute_type === 'work_experience_type_9') {
 			let query = `UPDATE student_profile
 			SET work_experience_type_9_map[?]={company_name:?, job_title:?, location:?, position_type:?,job_start_date:?, job_end_date:?, details:?,  file_url:?}
 			WHERE user_id = ? AND org_id=?`
@@ -271,110 +217,9 @@ app.post('/profile/add/', async (req, res) => {
 	}
 })
 
-// notice file_url is not required.
-
-// Yup.addMethod(Yup.string, 'string_integer', function () {
-//   return this.matches(/^\d+$/, 'The field should have digits only')
-// })
-
-const legoValidators
-	// Uncommenting as any makes all Yup types go away
-	// : {
-	// 	[key in SupportedLEGOsTypes]: any
-	// }
-	= {
-	// have removeed the file url this; Will integrate it after storing files in amazon s3
-	"date_type_1": Yup.object().shape({
-		value: Yup.date().required(),
-		file_url: Yup.string()
-	}),
-	"number_type_2": Yup.object().shape({
-		file_url: Yup.string(),
-		value: Yup.number().required()
-	}),
-	"single_select_type_3": Yup.object().shape({
-		file_url: Yup.string(),
-		value: Yup.string().required()
-
-	}),
-	"phone_number_type_4": Yup.object().shape({
-		file_url: Yup.string(),
-		// TODO: Make them only put numbers in string
-		country_code: Yup.string().required(),
-		ph_number: Yup.string().required()
-
-	}),
-	"address_type_5": Yup.object().shape({
-		country: Yup.string().required(),
-		pincode: Yup.string().required(),
-		state: Yup.string().required(),
-		district: Yup.string().required(),
-		city: Yup.string().required(),
-		address_line: Yup.string().required(),
-		file_url: Yup.string(),
-
-	}),
-	"email_type_6": Yup.object().shape({
-		value: Yup.string().required(),
-		file_url: Yup.string(),
-	}),
-	"current_course_type_7": Yup.object().shape({
-		program: Yup.string().required(),
-		specialization: Yup.string().required(),
-		course_start_date: Yup.date().required(),
-		course_end_date: Yup.date().required(),
-		// is number same as float?
-		percent_score: Yup.number().required(),
-		institute_roll: Yup.string().required(),
-		description: Yup.string().required(),
-		file_url: Yup.string(),
-	}),
-	"education_type_8": Yup.object().shape({
-		school: Yup.string().required(),
-		program: Yup.string().required(),
-		board: Yup.string().required(),
-		education_type: Yup.string().required(),
-		percent_score: Yup.number().required(),
-		course_start_date: Yup.date().required(),
-		course_end_date: Yup.date().required(),
-		file_url: Yup.string(),
-	}),
-	"work_experience_type_9": Yup.object().shape({
-		company_name: Yup.string().required(),
-		job_title: Yup.string().required(),
-		location: Yup.string().required(),
-		position_type: Yup.string().required(),
-		job_start_date: Yup.date().required(),
-		job_end_date: Yup.date().required(),
-		details: Yup.string().required(),
-		file_url: Yup.string(),
-
-	}),
-	"project_type_10": Yup.object().shape({
-		project_name: Yup.string().required(),
-		start_date: Yup.date().required(),
-		end_date: Yup.date().required(),
-		project_url: Yup.string().required(),
-		description: Yup.string().required(),
-		file_url: Yup.string(),
-
-	}),
-	"resume_type_11": Yup.object().shape({
-		file_name: Yup.string().required(),
-		file_url: Yup.string().required(),
-	}),
-	"multi_select_type_12": Yup.object().shape({
-		file_url: Yup.string(),
-		value: Yup.array().required(),
-	}),
-
-}
-
-// beneficial while student is adding/deleteing/editing data to profile
 
 
-
-// we are keeping this user_id thing so that admin can also see the profiles
+// we are keeping this [user_id] (and not email) as param so that admin can also see the profiles
 // else we just could have tried to get the userid from [req.user] and then send the data
 // Since user_id is a surrogate key, so it's actually nice that nobody would mind that on the addressbar (they might if we used email)
 app.get('/profile/:user_id', async (req, res) => {
@@ -391,7 +236,6 @@ app.get('/profile/:user_id', async (req, res) => {
 			canAccessThisRecord = true;
 		}
 
-
 		if (!canAccessThisRecord) {
 			throw new Error("You don't have sufficient permissions to view this record")
 		}
@@ -407,28 +251,14 @@ app.get('/profile/:user_id', async (req, res) => {
 		}
 
 		let data = response.rows[0];
-		console.log(data);
 
-		// type StudentProfileBlock = {
-		// 	'org_id': string
-		// 	'user_id': string
-		// 	'address_type_5_map': GenericObject
-		// 	'current_course_type_7_map': GenericObject
-		// 	'date_type_1_map': GenericObject
-		// 	'education_type_8_map': GenericObject
-		// 	'email_type_6_map': GenericObject
-		// 	'multi_select_type_12_map': GenericObject
-		// 	'number_type_2_map': GenericObject
-		// 	'phone_number_type_4_map': GenericObject
-		// 	'project_type_10_map': GenericObject
-		// 	'resume_type_11_map': GenericObject
-		// 	'single_select_3_type_map': GenericObject
-		// 	'work_experience_type_9_map': GenericObject
-		// }
-
-		let finalResponse = {
-
+		let finalResponse = {}
+		let basicData = {
+			first_name: data.first_name,
+			last_name: data.last_name,
+			email_address: data.email_address,
 		}
+
 
 		allSupportedLEGOs.forEach(e => {
 			let key = `${e}_map`;
@@ -443,26 +273,11 @@ app.get('/profile/:user_id', async (req, res) => {
 			}
 		})
 
-		console.log(finalResponse);
 
-
-		// let finalResponse: StudentProfileBlock = {
-		// 	org_id: data.org_id,
-		// 	user_id: data.user_id,
-		// 	...legoData
-		// }
-
-		let data1 = await dbClient.execute(`SELECT first_name, last_name, email_adress
-		 FROM users
-		 WHERE user_id=`, [user_id]);
-
-
-		// TODO: Edit wala karo for stduent definitions?
-		// NEXT: What?
 		return res.send({
 			error: false,
 			data: finalResponse,
-			basic: data1.rows[0]
+			basic: basicData
 		})
 	} catch (err) {
 		return res.send({
