@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { navbarHeight } from '../../config/navbarHeight';
 
 // ? To be used in "features", "security", "landing page"
 // TODO: If the user is authenticated then change the "Login", "Join Now" state
@@ -34,7 +35,7 @@ const NonAuthNavbar = () => {
 	}
 	return (
 		<>
-			<div className="bg-nav-color px-2 md:px-6 sticky top-0 flex  justify-between items-center text-white">
+			<div className={`bg-nav-color px-2 md:px-6 flex ${navbarHeight} justify-between items-center text-white`}>
 				{/* logo */}
 				<Link href='/'>
 					<div className='cursor-pointer'>
@@ -50,13 +51,14 @@ const NonAuthNavbar = () => {
 					<Image src={require('../../assets/images/menu.svg')} width={25} height={25} />
 				</div>
 			</div>
-
 			{/* Full Screen Nav */}
+
 			{isNavbarOpen ?
-				<nav className='md:hidden h-screen bg-custom-blue-color py-6 px-3 md:px-10 lg:px-12 text-white transition ease-out duration-1000'>
+				<nav className={`md:hidden bg-custom-blue-color py-6 px-3 md:px-10 lg:px-12 text-white transition ease-out duration-1000`}>
 					<NavItems />
 				</nav>
 				: null}
+
 		</>
 	)
 }

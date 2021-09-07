@@ -32,8 +32,6 @@ export const AdditionalOptions = ({ accessRole }) => {
 				label: "My Profile",
 				relative_url: "/s/profile",
 			},
-			// if campaign
-			// ! For now instead of having a dashboard of camp where we show all [posts] we will current make the all profiles as the standard one
 		]
 	}
 	return (

@@ -14,7 +14,7 @@ const AdminDash = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Admin Dashboard' />
+			<HeadMeta title='Uniport | Admin Dashboard' />
 			<Layout>
 				<div className='p-10 max-w-3xl mx-auto'>
 

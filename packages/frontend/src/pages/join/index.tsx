@@ -55,12 +55,12 @@ const RegisterAdmin = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Join the Club' />
+			<HeadMeta title='Uniport | Join the Club' />
 			<NonAuthNavbar />
-			<div className='w-full mt-4 overflow-y-scroll'>
+			<div className='main-container w-full pt-4 overflow-y-scroll'>
 				<div className="mx-auto p-4 max-w-md shadow-md rounded-md text-left">
 					<div className='text-gray-700 text-3xl font-semibold text-center'>
-						Join UniPort
+						Join Uniport
 					</div>
 
 					<div className='my-3 text-sm text-left text-purple-600 bg-purple-500 bg-opacity-10 border border-purple-400 flex items-center p-4 rounded-md' role="alert">

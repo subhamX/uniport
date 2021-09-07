@@ -8,11 +8,11 @@ import Image from 'next/image';
 const Landing = () => {
 	return (
 		<>
-			<HeadMeta title={"UniPort | Home"} />
+			<HeadMeta title={"Uniport | Home"} />
 			<NoAuthNavbar />
-			<div className='ui-landing'>
-				<div className='grid grid-cols-2 max-w-7xl mx-auto gap-8 h-full'>
-					<div className='text-3xl flex flex-col justify-center gap-5 font-bold leading-snug text-gray-700 mb-10 wow fadeInUp animated '>
+			<div className='ui-landing main-container px-6'>
+				<div className='grid grid-cols-2 mx-auto gap-8 h-full'>
+					<div className='text-3xl flex flex-col justify-center gap-5 font-bold leading-snug text-gray-700'>
 						{/* The Universal Portal to manage seamlessly campus recruitments */}
 						<div>
 							A fully customizable <span className='text-yellow-500'>Uni</span>versal <span className='text-yellow-500'>Port</span>al for universities to manage the campus recruitments seamlessly.

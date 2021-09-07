@@ -43,7 +43,7 @@ const CreateNewCampaign = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Create new Campaign' />
+			<HeadMeta title='Uniport | Create new Campaign' />
 			<Layout>
 				<div className='p-10'>
 					<div className='w-full mt-4'>

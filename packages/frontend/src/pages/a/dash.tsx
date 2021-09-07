@@ -6,7 +6,7 @@ import withAuth from "../../HOC/withAuth";
 const AdminDash = () => {
 	return (
 		<div>
-			<HeadMeta title='UniPort | Admin Dashboard' />
+			<HeadMeta title='Uniport | Admin Dashboard' />
 			<Layout>
 				<div className='p-10'>
 					{/* Content goes here */}

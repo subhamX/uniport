@@ -56,7 +56,7 @@ const SignUpForInvited = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Join the Club' />
+			<HeadMeta title='Uniport | Join the Club' />
 			<NonAuthNavbar />
 			<div className='w-full mt-4 overflow-y-scroll'>
 				<div className="mx-auto p-4 max-w-md shadow-md rounded-md text-left">

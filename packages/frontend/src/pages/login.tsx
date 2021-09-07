@@ -44,9 +44,9 @@ const Login = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Login' />
+			<HeadMeta title='Uniport | Login' />
 			<NonAuthNavbar />
-			<div className='w-full mt-4 overflow-y-scroll'>
+			<div className='main-container w-full pt-4 overflow-y-scroll'>
 				<div className="mx-auto p-4 max-w-md shadow-md rounded-md text-left">
 					<div className='text-gray-700 text-3xl font-semibold text-center'>
 						Login
@@ -112,7 +112,7 @@ const Login = () => {
 
 					<div className="w-full">
 						<button
-							className="w-full flex gap-3 bg-red-700 hover:bg-red-800 text-white font-bold mt-5 mb-3 py-2 px-4 focus:outline-none focus:shadow-outline"
+							className="w-full flex rounded-2xl gap-3 bg-red-600 hover:bg-red-800 text-white font-bold mt-5 mb-3 py-2 px-4 focus:outline-none focus:shadow-outline"
 							type="button"
 						>
 							<Image src={require('../assets/images/google-logo.svg')} height={25} width={25} />

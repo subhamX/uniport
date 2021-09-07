@@ -30,26 +30,6 @@ const LEGOActionDialog = ({ setOpen, open, initialValues, title, formSchema, sub
 	success: boolean,
 }) => {
 	// TODO: make the data as null in consecutive renders. Currently it retains that data is true
-
-
-
-
-
-	// const handleSubmit = async (e: any) => {
-
-	// 	try {
-
-	// 		// !FETCH REQUEST
-	// 		setLoading(true);
-	// 		console.log(e);
-	// 	} catch (err) {
-	// 		setLoading(false);
-	// 		setError(err.message);
-	// 	}
-
-	// }
-
-
 	// TODO: Add frontend validation
 	return (
 		<div>
@@ -62,7 +42,6 @@ const LEGOActionDialog = ({ setOpen, open, initialValues, title, formSchema, sub
 						initialValues={initialValues}
 						onSubmit={handleSubmit}
 					>
-
 						<Form className='text-black' autoComplete='off'>
 
 							<div>
@@ -87,8 +66,6 @@ const LEGOActionDialog = ({ setOpen, open, initialValues, title, formSchema, sub
 
 
 												{formSchema.map((e, indx) => {
-
-
 													return (
 														<div className="mb-4" key={indx}>
 															<div className='grid grid-cols-2 items-center my-2'>
@@ -108,14 +85,11 @@ const LEGOActionDialog = ({ setOpen, open, initialValues, title, formSchema, sub
 																	<ErrorMessage name={e.id} />
 																</p>
 															</div>
-
 														</div>
 													)
 												})}
 											</div>
-
 										</div>
-
 									</div>
 								</div>
 								<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">

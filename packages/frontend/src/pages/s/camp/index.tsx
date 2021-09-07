@@ -1,5 +1,3 @@
-
-
 // Student dash.
 // get all the campaigns and let the student choose from here
 // incase there are only 1 campaign then automatically redirect them
@@ -21,9 +19,9 @@ const StudentCampChoose = () => {
 
 	return (
 		<>
-			<HeadMeta title='UniPort | Dashboard' />
+			<HeadMeta title='Uniport | Dashboard' />
 			<Layout>
-				<div className='p-10'>
+				<div className='mt-20'>
 					{/* Content goes here */}
 					{error ?
 						<div className='my-3 text-sm text-left text-red-600 bg-red-500 bg-opacity-10 border border-red-400 flex items-center p-4 rounded-md'>

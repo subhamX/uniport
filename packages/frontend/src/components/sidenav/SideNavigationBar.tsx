@@ -36,7 +36,7 @@ const SideNavigationBar = () => {
 
 
 	// campaings are defined
-	// TODO: Fix the styling of campaigns
+	// TODO: Fix the styling of active route of campaigns
 	return (
 		<>
 			<SideMenuWrapper isSideNavOpen={isSideNavOpen}>

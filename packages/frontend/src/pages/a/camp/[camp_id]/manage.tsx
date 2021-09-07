@@ -29,7 +29,7 @@ const ManageCampaign = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Manage Campaign' />
+			<HeadMeta title='Uniport | Manage Campaign' />
 			<Layout>
 				<div className='p-10'>
 

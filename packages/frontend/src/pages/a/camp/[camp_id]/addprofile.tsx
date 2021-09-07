@@ -55,7 +55,7 @@ const AddProfilesInCamp = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Campaign Add Profile' />
+			<HeadMeta title='Uniport | Campaign Add Profile' />
 			<Layout>
 				<div className='p-10'>
 					<div className="mx-auto p-4 max-w-lg shadow-md rounded-md text-left">

@@ -80,7 +80,7 @@ const StudentProfile = () => {
 
 	return (
 		<>
-			<HeadMeta title='UniPort | Student Profile' />
+			<HeadMeta title='Uniport | Student Profile' />
 			<Layout>
 				<div className='px-3 max-w-2xl my-10 w-full mx-auto'>
 					<div>

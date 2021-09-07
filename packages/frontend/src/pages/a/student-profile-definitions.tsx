@@ -15,7 +15,7 @@ const ManageStudentProfileDefinitions = () => {
 
 	return (
 		<div>
-			<HeadMeta title='UniPort | Manage Student Profile Definitions' />
+			<HeadMeta title='Uniport | Manage Student Profile Definitions' />
 			<Layout>
 				<div className='p-10'>
 

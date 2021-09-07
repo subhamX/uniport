@@ -7,7 +7,7 @@ import Layout from "../components/views/Layout";
 const Dashboard = () => {
 	return (
 		<>
-			<HeadMeta title='UniPort | Dashboard' />
+			<HeadMeta title='Uniport | Dashboard' />
 			<Layout>
 				<div className='p-10'>
 					{/* Content goes here */}

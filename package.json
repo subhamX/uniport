@@ -1,5 +1,5 @@
 {
-    "name" : "uniport",
+    "name": "uniport",
     "private": true,
     "workspaces": {
         "packages": [

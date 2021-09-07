@@ -5,7 +5,7 @@ import Layout from "../../../../components/views/Layout";
 const AllProfilesInCamp = () => {
 	return (
 		<div>
-			<HeadMeta title='UniPort | Campaign All Profiles' />
+			<HeadMeta title='Uniport | Campaign All Profiles' />
 			<Layout>
 				<div className='p-10'>
 					{/* Content goes here */}
