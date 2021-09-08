@@ -16,22 +16,19 @@ Uniport is built using the following technologies. All of them are written in ty
 1. Next.js
 2. GraphQL
 3. Node.js
-4. Cassandra
+4. Apache Cassandra
 
 ## Application Workflow
 
 ![](./docs/workflow.png)
 
 ## Currently supported LEGOs
-Uniport is a modular application where the admin has power to customize the platform to their needs. For now the application supports the following types(refer image below). They cover most of the cases be modified to the admin needs. For example: **Single Select** can be used for **Gender**, **Country**, **any objective question**.
+Uniport is a modular application where the admin has power to customize the platform to their needs. For now the application supports the following types(refer image below). They cover most of the cases and can be modified by the admin based on their needs. Each of the LEGO is capable of handling multiple cases. For example: **Single Select** can be used for **Gender**, **Country**, **any objective question**.
 
-> Note that LEGOs like **Education**, **Work Experience** have multiple elements nested inside. And the data corresponding to these LEGOs isn't stored using the unscalable entity attribute value model. Instead, it is modelled in an intelligent way using the Cassandra collections and UDTs. We will add more LEGOs in future. 🚀🚀
+> 💡 If you have some cases that cannot be modelled using the existing LEGOs, please do share them with us by [creating an issue](https://github.com/subhamX/uniport/issues). We shall add that soon.
+
+
+> Note that LEGOs like **Education**, **Work Experience** have multiple elements nested inside. And the data corresponding to these LEGOs isn't stored using the unscalable entity attribute value model. Instead, it is modelled in an intelligent way using the Apache Cassandra collections and UDTs. ⚡⚡
 
 ![](./docs/legos.PNG)
-
-
-## Application Screenshots
-
-![](./docs/invite_campaign.PNG)
-![](./docs/job_profile_details.PNG)
 
