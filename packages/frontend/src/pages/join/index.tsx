@@ -1,6 +1,5 @@
-import HeadMeta from "../../components/views/HeadMeta";
-import NonAuthNavbar from "../../components/views/NonAuthNavbar";
-import { useState } from "react";
+import HeadMeta from "../../components/HeadMeta/HeadMeta";
+import NonAuthNavbar from "../../components/NonAuthNavbar/NonAuthNavbar";
 import React from 'react';
 import { useMutation } from "@apollo/client";
 import { RegisterAdminInputForm, registerAdminInputFormValidationSchema, User } from '@uniport/common';
@@ -8,9 +7,8 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from 'next/router'
 import { ADMIN_PRIMARY_DASHBOARD } from "../../config/routes-config";
 import { registerAdminMutation } from "../../graphql/RegisterAdminMutation";
-import withAuth from "../../HOC/withAuth";
 import withNoAuth from "../../HOC/withNoAuth";
-
+import Link from 'next/link';
 
 
 const initialValues: RegisterAdminInputForm = {
@@ -57,7 +55,7 @@ const RegisterAdmin = () => {
 		<div>
 			<HeadMeta title='Uniport | Join the Club' />
 			<NonAuthNavbar />
-			<div className='main-container w-full pt-4 overflow-y-scroll'>
+			<div className='main-container w-full pt-4 overflow-y-scroll pb-20'>
 				<div className="mx-auto p-4 max-w-md shadow-md rounded-md text-left">
 					<div className='text-gray-700 text-3xl font-semibold text-center'>
 						Join Uniport
@@ -175,12 +173,20 @@ const RegisterAdmin = () => {
 								</div>
 
 								<div className="flex items-center justify-between">
-									<button type="submit" disabled={waitingForServerResponse} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Join Uniport</button>
+									<button type="submit" disabled={waitingForServerResponse} className="bg-blue-500 disabled:bg-blue-200 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Join Uniport</button>
 								</div>
 							</Form>
 
 						</Formik>
 
+						<hr className='mt-2 mb-4' />
+
+						<div className='flex gap-4 items-center'>
+							Got an invite?
+							<Link href='/join/invited/'>
+							<button type="submit" disabled={waitingForServerResponse} className="bg-indigo-500 disabled:bg-indigo-300 hover:bg-indigo-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">Join with Invite</button>
+							</Link>
+						</div>
 
 					</div>
 

@@ -18,6 +18,7 @@ import { studentProfileDefinitionSchema } from './schema/StudentProfileDefinitio
 import { campaignSchema } from './schema/Campaign';
 import studentProfileRoutes from './routes/StudentProfile';
 
+
 const app = Express();
 declare global {
 	namespace Express {
@@ -62,6 +63,8 @@ app.use(session({
 
 app.use(cookie_parser())
 app.use(Express.json())
+
+
 
 // Passport config
 passport.use(localStrategyConfig);

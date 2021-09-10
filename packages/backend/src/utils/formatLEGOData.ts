@@ -1,9 +1,9 @@
 import { STUDENT_PROFILE_BLOCK_ID_INDEX_DELIM } from "../config/constants";
 
 
-// ! [debug_block_type] is redundant. Since block determination is done by student definitions and not by this
+// ! [debug_block_type] is redundant. Since block determination is done by student definitions and not by this.
+// But we are keeping it for type definitions
 export const formatLEGOData = (data: { [key: string]: any }, debug_block_type: string) => {
-	console.log(data);
 	if (!data) return {};
 	let formattedData: any = {}
 
@@ -20,18 +20,13 @@ export const formatLEGOData = (data: { [key: string]: any }, debug_block_type: s
 		}
 
 		if (!formattedData[attribute_id]) {
-			formattedData[attribute_id] = []
+			formattedData[attribute_id] = {}
 		}
 
-
-		formattedData[attribute_id] = [
-			...formattedData[attribute_id],
-			{
-				block_index: block_index,
-				...data,
-				debug_block_type
-			}
-		]
+		formattedData[attribute_id][block_index] = {
+			...data,
+			debug_block_type
+		}
 	})
 
 	return formattedData;

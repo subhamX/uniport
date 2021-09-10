@@ -1,5 +1,5 @@
 
-
+-- drop tables
 drop table job_profile;
 drop table navigation_menu_item;
 drop table applied_candidate;
@@ -13,7 +13,7 @@ drop table invited_user;
 drop table campaign_by_org;
 drop table campaign_stats_by_org;
 
-
+-- drop student profile LEGO types
 drop type resume_type_11;
 drop type work_experience_type_9;
 drop type multi_select_type_12;
@@ -29,7 +29,7 @@ drop type project_type_10;
 drop type date_type_1;
 
 
-
+-- drop leaf types
 drop type filtering_rule;
 drop type verification_info_type;
 drop type company_representative_type;

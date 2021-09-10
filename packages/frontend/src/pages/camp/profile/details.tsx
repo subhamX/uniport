@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
-import HeadMeta from "../../../components/views/HeadMeta";
-import Layout from "../../../components/views/Layout";
+import HeadMeta from "../../../components/HeadMeta/HeadMeta";
+import Layout from "../../../components/AuthLayout/Layout";
 import { FETCH_CURRENT_USER } from "../../../graphql/FetchCurrentUser";
 import withAuth from "../../../HOC/withAuth";
 

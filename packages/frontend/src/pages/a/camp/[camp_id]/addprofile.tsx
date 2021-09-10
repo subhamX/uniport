@@ -1,5 +1,5 @@
-import HeadMeta from "../../../../components/views/HeadMeta";
-import Layout from "../../../../components/views/Layout";
+import HeadMeta from "../../../../components/HeadMeta/HeadMeta";
+import Layout from "../../../../components/AuthLayout/Layout";
 import * as Yup from 'yup';
 import { useMutation } from "@apollo/client";
 import { POWER_MUTATION } from "../../../../graphql/PowerMutation";
@@ -43,7 +43,6 @@ const formValidationSchema = Yup.object().shape({
 const AddProfilesInCamp = () => {
 	const [mutationFn, { data, loading: waitingForServerResponse, error }] = useMutation(POWER_MUTATION);
 	const handleSubmit = async (e) => {
-		console.log(e);
 		await mutationFn({
 			variables: {
 				...e

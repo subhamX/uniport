@@ -123,10 +123,7 @@ export const validateStudentProfileDefinitionItem = (item: AddStudentProfileDefi
 			throw new UserInputError(`LEGO ${attribute_type} shouldn't define any options`)
 		}
 	}
-
-	// ! Keeping it logical for now. And not enforcing here.
-	// if(attribute_type==='resume_type_11' && item.requires_proof===false){
-	// 	throw new UserInputError(`LEGO ${attribute_type} will always require proof.`)
-
-	// }
+	if(attribute_type==='resume_type_11' && item.requires_proof===true){
+		throw new UserInputError(`LEGO ${attribute_type} is a proof in itself. Please uncheck requires_proof`)
+	}
 }

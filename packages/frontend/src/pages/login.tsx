@@ -1,5 +1,5 @@
-import HeadMeta from "../components/views/HeadMeta";
-import NonAuthNavbar from "../components/views/NonAuthNavbar";
+import HeadMeta from "../components/HeadMeta/HeadMeta";
+import NonAuthNavbar from "../components/NonAuthNavbar/NonAuthNavbar";
 import * as Yup from 'yup';
 import Image from 'next/image';
 import { ErrorMessage, Field, Form, Formik } from "formik";
@@ -29,7 +29,6 @@ const Login = () => {
 
 	const [mutationFn, { data, loading: waitingForServerResponse, error }] = useMutation(loginExistingUser);
 	const handleSubmit = async (e) => {
-		console.log(e);
 		await mutationFn({
 			variables: {
 				...e

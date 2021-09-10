@@ -72,7 +72,6 @@ export const campaignResolvers = {
 				campaign_id,
 				campaign_name: res.rows[0].campaign_name
 			};
-			console.log(data);
 
 			return data;
 		}

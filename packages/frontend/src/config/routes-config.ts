@@ -19,6 +19,7 @@ export const MANAGE_STUDENT_PROFILE_DEFINITIONS = '/a/student-profile-definition
 export const STUDENT_CAMP_CHOOSE_ROUTE = '/s/camp'
 
 export const VIEW_CAMP_ALL_PROFILES = (campaign_id: string, accessRole: string) => {
+	// TODO: Change it and add link in dash/
 	return `/camp/profile/details`
 	if (accessRole === 'ADMIN') {
 		return `/a/camp/${campaign_id}/allprofiles`;
@@ -44,14 +45,15 @@ export const FETCH_STUDENT_PROFILE_DATA_ENDPOINT = 'http://localhost:4201/s/prof
 // add [block_index] too if you want to edit
 export const ADD_STUDENT_PROFILE_BLOCK = async (payload: any) => {
 	console.log("PUSHING", payload);
+	let formData = new FormData();
+	for (let key in payload) {
+		formData.append(key, payload[key])
+	}
+
 	let res = await fetch(`http://localhost:4201/s/profile/add`, {
 		method: 'POST',
 		credentials: 'include',
-		headers: {
-			'Content-Type': 'application/json'
-			// 'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		body: JSON.stringify(payload)
+		body: formData
 	})
 
 	let json = await res.json();
@@ -63,4 +65,7 @@ export const ADD_STUDENT_PROFILE_BLOCK = async (payload: any) => {
 export const ALL_COMPANIES_ROUTE = `/a/companies/all`;
 
 
-export const ADD_A_JOB_PROFILE = (camp_id:string ) => `/a/camp/${camp_id}/addprofile`
+export const ADD_A_JOB_PROFILE = (camp_id: string) => `/a/camp/${camp_id}/addprofile`
+
+
+export const LINK_TO_OPEN_FILE = (resource_id: string) => `http://localhost:4201/serve/${resource_id}`;

@@ -1,5 +1,5 @@
 # Uniport
-Uniport is a fully customizable portal for universities to manage the campus recruitments seamlessly. It's a software as a service and is built with multi-tenant architecture isolated at application level.
+Uniport is a fully customizable university portal to manage the campus recruitments seamlessly. It's a software as a service and is built with multi-tenant architecture isolated at application level.
 
 ![](./docs/landing.PNG)
 
@@ -17,6 +17,13 @@ Uniport is built using the following technologies. All of them are written in ty
 2. GraphQL
 3. Node.js
 4. Apache Cassandra
+
+## Modules
+The code sample contains the following four modules:
+* [Database](./database/): Contains the Apache-Cassandra data model
+* [Frontend](./packages/frontend/): Contains a NextJS-application
+* [Backend](./packages/backend/):  Contains an express-apollo GraphQL-server
+* [Shared](./packages/common/):  Contains the common validators, LEGOs definitions etc which are used by both frontend and backend modules
 
 ## Application Workflow
 

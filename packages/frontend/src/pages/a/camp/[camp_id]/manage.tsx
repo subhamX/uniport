@@ -1,12 +1,10 @@
 import { useMutation, useQuery } from "@apollo/client"
-import HeadMeta from "../../../../components/views/HeadMeta"
-import Layout from "../../../../components/views/Layout"
+import HeadMeta from "../../../../components/HeadMeta/HeadMeta"
+import Layout from "../../../../components/AuthLayout/Layout"
 import { FETCH_CAMPAIGN_DETAILS_BY_ID } from "../../../../graphql/FetchCampaignData"
 import { useRouter } from 'next/router';
-import Link from 'next/link';
-import GenericModal from "../../../../components/views/GenericModal";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import GenericModal from "../../../../components/GenericModal/GenericModal";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { INVITE_NEW_USERS_TO_CAMPAIGN_MUTATION } from "../../../../graphql/InviteNewUsersToCampaign";
 import { AddFilteringFormikField } from "./addprofile";
@@ -153,7 +151,6 @@ const InviteUsers = ({ camp_id }) => {
 
 	const [mutationFn, { data, loading, error }] = useMutation(INVITE_NEW_USERS_TO_CAMPAIGN_MUTATION);
 	const handleSubmit = async (e) => {
-		console.log(e);
 		// TODO: check that individual mails are valid
 		let emails = [];
 		e.user_emails.split(/[\s]+/).map((text: string) => {

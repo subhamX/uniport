@@ -27,6 +27,7 @@
     "express-session": "^1.17.2",
     "graphql": "^15.5.1",
     "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.3",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "yup": "^0.32.9"
@@ -42,6 +43,7 @@
     "@types/cassandra-store": "^5.0.2",
     "@types/cookie-parser": "^1.4.2",
     "@types/express-session": "^1.17.4",
+    "@types/multer": "^1.4.7",
     "@types/passport": "^1.0.7",
     "@types/passport-local": "^1.0.34",
     "nodemon": "^2.0.12",

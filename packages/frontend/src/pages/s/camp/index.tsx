@@ -3,8 +3,8 @@
 // incase there are only 1 campaign then automatically redirect them
 
 import { useQuery } from "@apollo/client";
-import HeadMeta from "../../../components/views/HeadMeta";
-import Layout from "../../../components/views/Layout";
+import HeadMeta from "../../../components/HeadMeta/HeadMeta";
+import Layout from "../../../components/AuthLayout/Layout";
 import { FETCH_MY_CAMPAIGNS } from "../../../graphql/FetchMyCampaigns";
 import Image from 'next/image';
 import Link from 'next/link';

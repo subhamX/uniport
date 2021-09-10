@@ -4,7 +4,7 @@
 
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Dispatch, SetStateAction, useState } from "react";
-import GenericModal from "./views/GenericModal";
+import GenericModal from "./GenericModal/GenericModal";
 
 
 

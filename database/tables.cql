@@ -1,17 +1,8 @@
--- to store the menu items for an access role
--- note: It won't have /s/profile/ in it. We shall see in frontend if [has_student_profile] is true or false.
--- based on which we shall show that
--- NOTE: we are not denomalizing for now. It can be done in future.
-CREATE TABLE navigation_menu_item (
-	access_role TEXT,
-	items set<frozen<navigation_menu_item_type>>,
-	PRIMARY KEY((access_role))
-);
+-- One Query, One Table. :)
 
 -- to store the user minimal data to allow authentication
 -- query: login a user. (get a user with a given email address)
--- query: [CHECK] get all the users for a org. () [It will hit multi nodes] [Paginated results only]
--- for now let's use allow filtering. Also it's not very frequent. (Unless the admin wants to target some the student profiles. XD)
+-- query: get all the users for a org. [Should be performed directly with student_profile as it's Denormalized]
 CREATE TABLE user (
 	user_id UUID, -- a dummy thing only
 	first_name TEXT,
@@ -29,7 +20,7 @@ CREATE TABLE user (
 );
 
 -- to store the organization details.
--- TODO: ADD some aggregate fields!
+-- TODO: ADD some aggregate fields! (apart from campaign_stats)
 -- query: [in Admin Dash] -> Get me some stats.
 CREATE TABLE organization (
 	org_name TEXT,
@@ -61,8 +52,8 @@ CREATE TABLE student_profile_definition (
 	required Boolean,
 	options set<TEXT>, -- notice that we only support strings as options
 	requires_proof Boolean,
-	-- [NOT DOING]: we will group everything by [attribute_type]. In this way things will be grouped for us
-	-- [REASON]: If needed we will add a sorting logic in the resolver
+	-- TODO: Do we need a sorting logic? How the data should be organized in the student profile?
+	-- shall we store some value here to keep track of the order?
 	PRIMARY KEY((org_id), attribute_id)
 );
 
@@ -199,7 +190,7 @@ CREATE TABLE applied_candidate(
 	PRIMARY KEY ((org_id),job_profile_id,candidate_id)
 );
 
--- for sessions
+-- for sessions (to store auth sessions)
 CREATE TABLE IF NOT EXISTS sessions (
    sid text,
    session text,

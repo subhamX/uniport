@@ -8,7 +8,6 @@ export const AdditionalOptions = ({ accessRole }) => {
 			{
 				label: "My Profile",
 				relative_url: "###",
-
 			},
 			{
 				label: "Dashboard",

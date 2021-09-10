@@ -1,51 +1,50 @@
 
--- TODO: Change the org_id
-
+-- NOTE: Change the org_id before executing
 -- add student profile definitions
 
 
--- INSERT INTO student_profile_definition(label, org_id, attribute_id, attribute_type, is_array,  is_blocked, required, options, requires_proof)
--- VALUES(
--- 	'Date of Birth', -- label
--- 	06b6e9cc-0be1-4d60-9df6-ca9a0353afab, -- org_id
--- 	uuid(), -- attribute_id
--- 	'date_type_1', -- attribute_type
--- 	false, -- is_array
--- 	false, -- is_blocked
--- 	true, -- required
--- 	null, -- options
--- 	true  -- requires_proof
--- );
+INSERT INTO student_profile_definition(label, org_id, attribute_id, attribute_type, is_array,  is_blocked, required, options, requires_proof)
+VALUES(
+	'Date of Birth', -- label
+	06b6e9cc-0be1-4d60-9df6-ca9a0353afab, -- org_id
+	uuid(), -- attribute_id
+	'date_type_1', -- attribute_type
+	false, -- is_array
+	false, -- is_blocked
+	true, -- required
+	null, -- options
+	true  -- requires_proof
+);
 
 
--- INSERT INTO student_profile_definition(label, org_id, attribute_id, attribute_type, is_array,  is_blocked, required, options, requires_proof)
--- VALUES(
--- 	'Favorite Number', -- label
--- 	06b6e9cc-0be1-4d60-9df6-ca9a0353afab, -- org_id
--- 	uuid(), -- attribute_id
--- 	'number_type_2', -- attribute_type
--- 	false, -- is_array
--- 	false, -- is_blocked
--- 	true, -- required
--- 	null, -- options
--- 	true  -- requires_proof
--- );
+INSERT INTO student_profile_definition(label, org_id, attribute_id, attribute_type, is_array,  is_blocked, required, options, requires_proof)
+VALUES(
+	'Favorite Number', -- label
+	06b6e9cc-0be1-4d60-9df6-ca9a0353afab, -- org_id
+	uuid(), -- attribute_id
+	'number_type_2', -- attribute_type
+	false, -- is_array
+	false, -- is_blocked
+	true, -- required
+	null, -- options
+	true  -- requires_proof
+);
 
 
 
 
--- INSERT INTO student_profile_definition(label, org_id, attribute_id, attribute_type, is_array,  is_blocked, required, options, requires_proof)
--- VALUES(
--- 	'Gender', -- label
--- 	06b6e9cc-0be1-4d60-9df6-ca9a0353afab, -- org_id
--- 	uuid(), -- attribute_id
--- 	'single_select_type_3', -- attribute_type
--- 	false, -- is_array
--- 	false, -- is_blocked
--- 	true, -- required
--- 	{'Male', 'Female', 'Others'}, -- options
--- 	true  -- requires_proof
--- );
+INSERT INTO student_profile_definition(label, org_id, attribute_id, attribute_type, is_array,  is_blocked, required, options, requires_proof)
+VALUES(
+	'Gender', -- label
+	06b6e9cc-0be1-4d60-9df6-ca9a0353afab, -- org_id
+	uuid(), -- attribute_id
+	'single_select_type_3', -- attribute_type
+	false, -- is_array
+	false, -- is_blocked
+	true, -- required
+	{'Male', 'Female', 'Others'}, -- options
+	true  -- requires_proof
+);
 
 
 INSERT INTO student_profile_definition(label, org_id, attribute_id, attribute_type, is_array,  is_blocked, required, options, requires_proof)

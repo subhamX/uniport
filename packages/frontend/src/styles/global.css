@@ -8,13 +8,15 @@
 
 body {
 	/* Give it at right places only */
-	/* overflow-y: hidden; */
+	overflow-y: hidden;
+	background: #fffbf5;
 }
 
 .main-container {
 	/* keep it with sync with navbarHeight.ts */
 	max-height: calc(100vh - theme("height.10"));
 	height: calc(100vh - theme("height.10"));
+	overflow-y: scroll;
 }
 
 .ui-landing {

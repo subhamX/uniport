@@ -1,6 +1,6 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import HeadMeta from "../../../components/views/HeadMeta";
-import Layout from "../../../components/views/Layout";
+import HeadMeta from "../../../components/HeadMeta/HeadMeta";
+import Layout from "../../../components/AuthLayout/Layout";
 import * as Yup from 'yup';
 import { useMutation } from "@apollo/client";
 import { CREATE_A_NEW_CAMPAIGN } from "../../../graphql/CreateANewCampaign";
@@ -25,7 +25,6 @@ const CreateNewCampaign = () => {
 
 	const [mutationFn, { data, loading: waitingForServerResponse, error }] = useMutation(CREATE_A_NEW_CAMPAIGN);
 	const handleSubmit = async (e: FormFields) => {
-		console.log(e);
 		await mutationFn({
 			variables: {
 				...e
@@ -103,5 +102,4 @@ const CreateNewCampaign = () => {
 
 
 
-// TODO: auth and role check
 export default CreateNewCampaign;

@@ -2,23 +2,28 @@
 // Page to show the rendered profile of the student in view mode
 // Any non-blocked field (by university admin) can be edited using a modal
 
-import HeadMeta from "../../../../components/views/HeadMeta";
-import Layout from "../../../../components/views/Layout";
-import dayjs from "dayjs";
-import { ResumeView } from "../../../../components/profile/Resume/view";
+import HeadMeta from "../../../../components/HeadMeta/HeadMeta";
+import Layout from "../../../../components/AuthLayout/Layout";
+import { ResumePilot } from "../../../../components/profile/resume_type_11/Pilot";
 import { useQuery } from "@apollo/client";
 import { GET_STUDENT_PROFILE_DEFINITIONS } from "../../../../graphql/GetStudentProfileDefinitions";
-import { OrgSchemaInstanceBlock, SupportedLEGOsTypes } from "@uniport/common";
+import { SupportedLEGOsTypes } from "@uniport/common";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FETCH_STUDENT_PROFILE_DATA_ENDPOINT } from "../../../../config/routes-config";
-import { PhoneNumberView } from "../../../../components/profile/PhoneNumber/PhoneNumberBlock";
-import { EmailAddressView } from "../../../../components/profile/EmailAddress/EmailAddressBlock";
-import { AddressBlock } from "../../../../components/profile/AddressBlock/AddressBlock";
-import { EducationBlock } from "../../../../components/profile/EducationTypeA/view";
-import { ProjectBlock } from "../../../../components/profile/Project/view";
-import { WorkExperienceBlock } from "../../../../components/profile/WorkExperience/view";
 import { FETCH_CURRENT_USER } from "../../../../graphql/FetchCurrentUser";
+import { useStudentProfileStore } from "../../../../global-stores/useStudentProfiles";
+import { WorkExperienceType9Pilot } from "../../../../components/profile/work_experience_type_9/Pilot";
+import { ProjectType10Pilot } from "../../../../components/profile/project_type_10/Pilot";
+import { EducationType8Pilot } from "../../../../components/profile/education_type_8/Pilot";
+import { CurrentCourseType7Pilot } from "../../../../components/profile/current_course_type_7/Pilot";
+import { AddressType5Pilot } from "../../../../components/profile/address_type_5/Pilot";
+import { EmailType6Pilot } from "../../../../components/profile/email_type_6/Pilot";
+import { PhoneNumberType4Pilot } from "../../../../components/profile/phone_number_type_4/Pilot";
+import { DateType1Pilot } from "../../../../components/profile/date_type_1/Pilot";
+import { NumberType2Pilot } from "../../../../components/profile/number_type_2/Pilot";
+import { SingleSelectType3Pilot } from "../../../../components/profile/single_select_type_3/Pilot";
+import { MultiSelectType12Pilot } from "../../../../components/profile/multi_select_type_12/Pilot";
 
 
 
@@ -30,25 +35,20 @@ const StudentProfile = () => {
 
 	let { data, loading, error } = useQuery(GET_STUDENT_PROFILE_DEFINITIONS);
 
-	const { data: user } = useQuery(FETCH_CURRENT_USER);
-
-	console.log(user);
-
-
 	const [loadingStudentData, setloadingStudentData] = useState(true)
-	// const [studentDataFetchError, setStudentData] = useState(true)
 	const [studentDataFetchError, setstudentDataFetchError] = useState(null);
-	const [studentData, setStudentData] = useState(null);
+
+	const studentProfile = useStudentProfileStore(state => state.studentProfile);
+	const setStudentProfile = useStudentProfileStore(state => state.setStudentProfile);
+
 	const [basicData, setBasicData] = useState(null);
+
 	const router = useRouter()
 	let student_id = router.query.student_id as string;
-
-	console.log(student_id);
 
 	useEffect(() => {
 		const getStudentProfileDataBlocks = async (student_id) => {
 			try {
-				console.log("ashasihsa", student_id);
 				const url = `${FETCH_STUDENT_PROFILE_DATA_ENDPOINT}/${student_id}`;
 				let res = await fetch(url, {
 					cache: 'no-cache',
@@ -58,8 +58,9 @@ const StudentProfile = () => {
 				if (jsonData['error']) {
 					throw Error(jsonData['message'])
 				}
-				// TODO: set the data to zustang state
-				setStudentData(jsonData['data']);
+
+				setStudentProfile(jsonData['data']);
+				// TODO: set the [basicData] to zustang state
 				setBasicData(jsonData['basic']);
 
 				setloadingStudentData(false);
@@ -88,8 +89,6 @@ const StudentProfile = () => {
 						<div className='text-2xl font-bold leading-normal mt-0 mb-3 text-purple-800'>
 							Student Profile
 						</div>
-
-
 
 
 						{error || studentDataFetchError ?
@@ -133,7 +132,7 @@ const StudentProfile = () => {
 							</div>
 							<RenderLEGOs
 								getStudentProfileDefinitions={data.getStudentProfileDefinitions}
-								studentProfileDataBlocks={studentData} />
+								studentProfileDataBlocks={studentProfile} />
 						</div>}
 					</div>
 				</div>
@@ -146,67 +145,104 @@ const StudentProfile = () => {
 
 // plural h. XD
 const RenderLEGOs = ({ getStudentProfileDefinitions, studentProfileDataBlocks }) => {
-	console.log(studentProfileDataBlocks);
-
 	return (
 		<div>
-			{getStudentProfileDefinitions.map(e => {
+			{getStudentProfileDefinitions.map((e, indx) => {
 				let { attribute_id, attribute_type }: { attribute_id: string, attribute_type: SupportedLEGOsTypes } = e;
 
-				let data = studentProfileDataBlocks[attribute_id] ?? [];
+				let data: { [key in string]: any } = studentProfileDataBlocks[attribute_id] ?? {};
 
 				if (attribute_type === 'resume_type_11') {
 					return (
-						<ResumeView
-							// attribute_id={attribute_id}
-							data={data}
+						<ResumePilot
+							key={indx}
 							meta={e}
 						/>
 					)
 				} else if (attribute_type === 'phone_number_type_4') {
 					return (
-						<PhoneNumberView
-							data={data}
+						<PhoneNumberType4Pilot
+							key={indx}
+							meta={e}
+						/>
+					)
+				} else if (attribute_type === 'date_type_1') {
+					return (
+						<DateType1Pilot
+							key={indx}
+							meta={e}
+						/>
+					)
+				} else if (attribute_type === 'number_type_2') {
+					return (
+						<NumberType2Pilot
+							key={indx}
+							meta={e}
+						/>
+					)
+				} else if (attribute_type === 'single_select_type_3') {
+					return (
+						<SingleSelectType3Pilot
+							key={indx}
+							meta={e}
+						/>
+					)
+				} else if (attribute_type === 'multi_select_type_12') {
+					return (
+						<MultiSelectType12Pilot
+							key={indx}
 							meta={e}
 						/>
 					)
 				} else if (attribute_type === 'email_type_6') {
 					return (
-						<EmailAddressView
-							data={data}
+						<EmailType6Pilot
+							key={indx}
 							meta={e}
 						/>
 					)
 				} else if (attribute_type === 'address_type_5') {
 					return (
-						<AddressBlock
-							data={data}
+						<AddressType5Pilot
+							key={indx}
 							meta={e}
 						/>
 					)
+
+				} else if (attribute_type === 'current_course_type_7') {
+					return (
+						<CurrentCourseType7Pilot
+							key={indx}
+							meta={e}
+						/>
+					)
+
 				} else if (attribute_type === 'education_type_8') {
 					return (
-						<EducationBlock
-							data={data}
+						<EducationType8Pilot
+							key={indx}
 							meta={e}
 						/>
 					)
 				} else if (attribute_type === 'project_type_10') {
 					return (
-						<ProjectBlock
-							data={data}
+						<ProjectType10Pilot
+							key={indx}
 							meta={e}
 						/>
 					)
 				} else if (attribute_type === 'work_experience_type_9') {
 					return (
-						<WorkExperienceBlock
-							data={data}
+						<WorkExperienceType9Pilot
 							meta={e}
+							key={indx}
 						/>
 					)
 				}
-				return null;
+				return <div>
+					{JSON.stringify(e)}
+					{JSON.stringify(data)}
+				</div>;
 			})}
 		</div>
 	)

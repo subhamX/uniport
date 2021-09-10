@@ -56,7 +56,6 @@ export const campaignSchema = gql`
 	}
 
 	type Mutation{
-		# TODO:
 		# for admin to create a new campaign
 		createANewCampaign(campaign_name: String!): Campaign!
 
@@ -67,7 +66,6 @@ export const campaignSchema = gql`
 		# or someone is user and you want to make them admin. (FOR NOW)
 		# In future we shall add multiple roles like PLACEMENT_ADMIN, COORDINATOR etc which will make this possible
 		# invite new students to the new campaign
-		# TODO:
 		inviteNewUsersToCampaign(payload: InviteNewUsersToCampaignInput): Boolean!
 
 

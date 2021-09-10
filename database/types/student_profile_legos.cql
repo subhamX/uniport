@@ -1,24 +1,24 @@
--- Note: all file_url are for proofs!
+-- Note: all proof_file_url are for proofs!
 -- so for a field which requires no proof. It will be null.
 
 -- LEGO 1
 CREATE TYPE date_type_1(
-		value TIMESTAMP,
-		file_url TEXT,
-		verification_info verification_info_type
+	value TIMESTAMP,
+	proof_file_url TEXT,
+	verification_info verification_info_type
 );
 
 -- LEGO 2
 CREATE TYPE number_type_2(
-		value INT,
-		file_url TEXT,
-		verification_info verification_info_type
+	value INT,
+	proof_file_url TEXT,
+	verification_info verification_info_type
 );
 
 -- LEGO 3
 CREATE TYPE single_select_type_3(
 	value TEXT,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );
 
@@ -26,7 +26,7 @@ CREATE TYPE single_select_type_3(
 CREATE TYPE phone_number_type_4(
 	country_code TEXT,
 	ph_number TEXT,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );
 
@@ -38,14 +38,14 @@ CREATE TYPE address_type_5(
 	district TEXT,
 	city TEXT,
 	address_line TEXT,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );
 
 -- LEGO 6
 CREATE TYPE email_type_6(
 	value TEXT,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );
 
@@ -58,7 +58,7 @@ CREATE TYPE current_course_type_7(
 	percent_score FLOAT,
 	institute_roll TEXT,
 	description TEXT,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );
 
@@ -71,8 +71,8 @@ CREATE TYPE education_type_8(
 	percent_score FLOAT,
 	course_start_date DATE,
 	course_end_date DATE,
-	file_url TEXT,
-	-- TODO: Add [description]
+	proof_file_url TEXT,
+	description TEXT,
 	verification_info verification_info_type
 );
 
@@ -82,10 +82,10 @@ CREATE TYPE work_experience_type_9(
 	job_title TEXT,
 	location TEXT,
 	position_type TEXT,
-	job_start_date TEXT,
-	job_end_date TEXT,
+	job_start_date DATE,
+	job_end_date DATE,
 	details TEXT,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );
 
@@ -96,7 +96,7 @@ CREATE TYPE project_type_10(
 	end_date DATE,
 	project_url TEXT,
 	description TEXT,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );
 
@@ -104,13 +104,14 @@ CREATE TYPE project_type_10(
 -- resume cannot have [hasProof]
 CREATE TYPE resume_type_11(
 	file_name TEXT,
-	file_url TEXT,
+	resume_file_url TEXT,
 	verification_info verification_info_type
 );
 
 -- LEGO 12
 CREATE TYPE multi_select_type_12(
+	-- store options index only. (it will enable the admin to change things anytime. :))
 	value set<TEXT>,
-	file_url TEXT,
+	proof_file_url TEXT,
 	verification_info verification_info_type
 );

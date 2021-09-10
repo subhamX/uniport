@@ -27,7 +27,6 @@ export const studentProfileDefinitionSchema = gql`
 	type Query{
 		# any authenticated user can get the profile definitions
 		getStudentProfileDefinitions: [StudentProfileDefinition]!
-
 	}
 
 	type Mutation{

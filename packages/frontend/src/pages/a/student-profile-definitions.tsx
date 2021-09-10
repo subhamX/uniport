@@ -2,9 +2,9 @@ import { useMutation, useQuery } from "@apollo/client";
 import { allSupportedLEGOs, LEGOIdToTypeName } from "@uniport/common";
 import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik";
 import { Dispatch, SetStateAction, useState } from "react";
-import GenericModal from "../../components/views/GenericModal";
-import HeadMeta from "../../components/views/HeadMeta";
-import Layout from "../../components/views/Layout";
+import GenericModal from "../../components/GenericModal/GenericModal";
+import HeadMeta from "../../components/HeadMeta/HeadMeta";
+import Layout from "../../components/AuthLayout/Layout";
 import { ADD_STUDENT_PROFILE_DEFINITIONS } from "../../graphql/AddStudentProfileDefinitions";
 import { GET_STUDENT_PROFILE_DEFINITIONS } from "../../graphql/GetStudentProfileDefinitions";
 
@@ -130,10 +130,7 @@ const AddNewStudentDefinitionModal = ({ setOpen, open, initialValues }: { setOpe
 		fetchPolicy: 'no-cache',
 	});
 	const handleSubmit = async (e: any) => {
-		console.log(e);
-
-
-		let res = await mutationFn({
+		await mutationFn({
 			variables: {
 				payload: {
 					...e,
@@ -141,8 +138,6 @@ const AddNewStudentDefinitionModal = ({ setOpen, open, initialValues }: { setOpe
 				}
 			}
 		})
-
-		console.log(e);
 	}
 
 
