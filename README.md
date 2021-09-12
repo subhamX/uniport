@@ -64,4 +64,4 @@ Uniport is a modular application where the admin has the power to customize the 
 ![](./docs/legos.PNG)
 
 
-> 🪐 Some core module functionalities, billing, integration to a scalable mail service, message queue, distributed storage, payments gateway, is still pending. We will deploy the project on AWS once they are complete.
+> 🪐 Some core modules are not yet integrated. We shall deploy the project once they are complete.
