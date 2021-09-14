@@ -1,5 +1,8 @@
 
 
+const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
+
 // just after registration is complete we shall route to this
 export const ADMIN_PRIMARY_DASHBOARD = '/a/dash';
 // when we don't know if we should push to /a/ or /s/
@@ -39,7 +42,7 @@ export const STUDENT_PROFILE_ROUTE = (student_id: string) => `/s/profile/${stude
 
 
 // don;t add trailing slash.
-export const FETCH_STUDENT_PROFILE_DATA_ENDPOINT = 'http://localhost:4201/s/profile'
+export const FETCH_STUDENT_PROFILE_DATA_ENDPOINT = new URL('s/profile', SERVER_URL).href
 
 // ensure that [payload] contains [student_id]
 // add [block_index] too if you want to edit
@@ -50,7 +53,7 @@ export const ADD_STUDENT_PROFILE_BLOCK = async (payload: any) => {
 		formData.append(key, payload[key])
 	}
 
-	let res = await fetch(`http://localhost:4201/s/profile/add`, {
+	let res = await fetch(new URL('s/profile/add', SERVER_URL).href, {
 		method: 'POST',
 		credentials: 'include',
 		body: formData
@@ -68,4 +71,4 @@ export const ALL_COMPANIES_ROUTE = `/a/companies/all`;
 export const ADD_A_JOB_PROFILE = (camp_id: string) => `/a/camp/${camp_id}/addprofile`
 
 
-export const LINK_TO_OPEN_FILE = (resource_id: string) => `http://localhost:4201/serve/${resource_id}`;
+export const LINK_TO_OPEN_FILE = (resource_id: string) => new URL(`serve/${resource_id}`, SERVER_URL).href;

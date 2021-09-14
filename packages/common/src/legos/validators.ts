@@ -41,7 +41,7 @@ export const legoDataValidators
 		address_line: Yup.string().required(),
 	}),
 	"email_type_6": Yup.object().shape({
-		value: Yup.string().required(),
+		value: Yup.string().email().required(),
 	}),
 	"current_course_type_7": Yup.object().shape({
 		program: Yup.string().required(),

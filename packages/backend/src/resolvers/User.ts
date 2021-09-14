@@ -46,7 +46,6 @@ export const UserResolver = {
 				let userUid = types.Uuid.random();
 
 				let hashed_password = await bcrypt.hash(payload.password, PWD_HASH_ROUNDS);
-
 				// insert into users table
 				let res = await dbClient.execute(
 					`INSERT INTO user (
@@ -58,18 +57,18 @@ export const UserResolver = {
 						access_role,
 						has_student_profile,
 						hashed_password)
-					 VALUES (?,?,?,?,?,?,?,?) IF NOT EXISTS`,
-					[
-						userUid,
-						payload.first_name,
-						payload.last_name,
-						payload.email_address,
-						orgUid,
-						"ADMIN",
-						false,
-						hashed_password
-					]
-				);
+						VALUES (?,?,?,?,?,?,?,?) IF NOT EXISTS`,
+						[
+							userUid,
+							payload.first_name,
+							payload.last_name,
+							payload.email_address,
+							orgUid,
+							"ADMIN",
+							false,
+							hashed_password
+						]
+						);
 
 				if (!res.rows[0]['[applied]']) {
 					throw Error("Account already taken!");

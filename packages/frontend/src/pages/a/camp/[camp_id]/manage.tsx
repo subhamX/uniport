@@ -6,8 +6,8 @@ import { useRouter } from 'next/router';
 import GenericModal from "../../../../components/GenericModal/GenericModal";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { INVITE_NEW_USERS_TO_CAMPAIGN_MUTATION } from "../../../../graphql/InviteNewUsersToCampaign";
 import { AddFilteringFormikField } from "./addprofile";
+import { INVITE_NEW_USERS_MUTATION } from "../../../../graphql/InviteNewUsers";
 
 const ManageCampaign = () => {
 	const router = useRouter();
@@ -15,7 +15,7 @@ const ManageCampaign = () => {
 	let { camp_id } = router.query;
 
 	// TODO: Initially camp_id remains undefined. But we still call /graphql/; How to fix it?
-
+	if(!camp_id) return null;
 
 	let { data, loading, error } = useQuery(FETCH_CAMPAIGN_DETAILS_BY_ID, {
 		variables: {
@@ -149,7 +149,7 @@ const AddNewRuleModal = ({ campaign_id, setOpen, open }: { campaign_id: string, 
 
 const InviteUsers = ({ camp_id }) => {
 
-	const [mutationFn, { data, loading, error }] = useMutation(INVITE_NEW_USERS_TO_CAMPAIGN_MUTATION);
+	const [mutationFn, { data, loading, error }] = useMutation(INVITE_NEW_USERS_MUTATION);
 	const handleSubmit = async (e) => {
 		// TODO: check that individual mails are valid
 		let emails = [];

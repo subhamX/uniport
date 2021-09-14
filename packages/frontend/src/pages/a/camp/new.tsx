@@ -6,6 +6,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_A_NEW_CAMPAIGN } from "../../../graphql/CreateANewCampaign";
 import Router from "next/router";
 import { MANAGE_CAMP } from "../../../config/routes-config";
+import { FETCH_MY_CAMPAIGNS } from "../../../graphql/FetchMyCampaigns";
 
 
 type FormFields = {
@@ -23,7 +24,13 @@ const formValidationSchema = Yup.object().shape({
 
 const CreateNewCampaign = () => {
 
-	const [mutationFn, { data, loading: waitingForServerResponse, error }] = useMutation(CREATE_A_NEW_CAMPAIGN);
+	const [mutationFn, { data, loading: waitingForServerResponse, error }] = useMutation(CREATE_A_NEW_CAMPAIGN, {
+		refetchQueries: [
+			FETCH_MY_CAMPAIGNS,
+			'fetchMyCampaigns'
+		]
+	});
+
 	const handleSubmit = async (e: FormFields) => {
 		await mutationFn({
 			variables: {
@@ -33,7 +40,7 @@ const CreateNewCampaign = () => {
 	}
 
 
-	if(data){
+	if (data) {
 		// new campaign creation was successful
 		Router.push(MANAGE_CAMP(data.createANewCampaign.campaign_id));
 		return null;

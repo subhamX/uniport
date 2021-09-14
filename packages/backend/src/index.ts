@@ -17,22 +17,27 @@ import { navMenuSchema } from './schema/NavMenu';
 import { studentProfileDefinitionSchema } from './schema/StudentProfileDefinition';
 import { campaignSchema } from './schema/Campaign';
 import studentProfileRoutes from './routes/StudentProfile';
+import { studentProfileSchema } from './schema/StudentProfile';
+import { inviteUsersSchema } from './schema/Invite';
 
 
 const app = Express();
 declare global {
 	namespace Express {
-		interface User extends UserModelType {
-
-		}
+		interface User extends UserModelType { }
 	}
 }
+
 
 // express session
 app.set('trust proxy', 1) // trust first proxy
 
+
+const is_production = process.env.NODE_ENV;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+
 app.use(cors({
-	origin: 'http://localhost:3000',
+	origin: CLIENT_ORIGIN,
 	credentials: true,
 }))
 
@@ -59,11 +64,9 @@ app.use(session({
 		}
 	})
 }))
-// TODO:
 
 app.use(cookie_parser())
 app.use(Express.json())
-
 
 
 // Passport config
@@ -71,13 +74,12 @@ passport.use(localStrategyConfig);
 
 
 passport.serializeUser<UserModelType, any>((user: UserModelType, done: any) => {
-	console.log("Serialize user?");
 	done(null, user.email_address);
 })
 
 passport.deserializeUser(async (email, done) => {
 	try {
-		console.log("New deserial?", email);
+		console.log("New deserial:", email);
 		const instance = await dbClient.execute('SELECT * FROM user WHERE email_address=?', [email]);
 		if (instance.rowLength !== 1) {
 			throw Error("Passport: Invalid email");
@@ -106,7 +108,14 @@ app.use('/s/', studentProfileRoutes);
 
 (async () => {
 	const server = new ApolloServer({
-		typeDefs: [UserSchema, navMenuSchema, studentProfileDefinitionSchema, campaignSchema],
+		typeDefs: [
+			UserSchema,
+			navMenuSchema,
+			studentProfileDefinitionSchema,
+			campaignSchema,
+			inviteUsersSchema,
+			studentProfileSchema
+		],
 		resolvers: mergedResolvers,
 		context: ({ req, res }) => ({ req, res }),
 		plugins: [

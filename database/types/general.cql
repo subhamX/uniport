@@ -2,6 +2,7 @@
 CREATE TYPE verification_info_type(
 	is_verified Boolean,
 	verified_by TEXT,
+	verifier_id UUID,
 	verify_action_timestamp TIMESTAMP
 );
 

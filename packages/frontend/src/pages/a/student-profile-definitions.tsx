@@ -127,7 +127,9 @@ export default ManageStudentProfileDefinitions;
 const AddNewStudentDefinitionModal = ({ setOpen, open, initialValues }: { setOpen: Dispatch<SetStateAction<boolean>>, open: boolean, initialValues: any }) => {
 	// TODO: make the data as null in consecutive renders. Currently it retains that data is true
 	const [mutationFn, { data, loading, error }] = useMutation(ADD_STUDENT_PROFILE_DEFINITIONS, {
-		fetchPolicy: 'no-cache',
+		refetchQueries: [
+			GET_STUDENT_PROFILE_DEFINITIONS
+		]
 	});
 	const handleSubmit = async (e: any) => {
 		await mutationFn({
