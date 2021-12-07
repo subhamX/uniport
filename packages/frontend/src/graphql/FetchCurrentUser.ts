@@ -9,11 +9,8 @@ export const FETCH_CURRENT_USER = gql`
 			last_name
 			email_address
 			access_role
-			org_id
-			has_student_profile
 			__typename
-			user_id
-
+			_id
 		}
 	}
 `

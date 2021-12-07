@@ -36,10 +36,10 @@ const StudentCampChoose = () => {
 						<div className='text-lg mb-4 font-bold text-blue-600'>
 							Choose a campaign to continue
 						</div>
-						{data && data.getMyCampaigns.map((e, indx) => {
+						{data ? data.getMyCampaigns.map((e, indx) => {
 							return (
 								<div className="" key={indx}>
-									<Link href={CAMPAIGN_DASHBOARD(e.campaign_id,user.access_role)}>
+									<Link href={CAMPAIGN_DASHBOARD(e._id, user.access_role)}>
 										<div className="btn text-base bg-white px-4 py-2 flex items-center my-2 rounded-lg shadow">
 											<div className="w-24 pr-5">
 												<Image src={require('../../../assets/images/workspace.svg')} width='50' height='50' className="rounded" />
@@ -51,7 +51,8 @@ const StudentCampChoose = () => {
 									</Link>
 								</div>
 							);
-						})}
+						}) : null}
+						{data && data.getMyCampaigns.length === 0 ? <div>Please wait while your adminstrator adds you to a campaign. Meanwhile please complete your profile.</div> : null}
 					</div>
 				</div>
 			</Layout>

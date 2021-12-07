@@ -31,10 +31,8 @@ const InviteUsers = () => {
 				<HeadMeta title='Uniport | Manage Campaign' />
 				<Layout>
 					<div className='p-10'>
-
-
 						<div className='font-bold text-xl mt-7 mb-3'>
-							Invite User without campaign
+							Invite Users to Organization
 						</div>
 
 						{error ? <div className='my-3 text-sm text-left text-red-600 bg-red-500 bg-opacity-10 border border-red-400 flex items-center p-4 rounded-md'>Something went wrong: {error.message}</div> : null}

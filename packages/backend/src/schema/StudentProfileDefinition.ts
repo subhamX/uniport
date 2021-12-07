@@ -1,26 +1,65 @@
 import { gql } from "apollo-server-core";
 
 
+
 export const studentProfileDefinitionSchema = gql`
+  scalar FieldValueScalar
+	scalar ArrayScalar
+
 	type StudentProfileDefinition {
-		org_id: String!
-		attribute_id: ID!
-		attribute_type: String!
+		_id: ID!
+		org_id: String! @deprecated(reason: "We don't need this info to pass to client!")
+		position: Int!
 		is_array: Boolean!
-		label: String!
-		is_blocked: Boolean!
-		required: Boolean!
-		options: [String]!
+		block_name: String!
+		is_freezed: String!
+		is_required: Boolean!
 		requires_proof: Boolean!
+		# at least one block is required
+		field_defs: [StudentProfileDefinitionField!]!
 	}
 
-	input AddStudentProfileDefinitionsInput {
-		attribute_type: String!
-		is_array: Boolean!
-		label: String!
+
+	type StudentProfileDefinitionField{
+		_id: ID!
+		field_name: String!
+		type: FieldsTypeEnum!
+		options: ArrayScalar!
 		required: Boolean!
-		options: [String]!
+		position: Int!
+		multi_type: Int!
+	}
+
+	# keep it in sync with actual blocks
+	enum FieldsTypeEnum{
+		text
+		date
+		email
+		integer
+		float
+		markdown
+	}
+
+	input StudentProfileDefinitionBlockInput{
+		field_name: String!
+		type: FieldsTypeEnum!
+		options: ArrayScalar!
+		required: Boolean!
+		# this position is required as it's hard to define things without it
+		position: Int!
+		multi_type: Int!
+	}
+
+
+	input AddStudentProfileDefinitionInput {
+		# if no position is provided we shall use 0
+		position: Int
+		is_array: Boolean!
+		block_name: String!
+		is_freezed: Boolean!
+		is_required: Boolean!
 		requires_proof: Boolean!
+		field_defs: [StudentProfileDefinitionBlockInput!]!
 	}
 
 
@@ -30,9 +69,9 @@ export const studentProfileDefinitionSchema = gql`
 	}
 
 	type Mutation{
-		# for now we will only allow the admin to add fields
+		# Only admin can add fields
 		# editing isn't allowed for now
-		addStudentProfileDefinitions(payload: [AddStudentProfileDefinitionsInput!]!): Boolean!
+		addStudentProfileDefinition(payload: AddStudentProfileDefinitionInput!): StudentProfileDefinition!
 	}
 
 `

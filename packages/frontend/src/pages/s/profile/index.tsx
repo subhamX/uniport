@@ -15,7 +15,7 @@ const StudentProfileBridge = () => {
 	if (data.getUserDetails.access_role === 'ADMIN') {
 		router.push(ADMIN_PRIMARY_DASHBOARD);
 	} else {
-		router.push(STUDENT_PROFILE_ROUTE(data.getUserDetails.user_id));
+		router.push(STUDENT_PROFILE_ROUTE(data.getUserDetails._id));
 	}
 
 	return null;

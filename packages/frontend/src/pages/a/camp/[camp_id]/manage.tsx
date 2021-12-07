@@ -8,6 +8,8 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { AddFilteringFormikField } from "./addprofile";
 import { INVITE_NEW_USERS_MUTATION } from "../../../../graphql/InviteNewUsers";
+import { ADD_STUDENTS_TO_CAMPAIGN_MUTATION } from "../../../../graphql/AddStudentsToCampaign";
+import { AddStudentsToCampaignInput } from "@uniport/common";
 
 const ManageCampaign = () => {
 	const router = useRouter();
@@ -15,7 +17,7 @@ const ManageCampaign = () => {
 	let { camp_id } = router.query;
 
 	// TODO: Initially camp_id remains undefined. But we still call /graphql/; How to fix it?
-	if(!camp_id) return null;
+	if (!camp_id) return null;
 
 	let { data, loading, error } = useQuery(FETCH_CAMPAIGN_DETAILS_BY_ID, {
 		variables: {
@@ -149,7 +151,7 @@ const AddNewRuleModal = ({ campaign_id, setOpen, open }: { campaign_id: string, 
 
 const InviteUsers = ({ camp_id }) => {
 
-	const [mutationFn, { data, loading, error }] = useMutation(INVITE_NEW_USERS_MUTATION);
+	const [mutationFn, { data, loading, error }] = useMutation(ADD_STUDENTS_TO_CAMPAIGN_MUTATION);
 	const handleSubmit = async (e) => {
 		// TODO: check that individual mails are valid
 		let emails = [];
@@ -158,48 +160,33 @@ const InviteUsers = ({ camp_id }) => {
 			if (text) emails.push(text);
 		})
 
+		const payload: AddStudentsToCampaignInput = {
+			student_emails: emails,
+			camp_id,
+		}
 		await mutationFn({
 			variables: {
-				payload: {
-					user_emails: emails,
-					campaign_id: camp_id,
-					access_role: e.access_role,
-				}
+				payload
 			}
 		})
 	}
 	return (
 		<>
 			<div className='font-bold text-xl mt-7 mb-3'>
-				Invite User
+				Add Students to this campaign
 			</div>
+
 
 			{error ? <div className='my-3 text-sm text-left text-red-600 bg-red-500 bg-opacity-10 border border-red-400 flex items-center p-4 rounded-md'>Something went wrong: {error.message}</div> : null}
 			{data ? <div className='my-3 text-sm text-left text-green-600 bg-green-500 bg-opacity-10 border border-green-400 flex items-center p-4 rounded-md'>Users added successfully</div> : null}
 
 			<Formik
-				initialValues={{ access_role: 'ADMIN', user_emails: '' }}
+				initialValues={{ user_emails: '' }}
 				// validationSchema={formFieldsValidationSchema}
 				onSubmit={handleSubmit}
 			>
 
 				<Form className='text-black' autoComplete='off' >
-					<div className="mb-4 flex items-center justify-start gap-7">
-						<label htmlFor="access_role">Access Role:</label>
-						<Field
-							component="select"
-							id="access_role"
-							name="access_role"
-							className='outline-none border-2 px-1 text-sm rounded-lg border-gray-300'
-						>
-							<option value="ADMIN">ADMIN</option>
-							<option value="STUDENT">STUDENT</option>
-						</Field>
-						<p className="text-red-500 text-xs mt-1">
-							<ErrorMessage name='access_role' />
-						</p>
-					</div>
-
 					<Field
 						component="textarea"
 						id="user_emails"
@@ -209,12 +196,11 @@ const InviteUsers = ({ camp_id }) => {
 						className='w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none'
 					>
 					</Field>
-					{/* <textarea className="" rows={4}></textarea> */}
 
 					<div className="flex items-center justify-end">
 						<button type="submit"
 							disabled={loading}
-							className="btn bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Send Invite</button>
+							className="btn bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
 					</div>
 				</Form>
 			</Formik>

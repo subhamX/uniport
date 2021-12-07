@@ -26,8 +26,8 @@ export const AdditionalOptions = ({ accessRole }) => {
 				relative_url: "###",
 			},
 			{
-				label: "Invite (without campaign)",
-				relative_url: "/invite-without-camp",
+				label: "Invite Users",
+				relative_url: "/invite",
 			},
 		],
 		"STUDENT": [

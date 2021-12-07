@@ -42,7 +42,7 @@ const CreateNewCampaign = () => {
 
 	if (data) {
 		// new campaign creation was successful
-		Router.push(MANAGE_CAMP(data.createANewCampaign.campaign_id));
+		Router.push(MANAGE_CAMP(data.createANewCampaign._id));
 		return null;
 	}
 

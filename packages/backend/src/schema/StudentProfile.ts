@@ -3,158 +3,122 @@ import { gql } from "apollo-server-core";
 // all these shall be exclusively available for admins only
 
 export const studentProfileSchema = gql`
-  # returns basic data
 	type StudentProfile{
-		user_id: ID!
-		org_id: ID!
+		_id: ID!
+		campaigns: [Campaign]!
 		first_name: String!
 		last_name: String!
 		email_address: String!
-		# this is only to get basic data
-		# additional data the person shall get via REST
+		org_id: ID! @deprecated (reason: "Don't need this data at client")
+		blocks_data: [BlockData]!
+		verification_info: [VerificationInfo!]!
+	}
+
+	type FieldData {
+		_id: ID! # field_id
+		value: FieldValueScalar!
+	}
+
+	type BlockData {
+		_id: ID!
+		block_def_id: String!
+		field_data: [FieldData!]!
+	}
+
+	type VerificationInfo {
+		_id: ID!
+		timestamp: String!
+		verfier_id: String!
+		verifier_name: String!
 	}
 
 
-	input CompareValue{
-		modifier: String! # only for numeric values (for now)
-		modifier_operator: String! # only for numeric values (for now)
-		value: String! # JSON stringified for arrays and composite obj
-	}
+	# input CompareValue{
+	# 	# modifier: String! # only for numeric values (for now)
+	# 	# modifier_operator: String! # only for numeric values (for now)
+	# 	value: String! # JSON stringified for arrays and composite obj
+	# }
 
 
 	input FilteringConditionInput {
-		key: String!
-		lego_type: String! # just an additional input we are taking from user for debug, and ensure correctness
-		operator: String!
-		compare_value: CompareValue!
+		# key: String!
+		# lego_type: FieldsTypeEnum! # just an additional input we are taking from user for debug, and ensure correctness
+		block_def_id: String!
+		field_id: String!
+		# using generic JSON encoding
+		compare_value: FieldValueScalar
+		operator: SupportedFilteringOperator!
+	}
+
+	enum SupportedFilteringOperator {
+		# base
+		EQUALS
+		DOES_NOT_EQUAL
+		IS_EMPTY
+		IS_NOT_EMPTY
+
+		# text/email/markdown based
+		STARTS_WITH
+		ENDS_WITH
+		CONTAINS
+		DOES_NOT_CONTAIN
+
+		# int/number
+		GREATER_THAN
+		LESS_THAN
+		GREATER_THAN_OR_EQUAL
+		LESS_THAN_OR_EQUAL
+		IS_BETWEEN # inclusive
+
+		# date
+		# dates must be sent in ISO format (as strings)
+		DATE_IS_BEFORE
+		DATE_IS_AFTER
+		DATE_IS_BETWEEN # inclusive
+
+		# for array
+		CONTAINS_ALL_OF
+		CONTAINS_ANY_OF
+		CONTAINS_NONE_OF
+	}
+
+	input GetStudentProfileByQueryInput{
+		offset: Int!
+		page_size: Int!
+		# base query shall search in first_name and last_name
+		# TODO: In future, when we bring priority_fields (like institute roll etc) they will be searched too.
+		base_query: String
+		conditions: [FilteringConditionInput!]!
 	}
 
 	type Query{
-		getStudentBasicDataByQuery(conditions: [FilteringConditionInput]!): [StudentProfile]!
+		# although we are giving full data. Use it cautiously and fetch the required fields only
+		getStudentProfileByQuery(payload: GetStudentProfileByQueryInput): [StudentProfile]!
+		# get Student Profile by ID
+		getStudentProfileById(_id: String!): StudentProfile!
 	}
 
-	# ---DEPRECATED---
-	# type verification_info_type{
-	# 	is_verified: Boolean
-	# 	verified_by: String
-	# 	# TODO: add the id too. Since there can be two person with same name
-	# 	verify_action_timestamp: String
-	# }
+	input MutateStudentProfileFieldInput{
+		# field_id of the block
+		_id: ID!
+		# should be in proper encoded form
+		value: FieldValueScalar!
+	}
 
-	# type date_type_1{
-	# 	value: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type!
-	# }
+	# we have deliberately made it in such a way that
+	# we cannot
+	input MutateStudentProfileBlockDataInput{
+		_id: String
+		block_def_id: String!
+		user_id: String!
+		fields: [MutateStudentProfileFieldInput!]!
+	}
 
-	# type number_type_2{
-	# 	value: Int!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type!
-	# }
 
-	# type single_select_type_3{
-	# 	value: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type phone_number_type_4{
-	# 	country_code: String!
-	# 	ph_number: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type address_type_5{
-	# 	country: String!
-	# 	pincode: String!
-	# 	state: String!
-	# 	district: String!
-	# 	city: String!
-	# 	address_line: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type email_type_6{
-	# 	value: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type current_course_type_7{
-	# 	program: String!
-	# 	specialization: String!
-	# 	course_start_date: String!
-	# 	course_end_date: String!
-	# 	percent_score: Float!
-	# 	institute_roll: String!
-	# 	description: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type education_type_8{
-	# 	school: String!
-	# 	program: String!
-	# 	board: String!
-	# 	education_type: String!
-	# 	percent_score: Float!
-	# 	course_start_date: String!
-	# 	course_end_date: String!
-	# 	proof_file_url: String!
-	# 	description: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type work_experience_type_9{
-	# 	company_name: String!
-	# 	job_title: String!
-	# 	location: String!
-	# 	position_type: String!
-	# 	job_start_date: String!
-	# 	job_end_date: String!
-	# 	details: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type project_type_10{
-	# 	project_name: String!
-	# 	start_date: String!
-	# 	end_date: String!
-	# 	project_url: String!
-	# 	description: String!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type resume_type_11{
-	# 	file_name: String!
-	# 	resume_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# type multi_select_type_12{
-	# 	value: [String]!
-	# 	proof_file_url: String!
-	# 	verification_info: verification_info_type
-	# }
-
-	# union ProfileBlock =
-	# 	date_type_1 |
-	# 	number_type_2 |
-	# 	single_select_type_3 |
-	# 	phone_number_type_4 |
-	# 	address_type_5 |
-	# 	email_type_6 |
-	# 	current_course_type_7 |
-	# 	education_type_8 |
-	# 	work_experience_type_9 |
-	# 	project_type_10 |
-	# 	resume_type_11 |
-	# 	multi_select_type_12
-
+	type Mutation{
+		# add/edit student profile block
+		# note: basic data cannot be changed for now.
+		mutateStudentProfileBlockData(payload: MutateStudentProfileBlockDataInput!): BlockData!
+	}
 
 `;

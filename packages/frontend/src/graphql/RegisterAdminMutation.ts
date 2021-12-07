@@ -9,7 +9,6 @@ export const registerAdminMutation = gql`
 			email_address
 			org_id
 			access_role
-			has_student_profile
 		}
 	}
 `;

@@ -53,7 +53,7 @@ const ManageStudentProfileDefinitions = () => {
 								label: '',
 								options: '',
 								requires_proof: false,
-								attribute_type: allSupportedLEGOs[0],
+								type: allSupportedLEGOs[0],
 								required: true
 							}}
 							open={showAddNewRuleModal}
@@ -73,7 +73,7 @@ const ManageStudentProfileDefinitions = () => {
 										</div>
 										<div className='bg-white px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
 											<div className="text-sm font-medium text-gray-500">Attribute Type</div>
-											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{LEGOIdToTypeName[e.attribute_type]}</div>
+											<div className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{LEGOIdToTypeName[e.type]}</div>
 										</div>
 										<div className='bg-gray-50 px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'>
 											<div className="text-sm font-medium text-gray-500">Is Blocked</div>
@@ -181,13 +181,13 @@ const AddNewStudentDefinitionModal = ({ setOpen, open, initialValues }: { setOpe
 
 												<div className="mb-4">
 													<div className='grid grid-cols-2 items-center my-2'>
-														<label className="block text-gray-700 text-sm font-bold" htmlFor='attribute_type'>
+														<label className="block text-gray-700 text-sm font-bold" htmlFor='type'>
 															Attribute Type
 														</label>
 														<Field
-															name='attribute_type'
+															name='type'
 															component='select'
-															id='attribute_type'
+															id='type'
 															className='shadow border rounded text-sm w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
 														>
 															{/* {allSupportedLEGOs[11]} */}
@@ -197,7 +197,7 @@ const AddNewStudentDefinitionModal = ({ setOpen, open, initialValues }: { setOpe
 
 														</Field>
 														<p className="text-red-500 text-xs mt-1">
-															<ErrorMessage name='attribute_type' />
+															<ErrorMessage name='type' />
 														</p>
 													</div>
 

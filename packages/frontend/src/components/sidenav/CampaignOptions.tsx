@@ -19,14 +19,14 @@ export const CampaignOptions = ({ camp_id, accessRole }) => {
 				relative_url: ADD_A_JOB_PROFILE(camp_id as string),
 			},
 		], "STUDENT": [
-			{
-				label: "Applied Profiles",
-				relative_url: "/s/camp/:id/appliedprofiles",
-			},
-			{
-				label: "All profiles",
-				relative_url: VIEW_CAMP_ALL_PROFILES(camp_id as string, accessRole),
-			},
+			// {
+			// 	label: "Applied Profiles",
+			// 	relative_url: "/s/camp/:id/appliedprofiles",
+			// },
+			// {
+			// 	label: "All profiles",
+			// 	relative_url: VIEW_CAMP_ALL_PROFILES(camp_id as string, accessRole),
+			// },
 		]
 	}
 

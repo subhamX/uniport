@@ -3,14 +3,25 @@ import { gql } from "apollo-server-core";
 
 export const campaignSchema = gql`
 	type Campaign{
-		campaign_id: ID!
+		_id: ID!
 		campaign_name: String!
 	}
 
 	type CampaignDetails{
-		campaign_id: ID!
+		_id: ID!
 		campaign_name: String!
+		number_of_students: Int!
 		rules: [FilteringRule]!
+	}
+
+
+	type Query{
+		# for students we will check the [campaign_by_user] table to get the campaigns
+		# for admin we will directly fetch all the campaigns registered for the org
+		getMyCampaigns: [Campaign]!
+
+		# only authenticated users can access it. (and they need to enrolled in that campaign or must be an admin)
+		getCampaignDetailsById(_id: String!): CampaignDetails!
 	}
 
 	type FilteringRule{
@@ -19,15 +30,6 @@ export const campaignSchema = gql`
 		threshold_value: Int!
 		prefix_multiplier: Int!
 		multi_select_threshold: [String]!
-	}
-
-	type Query{
-		# for students we will check the [campaign_by_user] table to get the campaigns
-		# for admin we will directly fetch all the campaigns registered for the org
-		getMyCampaigns: [Campaign]!
-
-		# only authenticated users can access it. (and they need to enrolled in that campaign or must be an admin)
-		getCampaignDetailsById(campaign_id: String!): CampaignDetails!
 	}
 
 	# input FilteringRuleInput{
@@ -43,11 +45,18 @@ export const campaignSchema = gql`
 	# 	# rules: [FilteringRule]!
 	# }
 
+	input AddStudentsToCampaignInput{
+		camp_id: String!
+		student_emails: [String!]!
+	}
+
 
 
 	type Mutation{
 		# for admin to create a new campaign
 		createANewCampaign(campaign_name: String!): Campaign!
+		# add students to campaign
+		addStudentsToCampaign(payload: AddStudentsToCampaignInput!): Boolean!
 	}
 `
 

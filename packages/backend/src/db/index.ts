@@ -1,18 +1,23 @@
-import { CASSANDRA_KEYSPACE, CASSANDRA_PASSWORD, CASSANDRA_USERNAME, SESSION_SECRET_KEY } from '../config/constants';
-import path from 'path';
-import { Client } from 'cassandra-driver';
+import { MongoClient } from 'mongodb'
+import { exit } from 'process';
+import { DB_NAME, MONGO_URL } from '../config/constants';
 
 
-export const dbClient = new Client({
-	cloud: {
-		secureConnectBundle: path.join(__dirname, "..", '..', "secure-connect-creds.zip"),
-	},
-	credentials: {
-		username: CASSANDRA_USERNAME,
-		password: CASSANDRA_PASSWORD,
-	},
-	keyspace: CASSANDRA_KEYSPACE,
-	encoding: {
-		useUndefinedAsUnset: false,
-	}
-})
+if (MONGO_URL === undefined) {
+	console.error("MONGO_URL isn't defined!");
+	exit(1);
+}
+
+const client = (new MongoClient(MONGO_URL))
+client.connect().then(e => {
+	console.log("Connected")
+}).catch(e => {
+	console.log("Something went wrong while connecting to MongoDb database");
+});
+
+export const dbClient = client.db(DB_NAME)
+
+
+// ensure that the following commands are executed on init
+// dbClient.collection('user').createIndex( { email_address: 1 }, { unique: true } )
+// dbClient.collection('invited_user').createIndex( { email: 1 }, { unique: true } )

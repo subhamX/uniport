@@ -1,8 +1,7 @@
 import Express from 'express';
-import { BACKEND_SERVER_PORT, CASSANDRA_KEYSPACE, SESSION_SECRET_KEY } from './config/constants';
+import { BACKEND_SERVER_PORT, CLIENT_ORIGIN, MONGO_URL, SESSION_SECRET_KEY } from './config/constants';
 import { ApolloServer } from 'apollo-server-express';
 import session from 'express-session';
-import CassandraStore from 'cassandra-store';
 import passport from 'passport';
 import { dbClient } from './db';
 import { UserModelType } from './models/User';
@@ -13,12 +12,11 @@ import { UserSchema } from './schema/User';
 import cookie_parser from 'cookie-parser';
 import cors from 'cors';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core/dist/plugin/landingPage/graphqlPlayground';
-import { navMenuSchema } from './schema/NavMenu';
 import { studentProfileDefinitionSchema } from './schema/StudentProfileDefinition';
 import { campaignSchema } from './schema/Campaign';
-import studentProfileRoutes from './routes/StudentProfile';
 import { studentProfileSchema } from './schema/StudentProfile';
 import { inviteUsersSchema } from './schema/Invite';
+import MongoDBStore from 'connect-mongodb-session';
 
 
 const app = Express();
@@ -33,15 +31,13 @@ declare global {
 app.set('trust proxy', 1) // trust first proxy
 
 
-const is_production = process.env.NODE_ENV;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
 
 app.use(cors({
 	origin: CLIENT_ORIGIN,
 	credentials: true,
 }))
 
-
+// using express sessions to keep track of the user
 app.use(session({
 	secret: SESSION_SECRET_KEY,
 	name: 'uni_id',
@@ -52,39 +48,32 @@ app.use(session({
 		httpOnly: true,
 		maxAge: 365 * 24 * 60 * 60 * 1000,
 	},
-	store: new CassandraStore({
-		"table": "sessions",
-		"client": dbClient,
-		"clientOptions": {
-			"contactPoints": ["localhost"],
-			"keyspace": CASSANDRA_KEYSPACE,
-			"queryOptions": {
-				"prepare": true
-			}
-		}
-	})
+	store: new (MongoDBStore(session))({
+		uri: MONGO_URL,
+		collection: 'mySessions'
+	}),
 }))
 
 app.use(cookie_parser())
 app.use(Express.json())
 
 
-// Passport config
+// instantiating passport with local strategy config
 passport.use(localStrategyConfig);
 
-
+// registering method for passport to serialize the user
 passport.serializeUser<UserModelType, any>((user: UserModelType, done: any) => {
 	done(null, user.email_address);
 })
 
+// registering method for passport to deserialize the user
 passport.deserializeUser(async (email, done) => {
 	try {
-		console.log("New deserial:", email);
-		const instance = await dbClient.execute('SELECT * FROM user WHERE email_address=?', [email]);
-		if (instance.rowLength !== 1) {
+		const instance = await dbClient.collection('user').findOne({ "email_address": email });
+		if (!instance) {
 			throw Error("Passport: Invalid email");
 		}
-		let user = instance.rows[0] as unknown as UserModelType;
+		let user = instance as unknown as UserModelType;
 		done(null, user);
 
 	} catch (err) {
@@ -99,18 +88,15 @@ app.use(passport.session());
 app.get('/', async (req, res) => {
 	res.send({
 		error: false,
-		status: "GREAT"
+		status: "OK"
 	})
 });
-
-app.use('/s/', studentProfileRoutes);
 
 
 (async () => {
 	const server = new ApolloServer({
 		typeDefs: [
 			UserSchema,
-			navMenuSchema,
 			studentProfileDefinitionSchema,
 			campaignSchema,
 			inviteUsersSchema,
@@ -126,8 +112,8 @@ app.use('/s/', studentProfileRoutes);
 	await server.start();
 	server.applyMiddleware({ app, cors: false });
 
-
 	await new Promise(resolve => httpServer.listen({ port: BACKEND_SERVER_PORT }, resolve as any));
 	console.log(`🚀 Server ready at http://localhost:${BACKEND_SERVER_PORT}${server.graphqlPath}`);
 })();
+
 

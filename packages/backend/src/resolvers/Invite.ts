@@ -4,16 +4,29 @@ import { dbClient } from "../db";
 import { CustomApolloContext } from "../types/CustomApolloContext";
 import * as Yup from 'yup'
 import { InviteNewUsersToOrgInput } from "@uniport/common";
+import { ObjectId } from "mongodb";
+import { UUID } from "bson";
+import { InvitedUserModelType } from "src/models/InvitedUser";
 
 
 export const inviteResolvers = {
 	Mutation: {
+		/**
+		 * Method to invite new users to organization
+		 *
+		 * Only authenticated users with ADMIN access role can access this method
+		 * ADMIN can invite users as admin, or as a STUDENT
+		 */
 		inviteNewUsersToOrg: async (_: any, { payload }: { payload: InviteNewUsersToOrgInput }, ctx: CustomApolloContext) => {
 			authenticatedUsersOnly(ctx.req);
 
 			// check if user is "ADMIN"
 			if (ctx.req.user?.access_role !== 'ADMIN') {
 				throw new ForbiddenError("Only admins can perform this action");
+			}
+
+			if (payload.user_emails.length === 0) {
+				throw new UserInputError("user_emails array cannot be empty")
 			}
 
 			// validate the input mails
@@ -24,73 +37,41 @@ export const inviteResolvers = {
 				}
 			}
 
-			let org_id = ctx.req.user.org_id
-
-			if (payload.campaign_id) {
-				// check if the admin owns the campaign and campaign id is valid
-				const res = await dbClient.execute(`SELECT campaign_id
-				FROM campaign_by_org
-				WHERE org_id=? AND campaign_id=?`, [org_id, payload.campaign_id]);
-
-				if (res.rowLength !== 1) {
-					throw new ForbiddenError("Invalid campaign id or access to the campaign is restricted");
+			// finding a user who is already registered on the platform
+			// there can be many conflicting docs, but we will only give one
+			const _conflictingDoc = await dbClient.collection('user').findOne({
+				email_address: {
+					"$in": payload.user_emails
 				}
+			})
+			if (_conflictingDoc) {
+				throw new UserInputError(`User already exists: ${_conflictingDoc.email_address}`)
 			}
 
+			let org_id = ctx.req.user.org_id;
 			let total_invite_cnt = payload.user_emails.length;
 
-			const query = `
-			INSERT INTO invited_user(
-				email,
-				org_id,
-				campaign_id,
-				access_role)
-			VALUES(?,?,?,?)`
-
-			let queries = [];
-
+			let docs = [];
 			for (let email of payload.user_emails) {
-				queries.push({
-					query,
-					params: [
-						email,
-						org_id,
-						payload.campaign_id,
-						payload.access_role
-					]
-				})
+				const tmp: InvitedUserModelType = {
+					_id: new ObjectId(),
+					email,
+					org_id,
+					access_role: payload.access_role,
+					unique_token: new UUID().toString()
+				}
+				docs.push(tmp)
 			}
-
-
-
-
-			await dbClient.batch(queries);
-
-
-			if (payload.campaign_id) {
-				// Unfortunately we cannot batch it with top: (ERROR) [Cannot include a counter statement in a logged batch]
-				// updating the stats
-				// It was giving error when I placed total_invite_cnt in params array
-				// thus have put it inside
-				const updateStatsQuery = `UPDATE campaign_stats_by_org
-				SET number_of_invited_student = number_of_invited_student + ${total_invite_cnt}
-				WHERE org_id=? AND campaign_id=?`;
-
-
-				await dbClient.execute(updateStatsQuery,
-					[org_id, payload.campaign_id]
-				)
-			}
+			await dbClient.collection('invited_user').insertMany(docs);
 
 			// update org stats
-			const updateStatsQuery = `UPDATE org_stats
-			SET number_of_invited_student = number_of_invited_student + ${total_invite_cnt}
-			WHERE org_id=?`;
-
-
-			await dbClient.execute(updateStatsQuery,
-				[org_id]
-			)
+			await dbClient.collection('organization').updateOne({
+				_id: new ObjectId(org_id),
+			}, {
+				$inc: {
+					number_of_invited_users: total_invite_cnt
+				}
+			})
 
 			return true;
 		}

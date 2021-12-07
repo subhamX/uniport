@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
-import { PWD_HASH_ROUNDS } from "../config/constants";
-import { types } from "cassandra-driver";
+import { GENERIC_ORG_LOGO_URL, PWD_HASH_ROUNDS } from "../config/constants";
 import { RegisterWithValidInviteInput, RegisterAdminInput, registerAdminInputValidationSchema, registerWithValidInviteInputValidationSchema } from '@uniport/common';
 import { dbClient } from '../db/index';
 import { CustomApolloContext } from 'src/types/CustomApolloContext';
@@ -9,12 +8,19 @@ import { UserModelType } from 'src/models/User';
 import * as yup from 'yup';
 import { authenticatedUsersOnly, nonAuthenticatedUsersOnly } from '../config/auth/authCheckers';
 import { setAuthCookieAndLogIn } from '../config/auth/setAuthCookieAndLogIn';
+import { ObjectId } from 'mongodb';
+import { InvitedUserModelType } from 'src/models/InvitedUser';
+import { StudentProfileModelType } from 'src/models/StudentProfile';
+import { OrganizationModelType } from 'src/models/Organization';
 
 
 
 export const UserResolver = {
 	Query: {
-		// a test route for debugging purposes
+		/**
+		 * Method to resolve the query to check the auth status
+		 * It's a test route for debugging purposes
+		 */
 		checkAuthStatus: (_: any, __: any, ctx: CustomApolloContext) => {
 			if (ctx.req.isAuthenticated()) {
 				return "AUTHENTICATED";
@@ -23,6 +29,11 @@ export const UserResolver = {
 			}
 		},
 
+		/**
+		 * Method to resolve the query to get the user details
+		 *
+		 * Only authenticated users can perform this operation
+		 */
 		getUserDetails: async (_: any, __: any, ctx: CustomApolloContext) => {
 			// only for authenticated users
 			authenticatedUsersOnly(ctx.req);
@@ -32,7 +43,11 @@ export const UserResolver = {
 	},
 
 	Mutation: {
-		// mutation to register a new "ADMIN"
+		/**
+		 * Method to resolve the mutation to register a new ADMIN
+		 *
+		 * Route is only for non authenticated users
+		 */
 		registerAdmin: async (_: any, { payload }: { payload: RegisterAdminInput }, ctx: CustomApolloContext) => {
 			try {
 				// route only for non authenticated users
@@ -42,58 +57,50 @@ export const UserResolver = {
 				await registerAdminInputValidationSchema.validate(payload);
 
 				// push the email
-				let orgUid = types.Uuid.random();
-				let userUid = types.Uuid.random();
+				let org_id = new ObjectId();
+				let userUid = new ObjectId();
 
 				let hashed_password = await bcrypt.hash(payload.password, PWD_HASH_ROUNDS);
 				// insert into users table
-				let res = await dbClient.execute(
-					`INSERT INTO user (
-						user_id,
-						first_name,
-						last_name,
-						email_address,
-						org_id,
-						access_role,
-						has_student_profile,
-						hashed_password)
-						VALUES (?,?,?,?,?,?,?,?) IF NOT EXISTS`,
-						[
-							userUid,
-							payload.first_name,
-							payload.last_name,
-							payload.email_address,
-							orgUid,
-							"ADMIN",
-							false,
-							hashed_password
-						]
-						);
 
-				if (!res.rows[0]['[applied]']) {
-					throw Error("Account already taken!");
-				}
-
-				// create a new org
-				res = await dbClient.execute(
-					`INSERT INTO organization (org_id, org_name)
-					VALUES (?,?) IF NOT EXISTS`, [orgUid, payload.org_name]
-				);
-
-				if (!res.rows[0]['[applied]']) {
-					// race condition. :(
-					await dbClient.execute('DELETE FROM user WHERE email_address=?', [payload.email_address])
-					throw Error("Something went wrong!");
-				}
-
-				let userData: UserModelType = {
-					user_id: userUid,
+				// ! Overwrite fix
+				let res = await dbClient.collection('user').insertOne({
+					_id: userUid,
 					first_name: payload.first_name,
 					last_name: payload.last_name,
 					email_address: payload.email_address,
-					org_id: orgUid,
+					org_id,
+					"access_role": "ADMIN",
+					hashed_password
+				})
+
+				// create a new org
+				res = await dbClient.collection('organization').insertOne({
+					_id: org_id,
+					name: payload.org_name,
+					// TODO: Org URL
+					logo: GENERIC_ORG_LOGO_URL,
+					// it's a bit weird to consider that the newly registered ADMIn is also an invited user! But we wish to make the following in sync:
+					// number_of_invited_users-(number_of_joined_users)=users with pending invite
+					number_of_invited_users: 1,
+					number_of_joined_users: 1, // 1 for the admin itself
+					number_of_joined_students: 0,
+				} as OrganizationModelType);
+
+				if (!res.acknowledged) {
+					// race condition. :(
+					// We got the user registered but we couldn't create a new org
+					// we should technically remove user. But it's a rare event!
+					throw Error("Something went wrong while creating org!");
+				}
+
+				let userData: UserModelType = {
+					_id: userUid,
+					first_name: payload.first_name,
+					last_name: payload.last_name,
+					email_address: payload.email_address,
+					org_id: org_id,
 					access_role: "ADMIN",
-					has_student_profile: false,
 					hashed_password,
 				}
 
@@ -106,7 +113,9 @@ export const UserResolver = {
 			}
 		},
 
-		// mutation to allow a user to join by invite
+		/**
+		 * Method to resolve the mutation to register a user join the organization with a valid invite
+		 */
 		registerWithValidInvite: async (_: any, { payload }: { payload: RegisterWithValidInviteInput }, ctx: CustomApolloContext) => {
 			// route only for non authenticated users
 			nonAuthenticatedUsersOnly(ctx.req);
@@ -114,117 +123,68 @@ export const UserResolver = {
 			await registerWithValidInviteInputValidationSchema.validate(payload);
 
 			// check if the email is actually invited or not
-			let res = await dbClient.execute(`SELECT * FROM invited_user WHERE email=?`, [payload.email_address]);
-			if (res.rowLength !== 1) {
-				throw new UserInputError("Invalid email. Please use the same email where you received the invite.")
+			const _doc = (await dbClient.collection('invited_user').findOne({
+				email: payload.email_address,
+				unique_token: payload.unique_token
+			})) as unknown as InvitedUserModelType
+
+			if (!_doc) {
+				throw new UserInputError("Invalid email or token. Please use the same email which you received in invite.")
 			}
 
-			let invitedUserData = res.rows[0];
 			let hashedPassword = await bcrypt.hash(payload.password, PWD_HASH_ROUNDS);
-
-			let shouldHaveStudentProfile = false;
-			if (invitedUserData['access_role'] === 'STUDENT') {
-				// ! Ensure that if you add PLACEMENT_COORDINATOR etc. Then you change it here.
-				shouldHaveStudentProfile = true;
-			}
-
-			let userUid = types.Uuid.random();
-			let insertResponse = await dbClient.execute(
-				`INSERT INTO user (
-					user_id,
-					first_name,
-					last_name,
-					email_address,
-					org_id,
-					access_role,
-					has_student_profile,
-					hashed_password)
-				 VALUES (?,?,?,?,?,?,?,?) IF NOT EXISTS`,
-				[
-					userUid,
-					payload.first_name,
-					payload.last_name,
-					payload.email_address,
-					invitedUserData['org_id'],
-					invitedUserData['access_role'],
-					shouldHaveStudentProfile,
-					hashedPassword
-				]
-			);
-
-
-			if (!insertResponse.rows[0]['[applied]']) {
-				// already used. Somehow we didn't delete the from invited user table. [Strange.]
-				throw Error("Something went wrong! Maybe the user is already a user.");
-			}
+			let userUid = new ObjectId();
 
 			let newUser: UserModelType = {
-				user_id: userUid,
+				_id: userUid,
 				first_name: payload.first_name,
 				last_name: payload.last_name,
 				email_address: payload.email_address,
-				org_id: invitedUserData['org_id'],
-				access_role: invitedUserData['access_role'],
-				has_student_profile: false,
+				org_id: _doc.org_id,
+				access_role: _doc.access_role,
 				hashed_password: hashedPassword,
 			}
-			// the user has an invite and the fields are valid
+			// If the user is already there then we shall have error raised by Mongodb because of unique email index
+			await dbClient.collection('user').insertOne(newUser)
 
-			// delete the invite
-			await dbClient.execute(`DELETE FROM invited_user WHERE email=?`, [payload.email_address]);
-
-
-			// update the [campaign_stats_by_org]
-			await dbClient.execute(`UPDATE campaign_stats_by_org
-				SET number_of_invited_student = number_of_invited_student -1,
-				number_of_registered_student = number_of_registered_student +1
-				WHERE org_id=? AND campaign_id=?
-				`, [invitedUserData['org_id'], invitedUserData['campaign_id']])
-
-			// add an entry to [campaign_by_user]
-			// we need campaign_name; So we shall find that from campaign_by_org
-			let campaignDetails = await dbClient.execute(`SELECT campaign_name
-				FROM campaign_by_org
-				WHERE org_id=? AND campaign_id=?`, [invitedUserData['org_id'], invitedUserData['campaign_id']]);
-
-			if (campaignDetails.rowLength !== 1) {
-				throw Error("Something went wrong. Things are out of sync");
+			if (_doc.access_role === 'STUDENT') {
+				// create student_profile
+				const profile: StudentProfileModelType = {
+					_id: userUid,
+					campaigns: [],
+					email_address: _doc.email,
+					first_name: payload.first_name,
+					last_name: payload.last_name,
+					org_id: _doc.org_id,
+					blocks_data: [],
+				};
+				await dbClient.collection('student_profile').insertOne(profile);
 			}
 
-			let campaignName = campaignDetails.rows[0]['campaign_name'];
+			// delete the invite
+			await dbClient.collection('invited_user').deleteOne({
+				_id: _doc._id
+			})
 
-
-			await dbClient.execute(`INSERT INTO campaign_by_user(
-				campaign_id,
-				campaign_name,
-				org_id,
-				user_id)
-				VALUES(?,?,?,?)`, [invitedUserData['campaign_id'], campaignName, invitedUserData['org_id'], userUid])
-
-
-
-			// add a student profile
-			const addStudentProfileQuery = `
-				INSERT INTO student_profile(user_id,org_id,first_name, last_name, email_address)
-				VALUES(?,?,?,?,?)`;
-
-
-			await dbClient.execute(addStudentProfileQuery,
-				[
-					userUid,
-					invitedUserData['org_id'],
-					payload.first_name,
-					payload.last_name,
-					payload.email_address
-				]
-			)
+			// update the [org stats]
+			await dbClient.collection('organization').updateOne({
+				_id: _doc.org_id
+			}, {
+				$inc: {
+					number_of_joined_users: 1,
+					number_of_joined_students: (_doc.access_role === 'STUDENT' ? 1 : 0)
+				}
+				// we aren't decreasing
+			})
 
 			// logIn the user
 			await setAuthCookieAndLogIn(ctx.req, newUser);
 
 			return newUser;
 		},
-
+		/**
+		 * Method to resolve the mutation to login an existing user
+		 */
 		loginExistingUser: async (_: any, { email, password }: { email: string, password: string }, ctx: CustomApolloContext) => {
 			// route only for non authenticated users
 			nonAuthenticatedUsersOnly(ctx.req);
@@ -237,12 +197,15 @@ export const UserResolver = {
 				throw new UserInputError("Bad email or password")
 			}
 
-			let userInstance = await dbClient.execute(`SELECT * FROM user WHERE email_address=?`, [email]);
-			if (userInstance.rowLength !== 1) {
+			let userInstance = await dbClient.collection('user').findOne({
+				email_address: email
+			});
+
+			if (!userInstance) {
 				throw new UserInputError("Invalid email");
 			}
 
-			let user = userInstance.rows[0] as unknown as UserModelType;
+			let user = userInstance as unknown as UserModelType;
 
 			let res = await bcrypt.compare(password, user.hashed_password);
 			if (!res) {

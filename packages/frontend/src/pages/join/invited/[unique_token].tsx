@@ -1,13 +1,13 @@
-import HeadMeta from "../../components/HeadMeta/HeadMeta";
-import NonAuthNavbar from "../../components/NonAuthNavbar/NonAuthNavbar";
+import HeadMeta from "../../../components/HeadMeta/HeadMeta";
+import NonAuthNavbar from "../../../components/NonAuthNavbar/NonAuthNavbar";
 import React from 'react';
 import { useMutation } from "@apollo/client";
 import { RegisterAdminInputForm, RegisterWithValidInviteInput, registerWithValidInviteInputFormValidationSchema, User } from '@uniport/common';
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useRouter } from 'next/router'
-import { BRIGE_DASHBOARD } from "../../config/routes-config";
-import withNoAuth from "../../HOC/withNoAuth";
-import { REGISTER_WITH_VALID_INVITE_MUTATION } from "../../graphql/RegisterWithValidInviteMutation";
+import { BRIGE_DASHBOARD } from "../../../config/routes-config";
+import withNoAuth from "../../../HOC/withNoAuth";
+import { REGISTER_WITH_VALID_INVITE_MUTATION } from "../../../graphql/RegisterWithValidInviteMutation";
 
 
 
@@ -15,6 +15,7 @@ const initialValues: RegisterWithValidInviteInput & { password_confirm: string }
 	first_name: '',
 	last_name: '',
 	email_address: '',
+	unique_token: '',
 	password: '',
 	password_confirm: '',
 }
@@ -28,10 +29,16 @@ const SignUpWithAnInvite = () => {
 	const [mutateFunction, { data, loading: waitingForServerResponse, error }] = useMutation<{ registerWithValidInvite: RegisterWithValidInviteInput }>(REGISTER_WITH_VALID_INVITE_MUTATION);
 	const router = useRouter();
 
+	let unique_token = router.query.unique_token as string;
+
 	// submit handler
 	const handleSubmit = async (e: RegisterAdminInputForm) => {
 		try {
-			let { password_confirm, ...payload } = e;
+			let { password_confirm, ...tmp } = e;
+			const payload = {
+				...tmp,
+				unique_token,
+			}
 			await mutateFunction({
 				variables: {
 					registerWithValidInvitePayload: payload,

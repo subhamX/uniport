@@ -1,15 +1,14 @@
 import { gql } from "apollo-server-express"
 
 
-const UserSchema = gql`
+export const UserSchema = gql`
 	type User {
-		user_id: ID!
+		_id: ID!
 		first_name: String!
 		last_name: String!
 		email_address: String!
 		org_id: String!
-		access_role: String! # for now we have "ADMIN" and "STUDENT"
-		has_student_profile: Boolean!
+		access_role: AccessRoleEnum! # for now we have "ADMIN" and "STUDENT"
 	}
 
 	input RegisterAdminInput {
@@ -25,6 +24,7 @@ const UserSchema = gql`
 		last_name: String!
 		email_address: String!
 		password: String!
+		unique_token: String!
 	}
 
 
@@ -40,14 +40,9 @@ const UserSchema = gql`
 		# Note: all three mutations here will set the [uid] cookie
 		# Mutation to allow the client register a new user with "Email and Password approach"
 		registerAdmin(payload: RegisterAdminInput!): User!
-		# Mutation to allow the client login  a user with "Email and Password appraoch"
+		# Mutation to allow the client login  a user with "Email and Password approach"
 		loginExistingUser(email: String!, password: String!): User!
 		# registration for users with valid invite
 		registerWithValidInvite(payload: RegisterWithValidInviteInput): User!
 	}
 `;
-
-
-export {
-	UserSchema
-}

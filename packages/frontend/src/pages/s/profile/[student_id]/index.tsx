@@ -148,60 +148,60 @@ const RenderLEGOs = ({ getStudentProfileDefinitions, studentProfileDataBlocks })
 	return (
 		<div>
 			{getStudentProfileDefinitions.map((e, indx) => {
-				let { attribute_id, attribute_type }: { attribute_id: string, attribute_type: SupportedLEGOsTypes } = e;
+				let { _id, type }: { _id: string, type: SupportedLEGOsTypes } = e;
 
-				let data: { [key in string]: any } = studentProfileDataBlocks[attribute_id] ?? {};
+				let data: { [key in string]: any } = studentProfileDataBlocks[_id] ?? {};
 
-				if (attribute_type === 'resume_type_11') {
+				if (type === 'resume_type_11') {
 					return (
 						<ResumePilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'phone_number_type_4') {
+				} else if (type === 'phone_number_type_4') {
 					return (
 						<PhoneNumberType4Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'date_type_1') {
+				} else if (type === 'date_type_1') {
 					return (
 						<DateType1Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'number_type_2') {
+				} else if (type === 'number_type_2') {
 					return (
 						<NumberType2Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'single_select_type_3') {
+				} else if (type === 'single_select_type_3') {
 					return (
 						<SingleSelectType3Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'multi_select_type_12') {
+				} else if (type === 'multi_select_type_12') {
 					return (
 						<MultiSelectType12Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'email_type_6') {
+				} else if (type === 'email_type_6') {
 					return (
 						<EmailType6Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'address_type_5') {
+				} else if (type === 'address_type_5') {
 					return (
 						<AddressType5Pilot
 							key={indx}
@@ -209,7 +209,7 @@ const RenderLEGOs = ({ getStudentProfileDefinitions, studentProfileDataBlocks })
 						/>
 					)
 
-				} else if (attribute_type === 'current_course_type_7') {
+				} else if (type === 'current_course_type_7') {
 					return (
 						<CurrentCourseType7Pilot
 							key={indx}
@@ -217,21 +217,21 @@ const RenderLEGOs = ({ getStudentProfileDefinitions, studentProfileDataBlocks })
 						/>
 					)
 
-				} else if (attribute_type === 'education_type_8') {
+				} else if (type === 'education_type_8') {
 					return (
 						<EducationType8Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'project_type_10') {
+				} else if (type === 'project_type_10') {
 					return (
 						<ProjectType10Pilot
 							key={indx}
 							meta={e}
 						/>
 					)
-				} else if (attribute_type === 'work_experience_type_9') {
+				} else if (type === 'work_experience_type_9') {
 					return (
 						<WorkExperienceType9Pilot
 							meta={e}

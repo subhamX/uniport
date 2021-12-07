@@ -15,8 +15,6 @@ export const registerAdminInputValidationSchema: yup.SchemaOf<RegisterAdminInput
 })
 
 
-
-
 // for frontend
 export type RegisterAdminInputForm = RegisterAdminInput & {
 	password_confirm: string;

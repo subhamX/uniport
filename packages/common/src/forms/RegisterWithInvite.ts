@@ -12,6 +12,7 @@ export const registerWithValidInviteInputValidationSchema: yup.SchemaOf<Register
 	last_name: onlyAlphaBets,
 	email_address: yup.string().required().email(),
 	password: yup.string().required().min(5),
+	unique_token: yup.string().required(),
 })
 
 
