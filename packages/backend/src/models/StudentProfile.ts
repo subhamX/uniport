@@ -52,7 +52,7 @@ export type StudentProfileBlockDataType = {
  */
 export type StudentProfileModelType = {
 	_id: ObjectId,
-	campaigns: { camp_id: ObjectId, name: string }[],
+	campaigns: { _id: ObjectId, campaign_name: string }[],
 	first_name: string,
 	last_name: string,
 	email_address: string,

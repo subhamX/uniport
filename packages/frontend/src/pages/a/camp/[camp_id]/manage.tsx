@@ -14,14 +14,14 @@ import { AddStudentsToCampaignInput } from "@uniport/common";
 const ManageCampaign = () => {
 	const router = useRouter();
 
-	let { camp_id } = router.query;
+	let { _id } = router.query;
 
-	// TODO: Initially camp_id remains undefined. But we still call /graphql/; How to fix it?
-	if (!camp_id) return null;
+	// TODO: Initially _id remains undefined. But we still call /graphql/; How to fix it?
+	if (!_id) return null;
 
 	let { data, loading, error } = useQuery(FETCH_CAMPAIGN_DETAILS_BY_ID, {
 		variables: {
-			campaign_id: camp_id
+			campaign_id: _id
 		}
 	});
 
@@ -72,7 +72,7 @@ const ManageCampaign = () => {
 						</div>
 
 
-						{showAddNewRuleModal ? <AddNewRuleModal open={showAddNewRuleModal} setOpen={setshowAddNewRuleModal} campaign_id={camp_id as string} /> : null}
+						{showAddNewRuleModal ? <AddNewRuleModal open={showAddNewRuleModal} setOpen={setshowAddNewRuleModal} campaign_id={_id as string} /> : null}
 
 
 
@@ -82,7 +82,7 @@ const ManageCampaign = () => {
 							</div>
 						</div>
 
-						<InviteUsers camp_id={camp_id} />
+						<InviteUsers _id={_id} />
 					</div> : null}
 				</div>
 			</Layout>
@@ -149,7 +149,7 @@ const AddNewRuleModal = ({ campaign_id, setOpen, open }: { campaign_id: string, 
 
 
 
-const InviteUsers = ({ camp_id }) => {
+const InviteUsers = ({ _id }) => {
 
 	const [mutationFn, { data, loading, error }] = useMutation(ADD_STUDENTS_TO_CAMPAIGN_MUTATION);
 	const handleSubmit = async (e) => {
@@ -162,7 +162,7 @@ const InviteUsers = ({ camp_id }) => {
 
 		const payload: AddStudentsToCampaignInput = {
 			student_emails: emails,
-			camp_id,
+			_id,
 		}
 		await mutationFn({
 			variables: {

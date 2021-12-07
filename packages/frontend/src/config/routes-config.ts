@@ -68,7 +68,7 @@ export const ADD_STUDENT_PROFILE_BLOCK = async (payload: any) => {
 export const ALL_COMPANIES_ROUTE = `/a/companies/all`;
 
 
-export const ADD_A_JOB_PROFILE = (camp_id: string) => `/a/camp/${camp_id}/addprofile`
+export const ADD_A_JOB_PROFILE = (_id: string) => `/a/camp/${_id}/addprofile`
 
 
 export const LINK_TO_OPEN_FILE = (resource_id: string) => new URL(`serve/${resource_id}`, SERVER_URL).href;

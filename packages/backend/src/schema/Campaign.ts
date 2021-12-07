@@ -46,7 +46,7 @@ export const campaignSchema = gql`
 	# }
 
 	input AddStudentsToCampaignInput{
-		camp_id: String!
+		_id: String!
 		student_emails: [String!]!
 	}
 

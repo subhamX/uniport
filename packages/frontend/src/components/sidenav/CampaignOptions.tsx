@@ -2,13 +2,13 @@ import { ADD_A_JOB_PROFILE, VIEW_CAMP_ALL_PROFILES } from "../../config/routes-c
 import { NavItems } from "./NavItems"
 
 // renders all the campaign options
-export const CampaignOptions = ({ camp_id, accessRole }) => {
+export const CampaignOptions = ({ _id, accessRole }) => {
 	// defines the campaign options
 	const campaignOptions = {
 		"ADMIN": [
 			{
 				label: "All profiles",
-				relative_url: VIEW_CAMP_ALL_PROFILES(camp_id as string, accessRole),
+				relative_url: VIEW_CAMP_ALL_PROFILES(_id as string, accessRole),
 			},
 			{
 				label: "Add a company",
@@ -16,7 +16,7 @@ export const CampaignOptions = ({ camp_id, accessRole }) => {
 			},
 			{
 				label: "Add a job profile",
-				relative_url: ADD_A_JOB_PROFILE(camp_id as string),
+				relative_url: ADD_A_JOB_PROFILE(_id as string),
 			},
 		], "STUDENT": [
 			// {
@@ -25,7 +25,7 @@ export const CampaignOptions = ({ camp_id, accessRole }) => {
 			// },
 			// {
 			// 	label: "All profiles",
-			// 	relative_url: VIEW_CAMP_ALL_PROFILES(camp_id as string, accessRole),
+			// 	relative_url: VIEW_CAMP_ALL_PROFILES(_id as string, accessRole),
 			// },
 		]
 	}

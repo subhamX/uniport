@@ -38,14 +38,7 @@ export const campaignResolvers = {
 					_id: ctx.req.user?._id
 				});
 
-				if (data?.campaigns) {
-					data?.campaigns.forEach((e: any) => {
-						campaigns.push({
-							_id: e.camp_id,
-							campaign_name: e.name
-						})
-					})
-				}
+				campaigns = data?.campaigns;
 			}
 
 			return campaigns;
@@ -68,7 +61,7 @@ export const campaignResolvers = {
 				// check if they are enrolled in that
 				const _doc = await dbClient.collection('student_profile').findOne({
 					_id: ctx.req.user?._id,
-					'campaigns.camp_id': _id
+					'campaigns._id': _id
 				})
 				if (!_doc) {
 					throw new ForbiddenError("You don't have access to it");
@@ -152,7 +145,7 @@ export const campaignResolvers = {
 				}
 			}
 
-			const campaignId = new ObjectId(payload.camp_id);
+			const campaignId = new ObjectId(payload._id);
 			const orgId = new ObjectId(ctx.req.user.org_id);
 
 			// checking if the campaign belongs to the same org as admin
@@ -172,7 +165,7 @@ export const campaignResolvers = {
 				email_address: {
 					"$in": payload.student_emails
 				},
-				"campaigns.camp_id": {
+				"campaigns._id": {
 					"$ne": campaignId
 				},
 				org_id: new ObjectId(ctx.req.user.org_id)
@@ -181,7 +174,7 @@ export const campaignResolvers = {
 			const numberOfValidRecords = await cursor.count();
 			if (numberOfValidRecords !== payload.student_emails.length) {
 				// TODO: Make the error message better; maybe include one of the conflicting email;
-				throw new UserInputError("Invalid Request; Either some users haven't joined yet. Or some users are already part of the org. Or there are attempts to add ADMIN to campain (which is not allowed)")
+				throw new UserInputError("Invalid Request; Either some users haven't joined yet. Or some users are already part of the campaign. Or there are attempts to add ADMIN to campaign (which is not allowed)")
 			}
 
 			// add the campaign data to students
@@ -192,8 +185,8 @@ export const campaignResolvers = {
 			}, {
 				$push: {
 					campaigns: {
-						camp_id: campaignId,
-						name: campaign.campaign_name
+						_id: campaignId,
+						campaign_name: campaign.campaign_name
 					}
 				} as any
 			});

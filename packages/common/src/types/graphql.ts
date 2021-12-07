@@ -30,7 +30,7 @@ export type AddStudentProfileDefinitionInput = {
 };
 
 export type AddStudentsToCampaignInput = {
-  camp_id: Scalars['String'];
+  _id: Scalars['String'];
   student_emails: Array<Scalars['String']>;
 };
 
@@ -40,15 +40,6 @@ export type BlockData = {
   block_def_id: Scalars['String'];
   field_data: Array<FieldData>;
 };
-
-export enum FieldsTypeEnum {
-  Date = 'date',
-  Email = 'email',
-  Float = 'float',
-  Integer = 'integer',
-  Markdown = 'markdown',
-  Text = 'text'
-}
 
 export type Campaign = {
   __typename?: 'Campaign';
@@ -69,6 +60,15 @@ export type FieldData = {
   _id: Scalars['ID'];
   value: Scalars['FieldValueScalar'];
 };
+
+export enum FieldsTypeEnum {
+  Date = 'date',
+  Email = 'email',
+  Float = 'float',
+  Integer = 'integer',
+  Markdown = 'markdown',
+  Text = 'text'
+}
 
 export type FilteringConditionInput = {
   block_def_id: Scalars['String'];
@@ -277,7 +277,7 @@ export enum SupportedFilteringOperator {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
-  access_role: Scalars['String'];
+  access_role: AccessRoleEnum;
   email_address: Scalars['String'];
   first_name: Scalars['String'];
   last_name: Scalars['String'];

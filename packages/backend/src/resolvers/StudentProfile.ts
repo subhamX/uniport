@@ -396,8 +396,11 @@ export const studentProfileResolvers = {
 				throw new UserInputError(`Invalid _id: ${blockDataId} passed. There seem to be no data block to edit.`)
 			}
 
+
+
 			return {
 				_id: blockDataId,
+				block_def_id: blockDefId,
 				field_data: newFields
 			};
 		}

@@ -12,7 +12,7 @@ import { SideMenuWrapper } from './SideMenuWrapper';
 // ! This is only for authenticated users. (enforced by Layout)
 const SideNavigationBar = () => {
 	const router = useRouter();
-	const { camp_id } = router.query;
+	const { _id } = router.query;
 
 	const isSideNavOpen = useSideNavStore(state => state.status)
 
@@ -50,7 +50,7 @@ const SideNavigationBar = () => {
 
 				{/* campaign options */}
 				<CampaignOptions
-					camp_id={camp_id}
+					_id={_id}
 					accessRole={accessRole}
 				/>
 
