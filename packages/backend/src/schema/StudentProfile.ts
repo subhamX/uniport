@@ -11,7 +11,24 @@ export const studentProfileSchema = gql`
 		email_address: String!
 		org_id: ID! @deprecated (reason: "Don't need this data at client")
 		blocks_data: [BlockData]!
-		verification_info: [VerificationInfo!]!
+		# to be used while querying data;
+		# getStudentProfileById shall get NULL value
+		matched_groups: [String!]
+	}
+
+	type BlockData {
+		_id: ID!
+		block_def_id: String!
+		field_data: [FieldData!]!
+		verification_info: VerificationInfo
+	}
+
+	type VerificationInfo {
+		# TODO: Check if we need this _id, since we are embedding it?
+		_id: ID!
+		timestamp: String!
+		verfier_id: String!
+		verifier_name: String!
 	}
 
 	type FieldData {
@@ -19,28 +36,7 @@ export const studentProfileSchema = gql`
 		value: FieldValueScalar!
 	}
 
-	type BlockData {
-		_id: ID!
-		block_def_id: String!
-		field_data: [FieldData!]!
-	}
-
-	type VerificationInfo {
-		_id: ID!
-		timestamp: String!
-		verfier_id: String!
-		verifier_name: String!
-	}
-
-
-	# input CompareValue{
-	# 	# modifier: String! # only for numeric values (for now)
-	# 	# modifier_operator: String! # only for numeric values (for now)
-	# 	value: String! # JSON stringified for arrays and composite obj
-	# }
-
-
-	input FilteringConditionInput {
+	input FilteringCondition {
 		# key: String!
 		# lego_type: FieldsTypeEnum! # just an additional input we are taking from user for debug, and ensure correctness
 		block_def_id: String!
@@ -82,13 +78,14 @@ export const studentProfileSchema = gql`
 		CONTAINS_NONE_OF
 	}
 
+	input FilteringConditionGroup{
+		conditions: [FilteringCondition!]!
+	}
+
 	input GetStudentProfileByQueryInput{
 		offset: Int!
 		page_size: Int!
-		# base query shall search in first_name and last_name
-		# TODO: In future, when we bring priority_fields (like institute roll etc) they will be searched too.
-		base_query: String
-		conditions: [FilteringConditionInput!]!
+		filter_groups: [FilteringConditionGroup!]!
 	}
 
 	type Query{

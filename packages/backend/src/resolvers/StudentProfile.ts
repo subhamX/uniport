@@ -8,7 +8,7 @@ import { GetStudentProfileByQueryInput, MutateStudentProfileBlockDataInput } fro
 import { ObjectId } from "mongodb";
 import { StudentProfileDefinitionFieldDefType, StudentProfileDefinitionModelType } from "../models/StudentProfileDefinition";
 import * as Yup from 'yup'
-import { StudentProfileBlockDataType } from "../models/StudentProfile";
+import { StudentProfileBlockDataType, StudentProfileFieldValueType } from "../models/StudentProfile";
 import { isFieldValueValid } from "../utils/isFieldValueValid";
 
 export const studentProfileResolvers = {
@@ -30,216 +30,96 @@ export const studentProfileResolvers = {
 				throw new ForbiddenError("Only admin can perform this action accessing all students data");
 			}
 
+			if (!payload.page_size) throw new UserInputError('PageSize must be positive')
+
 			const limit = payload.page_size > 25 ? 25 : payload.page_size;
-			const stages: any[] = [];
+			const filterGroups: any[][] = [];
 
-			for (let condition of payload.conditions) {
-				const blockDefId = new ObjectId(condition.block_def_id);
-				const fieldId = new ObjectId(condition.field_id);
-				// block_id -> student_def_block
-				// field_id -> individual field inside it
-
-				console.log(condition.compare_value);
-				if ((condition.operator === 'IS_EMPTY' || condition.operator === 'IS_NOT_EMPTY')) {
-					if (condition.compare_value !== undefined) throw new UserInputError(`Operator: ${condition.operator} doesn't require CompareValue`)
-				} else {
-					if (!condition.compare_value) throw new UserInputError(`Operator: ${condition.operator} require CompareValue`)
-				}
-
-				if (condition.operator === 'EQUALS') {
-					stages.push({
-						"$match": {
-							"blocks_data.block_def_id": blockDefId,
-							"blocks_data.field_data": {
-								"$elemMatch": {
-									"_id": fieldId,
-									"value": {
-										"$eq": condition.compare_value
-									}
-								}
-							}
-						}
-					})
-				} else if (condition.operator === 'DOES_NOT_EQUAL') {
-					stages.push({
-						"$match": {
-							"blocks_data.block_def_id": blockDefId,
-							"blocks_data.field_data": {
-								"$elemMatch": {
-									"_id": fieldId,
-									"value": {
-										"$ne": condition.compare_value
-									}
-								}
-							}
-						}
-					})
-				} else if (condition.operator === 'STARTS_WITH' ||
-					condition.operator === 'ENDS_WITH' ||
-					condition.operator === 'CONTAINS' ||
-					condition.operator === 'DOES_NOT_CONTAIN') {
-					if (typeof condition.compare_value !== 'string') {
-						throw new UserInputError(`Operator ${condition.operator} can only be used with strings!`)
-					}
-					let regExp: string;
-					if (condition.operator === 'STARTS_WITH') {
-						regExp = `^${condition.compare_value}`;
-					} else if (condition.operator === 'ENDS_WITH') {
-						regExp = `${condition.compare_value}$`;
-					} else if (condition.operator === 'CONTAINS') {
-						regExp = `${condition.compare_value}`;
+			for (const groupId in payload.filter_groups) {
+				const group = payload.filter_groups[groupId]
+				const stages: any[] = [];
+				for (const condition of group.conditions) {
+					// block_id -> student_def_block
+					// field_id -> individual field inside it
+					if ((condition.operator === 'IS_EMPTY' || condition.operator === 'IS_NOT_EMPTY')) {
+						if (condition.compare_value !== undefined) throw new UserInputError(`Operator: ${condition.operator} doesn't require CompareValue`)
 					} else {
-						regExp = `${condition.compare_value}`;
+						if (!condition.compare_value) throw new UserInputError(`Operator: ${condition.operator} require CompareValue`)
 					}
 
-					stages.push({
-						"$match": {
-							"blocks_data.block_def_id": blockDefId,
-							"blocks_data.field_data": {
-								"$elemMatch": {
-									"_id": fieldId,
-									"value": (condition.operator === 'DOES_NOT_CONTAIN' ? {
-										"$not": {
-											"$regex": new RegExp(regExp, "i")
-										}
-									} : {
-										"$regex": new RegExp(regExp, "i")
-									})
-								}
-							}
-						}
-					})
-				} else if (condition.operator === 'GREATER_THAN' ||
-					condition.operator === 'LESS_THAN' ||
-					condition.operator === 'GREATER_THAN_OR_EQUAL' ||
-					condition.operator === 'LESS_THAN_OR_EQUAL' ||
-					condition.operator === 'IS_BETWEEN') {
-					let valueMatchObj = {};
-					if (condition.operator === 'IS_BETWEEN') {
-						// it needs to be an array
-						if (!Array.isArray(condition.compare_value)) throw new UserInputError(`IS_BETWEEN expects an array`)
-						if (condition.compare_value.length != 2) throw new UserInputError(`IS_BETWEEN expects an array with exactly 2 elements`)
-						if (typeof condition.compare_value[0] !== 'number') throw new UserInputError('Type of all elements should be number')
-						// Note we don't need to check the type of all elements our CustomScaler ensures that the array is homogenous
-						valueMatchObj = {
-							"$gte": condition.compare_value[0],
-							"$lte": condition.compare_value[1],
-						}
-					} else {
-						if (typeof condition.compare_value !== 'number') throw new UserInputError(`${condition.operator} must get a single number as compare_value`)
-						if (condition.operator === 'GREATER_THAN') {
-							valueMatchObj = {
-								"$gt": condition.compare_value
-							}
-						} else if (condition.operator === 'GREATER_THAN_OR_EQUAL') {
-							valueMatchObj = {
-								"$gte": condition.compare_value
-							}
-						} else if (condition.operator === 'LESS_THAN') {
-							valueMatchObj = {
-								"$lt": condition.compare_value
-							}
-						} else if (condition.operator === 'LESS_THAN_OR_EQUAL') {
-							valueMatchObj = {
-								"$lte": condition.compare_value
-							}
-						}
-					}
+					const query = generateCompareValue(condition.operator, condition.compare_value);
 
-					stages.push({
-						"$match": {
-							"blocks_data.block_def_id": blockDefId,
-							"blocks_data.field_data": {
-								"$elemMatch": {
-									"_id": fieldId,
-									"value": valueMatchObj
-								}
-							}
-						}
-					})
-				} else if (condition.operator === 'DATE_IS_BEFORE' ||
-					condition.operator === 'DATE_IS_AFTER' ||
-					condition.operator === 'DATE_IS_BETWEEN') {
-					// validate date
-					let valueMatchObj = {}
-					if (condition.operator === 'DATE_IS_BETWEEN') {
-						// should be an array
-						if (!Array.isArray(condition.compare_value)) throw new UserInputError(`IS_BETWEEN expects an array`)
-						if (condition.compare_value.length != 2) throw new UserInputError(`IS_BETWEEN expects an array with exactly 2 elements`)
-						if (typeof condition.compare_value[0] !== 'string') throw new UserInputError('Date must be in ISO format as a string');
-						condition.compare_value.every((e: string) => {
-							if (!Yup.date().isValidSync(e)) throw new UserInputError(`ISO Date string ${e} is invalid`)
+					if (condition.block_def_id === 'first_name' ||
+						condition.block_def_id === 'email_address' ||
+						condition.block_def_id === 'last_name') {
+						if (condition.block_def_id !== condition.field_id) throw new UserInputError(`block_def_id and field_id should be equal for ${condition.block_def_id}`);
+						stages.push({
+							[condition.block_def_id]: query,
 						})
-						valueMatchObj = {
-							"$gte": new Date(condition.compare_value[0]),
-							"$lte": new Date(condition.compare_value[1]),
-						}
 					} else {
-						if (typeof condition.compare_value !== 'string') throw new UserInputError('Date must be in ISO format as a string');
-						if (!Yup.date().isValidSync(condition.compare_value)) throw new UserInputError(`ISO Date string ${condition.compare_value} is invalid`)
-						if (condition.operator === 'DATE_IS_AFTER') {
-							valueMatchObj = {
-								"$gte": new Date(condition.compare_value),
-							}
-						} else {
-							valueMatchObj = {
-								"$lte": new Date(condition.compare_value),
-							}
-						}
-					}
-					stages.push({
-						"$match": {
+						const blockDefId = new ObjectId(condition.block_def_id);
+						const fieldId = new ObjectId(condition.field_id);
+
+						stages.push({
 							"blocks_data.block_def_id": blockDefId,
 							"blocks_data.field_data": {
 								"$elemMatch": {
 									"_id": fieldId,
-									"value": valueMatchObj
+									"value": query
 								}
 							}
-						}
-					})
-
-
-				} else if (condition.operator === 'CONTAINS_ALL_OF' ||
-					condition.operator === 'CONTAINS_ANY_OF' ||
-					condition.operator === 'CONTAINS_NONE_OF') {
-					// should be an array
-					if (!Array.isArray(condition.compare_value)) throw new UserInputError(`Operator ${condition.operator} expects an array!`)
-
-					let valueMatchObj;
-					if (condition.operator === 'CONTAINS_ALL_OF') {
-						// using $all and not $in, since I want all of them to be present
-						valueMatchObj = {
-							"$all": condition.compare_value
-						}
-					} else if (condition.operator === 'CONTAINS_ANY_OF') {
-						valueMatchObj = {
-							"$in": condition.compare_value
-						}
-					} else if (condition.operator === 'CONTAINS_NONE_OF') {
-						valueMatchObj = {
-							"$nin": condition.compare_value
-						}
+						})
 					}
-					stages.push({
-						"$match": {
-							"blocks_data.block_def_id": blockDefId,
-							"blocks_data.field_data": {
-								"$elemMatch": {
-									"_id": fieldId,
-									"value": valueMatchObj
-								}
-							}
-						}
-					})
-
-				} else {
-					throw new UserInputError(`Operator ${condition.operator} is not supported yet`);
 				}
+				filterGroups.push(stages);
 			}
+			const facetObject: any = {}
+			filterGroups.forEach((group, indx) => {
+				facetObject[`GROUP_${indx}`] = [
+					{ $match: { $and: group } },
+					{ $addFields: { matched_group: indx } }
+				]
+			})
 
-			// TODO: add sort by name, filter and pageSize
-			const cursor = dbClient.collection('student_profile').aggregate(stages);
+			const cursor = dbClient.collection('student_profile').aggregate([
+				{
+					$match: {
+						$or: filterGroups.map(group => ({ $and: group }))
+					}
+				},
+				{
+					$facet: facetObject
+				},
+				{
+					$project: {
+						result: {
+							$concatArrays: filterGroups.map((_, indx) => `$GROUP_${indx}`)
+						}
+					}
+				},
+				{ $unwind: "$result" },
+				{
+					$replaceRoot: { newRoot: "$result" }
+				},
+				{
+					$group: {
+						_id: "$_id",
+						first_name: { $first: "$first_name" },
+						blocks_data: { $first: "$blocks_data" },
+						email_address: { $first: "$email_address" },
+						last_name: { $first: "$last_name" },
+						campaigns: { $first: "$campaigns" },
+						org_id: { $first: "$org_id" },
+						"matched_groups": { "$addToSet": "$matched_group" }
+					}
+				},
+				// sort
+				{ $sort: { first_name: 1, last_name: 1, _id: 1, } },
+				// offset
+				{ $skip: payload.offset },
+				// limit
+				{ $limit: limit }
+			]);
 			const results = await cursor.toArray();
 
 			return results;
@@ -405,4 +285,142 @@ export const studentProfileResolvers = {
 			};
 		}
 	}
+}
+
+
+/**
+ * Generate the query with MongoDB aggregation operator for the given operator and compare_value
+ *
+ * It throws error if there are any type mismatch or any errors!
+ * @param operator
+ * @param compare_value
+ * @returns mongodb aggregation query operator
+ */
+const generateCompareValue = (operator: string, compare_value: StudentProfileFieldValueType) => {
+	let valueMatchObj = {};
+
+	if (operator === 'EQUALS') {
+		valueMatchObj = {
+			"$eq": compare_value
+		}
+	} else if (operator === 'DOES_NOT_EQUAL') {
+		valueMatchObj = {
+			"$ne": compare_value
+		}
+	} else if (operator === 'STARTS_WITH' ||
+		operator === 'ENDS_WITH' ||
+		operator === 'CONTAINS' ||
+		operator === 'DOES_NOT_CONTAIN') {
+		if (typeof compare_value !== 'string') {
+			throw new UserInputError(`Operator ${operator} can only be used with strings!`)
+		}
+		let regExp: string;
+		if (operator === 'STARTS_WITH') {
+			regExp = `^${compare_value}`;
+		} else if (operator === 'ENDS_WITH') {
+			regExp = `${compare_value}$`;
+		} else if (operator === 'CONTAINS') {
+			regExp = `${compare_value}`;
+		} else {
+			regExp = `${compare_value}`;
+		}
+
+		valueMatchObj = (operator === 'DOES_NOT_CONTAIN' ? {
+			"$not": {
+				"$regex": new RegExp(regExp, "i")
+			}
+		} : {
+			"$regex": new RegExp(regExp, "i")
+		})
+
+	} else if (operator === 'GREATER_THAN' ||
+		operator === 'LESS_THAN' ||
+		operator === 'GREATER_THAN_OR_EQUAL' ||
+		operator === 'LESS_THAN_OR_EQUAL' ||
+		operator === 'IS_BETWEEN') {
+		if (operator === 'IS_BETWEEN') {
+			// it needs to be an array
+			if (!Array.isArray(compare_value)) throw new UserInputError(`IS_BETWEEN expects an array`)
+			if (compare_value.length != 2) throw new UserInputError(`IS_BETWEEN expects an array with exactly 2 elements`)
+			if (typeof compare_value[0] !== 'number') throw new UserInputError('Type of all elements should be number')
+			// Note we don't need to check the type of all elements our CustomScaler ensures that the array is homogenous
+			valueMatchObj = {
+				"$gte": compare_value[0],
+				"$lte": compare_value[1],
+			}
+		} else {
+			if (typeof compare_value !== 'number') throw new UserInputError(`${operator} must get a single number as compare_value`)
+			if (operator === 'GREATER_THAN') {
+				valueMatchObj = {
+					"$gt": compare_value
+				}
+			} else if (operator === 'GREATER_THAN_OR_EQUAL') {
+				valueMatchObj = {
+					"$gte": compare_value
+				}
+			} else if (operator === 'LESS_THAN') {
+				valueMatchObj = {
+					"$lt": compare_value
+				}
+			} else if (operator === 'LESS_THAN_OR_EQUAL') {
+				valueMatchObj = {
+					"$lte": compare_value
+				}
+			}
+		}
+	} else if (operator === 'DATE_IS_BEFORE' ||
+		operator === 'DATE_IS_AFTER' ||
+		operator === 'DATE_IS_BETWEEN') {
+		// validate date
+		if (operator === 'DATE_IS_BETWEEN') {
+			// should be an array
+			if (!Array.isArray(compare_value)) throw new UserInputError(`IS_BETWEEN expects an array`)
+			else if (compare_value.length != 2) throw new UserInputError(`IS_BETWEEN expects an array with exactly 2 elements`)
+			else if (typeof compare_value[0] !== 'string') throw new UserInputError('Date must be in ISO format as a string');
+			compare_value.forEach((e: any) => {
+				if (!Yup.date().isValidSync(e)) throw new UserInputError(`ISO Date string ${e} is invalid`)
+			})
+			valueMatchObj = {
+				"$gte": new Date(compare_value[0]),
+				"$lte": new Date(compare_value[1]),
+			}
+		} else {
+			if (typeof compare_value !== 'string') throw new UserInputError('Date must be in ISO format as a string');
+			if (!Yup.date().isValidSync(compare_value)) throw new UserInputError(`ISO Date string ${compare_value} is invalid`)
+			if (operator === 'DATE_IS_AFTER') {
+				valueMatchObj = {
+					"$gte": new Date(compare_value),
+				}
+			} else {
+				valueMatchObj = {
+					"$lte": new Date(compare_value),
+				}
+			}
+		}
+
+	} else if (operator === 'CONTAINS_ALL_OF' ||
+		operator === 'CONTAINS_ANY_OF' ||
+		operator === 'CONTAINS_NONE_OF') {
+		// should be an array
+		if (!Array.isArray(compare_value)) throw new UserInputError(`Operator ${operator} expects an array!`)
+
+		if (operator === 'CONTAINS_ALL_OF') {
+			// using $all and not $in, since I want all of them to be present
+			valueMatchObj = {
+				"$all": compare_value
+			}
+		} else if (operator === 'CONTAINS_ANY_OF') {
+			valueMatchObj = {
+				"$in": compare_value
+			}
+		} else if (operator === 'CONTAINS_NONE_OF') {
+			valueMatchObj = {
+				"$nin": compare_value
+			}
+		}
+	} else {
+		throw new UserInputError(`Operator ${operator} is not supported yet`);
+	}
+
+	return valueMatchObj;
 }

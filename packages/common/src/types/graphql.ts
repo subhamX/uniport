@@ -39,6 +39,7 @@ export type BlockData = {
   _id: Scalars['ID'];
   block_def_id: Scalars['String'];
   field_data: Array<FieldData>;
+  verification_info?: Maybe<VerificationInfo>;
 };
 
 export type Campaign = {
@@ -70,7 +71,11 @@ export enum FieldsTypeEnum {
   Text = 'text'
 }
 
-export type FilteringConditionInput = {
+export type FilteringConditionGroup = {
+  conditions: Array<FilteringCondition>;
+};
+
+export type FilteringCondition = {
   block_def_id: Scalars['String'];
   compare_value?: InputMaybe<Scalars['FieldValueScalar']>;
   field_id: Scalars['String'];
@@ -87,8 +92,7 @@ export type FilteringRule = {
 };
 
 export type GetStudentProfileByQueryInput = {
-  base_query?: InputMaybe<Scalars['String']>;
-  conditions: Array<FilteringConditionInput>;
+  filter_groups: Array<FilteringConditionGroup>;
   offset: Scalars['Int'];
   page_size: Scalars['Int'];
 };
@@ -213,9 +217,9 @@ export type StudentProfile = {
   email_address: Scalars['String'];
   first_name: Scalars['String'];
   last_name: Scalars['String'];
+  matched_groups?: Maybe<Array<Scalars['String']>>;
   /** @deprecated Don't need this data at client */
   org_id: Scalars['ID'];
-  verification_info: Array<VerificationInfo>;
 };
 
 export type StudentProfileDefinition = {

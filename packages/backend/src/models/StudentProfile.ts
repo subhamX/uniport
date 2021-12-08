@@ -50,7 +50,7 @@ export type StudentProfileBlockDataType = {
  * Similarly, there is a Many to Many relation from Campaign to Student. (But we aren't storing it anywhere! as this relation isn't critical for our application)
  *
  */
-export type StudentProfileModelType = {
+export interface StudentProfileModelType {
 	_id: ObjectId,
 	campaigns: { _id: ObjectId, campaign_name: string }[],
 	first_name: string,

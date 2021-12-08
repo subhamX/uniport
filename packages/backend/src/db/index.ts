@@ -2,17 +2,16 @@ import { MongoClient } from 'mongodb'
 import { exit } from 'process';
 import { DB_NAME, MONGO_URL } from '../config/constants';
 
-
 if (MONGO_URL === undefined) {
 	console.error("MONGO_URL isn't defined!");
 	exit(1);
 }
 
 const client = (new MongoClient(MONGO_URL))
-client.connect().then(e => {
+client.connect().then(async e => {
 	console.log("Connected")
 }).catch(e => {
-	console.log("Something went wrong while connecting to MongoDb database");
+	console.log("Something went wrong while connecting to MongoDb database: ", e);
 });
 
 export const dbClient = client.db(DB_NAME)
