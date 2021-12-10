@@ -23,7 +23,6 @@ export type StudentProfileFieldData = {
  * Any update by user (including admin) shall set the VerificationInfo block to null
  */
 export type StudentProfileVerificationInfoType = {
-	_id: ObjectId,
 	timestamp: Date,
 	verified_uid: ObjectId,
 	verifier_name: string

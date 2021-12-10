@@ -14,3 +14,6 @@ export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
 
 
 export const GENERIC_ORG_LOGO_URL = '/generic';
+
+
+export const genericCompanyLogoUrl = 'https://img.icons8.com/fluency/96/000000/company.png'

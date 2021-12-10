@@ -1,6 +1,7 @@
 import { ArrayScalar } from "../scalers/ArrayScalar";
 import { FieldValueScalar } from "../scalers/FieldValueScalar";
 import { campaignResolvers } from "./Campaign";
+import { companyResolvers } from "./Company";
 import { inviteResolvers } from "./Invite";
 import { studentProfileResolvers } from "./StudentProfile";
 import { studentProfileDefinitionResolver } from "./StudentProfileDefinition";
@@ -18,7 +19,8 @@ export const mergedResolvers = {
 		...UserResolver.Query,
 		...studentProfileDefinitionResolver.Query,
 		...campaignResolvers.Query,
-		...studentProfileResolvers.Query
+		...studentProfileResolvers.Query,
+		...companyResolvers.Query
 	},
 	// mutation resolvers
 	Mutation: {
@@ -26,6 +28,7 @@ export const mergedResolvers = {
 		...campaignResolvers.Mutation,
 		...studentProfileDefinitionResolver.Mutation,
 		...inviteResolvers.Mutation,
-		...studentProfileResolvers.Mutation
+		...studentProfileResolvers.Mutation,
+		...companyResolvers.Mutation
 	},
 }

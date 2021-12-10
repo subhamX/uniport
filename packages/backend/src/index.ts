@@ -17,6 +17,7 @@ import { campaignSchema } from './schema/Campaign';
 import { studentProfileSchema } from './schema/StudentProfile';
 import { inviteUsersSchema } from './schema/Invite';
 import MongoDBStore from 'connect-mongodb-session';
+import { companySchema } from './schema/Company';
 
 
 const app = Express();
@@ -100,7 +101,8 @@ app.get('/', async (req, res) => {
 			studentProfileDefinitionSchema,
 			campaignSchema,
 			inviteUsersSchema,
-			studentProfileSchema
+			studentProfileSchema,
+			companySchema
 		],
 		resolvers: mergedResolvers,
 		context: ({ req, res }) => ({ req, res }),

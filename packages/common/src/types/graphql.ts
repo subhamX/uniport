@@ -34,6 +34,12 @@ export type AddStudentsToCampaignInput = {
   student_emails: Array<Scalars['String']>;
 };
 
+export type BaseCompany = {
+  __typename?: 'BaseCompany';
+  logo_url: Scalars['String'];
+  name: Scalars['String'];
+};
+
 export type BlockData = {
   __typename?: 'BlockData';
   _id: Scalars['ID'];
@@ -56,6 +62,14 @@ export type CampaignDetails = {
   rules: Array<Maybe<FilteringRule>>;
 };
 
+export type Company = {
+  __typename?: 'Company';
+  _id: Scalars['String'];
+  logo_url: Scalars['String'];
+  name: Scalars['String'];
+  org_id: Scalars['String'];
+};
+
 export type FieldData = {
   __typename?: 'FieldData';
   _id: Scalars['ID'];
@@ -71,15 +85,15 @@ export enum FieldsTypeEnum {
   Text = 'text'
 }
 
-export type FilteringConditionGroup = {
-  conditions: Array<FilteringCondition>;
-};
-
 export type FilteringCondition = {
   block_def_id: Scalars['String'];
   compare_value?: InputMaybe<Scalars['FieldValueScalar']>;
   field_id: Scalars['String'];
   operator: SupportedFilteringOperator;
+};
+
+export type FilteringConditionGroup = {
+  conditions: Array<FilteringCondition>;
 };
 
 export type FilteringRule = {
@@ -102,6 +116,12 @@ export type InviteNewUsersToOrgInput = {
   user_emails: Array<Scalars['String']>;
 };
 
+export type MutateCompanyToOrgInput = {
+  _id?: InputMaybe<Scalars['String']>;
+  logo_url?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
 export type MutateStudentProfileBlockDataInput = {
   _id?: InputMaybe<Scalars['String']>;
   block_def_id: Scalars['String'];
@@ -121,6 +141,7 @@ export type Mutation = {
   createANewCampaign: Campaign;
   inviteNewUsersToOrg: Scalars['Boolean'];
   loginExistingUser: User;
+  mutateCompanyToOrg: Company;
   mutateStudentProfileBlockData: BlockData;
   registerAdmin: User;
   registerWithValidInvite: User;
@@ -153,6 +174,11 @@ export type MutationLoginExistingUserArgs = {
 };
 
 
+export type MutationMutateCompanyToOrgArgs = {
+  companyDetails: MutateCompanyToOrgInput;
+};
+
+
 export type MutationMutateStudentProfileBlockDataArgs = {
   payload: MutateStudentProfileBlockDataInput;
 };
@@ -171,16 +197,24 @@ export type Query = {
   __typename?: 'Query';
   checkAuthStatus: Scalars['String'];
   getCampaignDetailsById: CampaignDetails;
+  getCompaniesInOrg: Array<Company>;
   getMyCampaigns: Array<Maybe<Campaign>>;
   getStudentProfileById: StudentProfile;
   getStudentProfileByQuery: Array<Maybe<StudentProfile>>;
   getStudentProfileDefinitions: Array<Maybe<StudentProfileDefinition>>;
   getUserDetails?: Maybe<User>;
+  queryBaseCompanies: Array<BaseCompany>;
 };
 
 
 export type QueryGetCampaignDetailsByIdArgs = {
   _id: Scalars['String'];
+};
+
+
+export type QueryGetCompaniesInOrgArgs = {
+  offset: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
@@ -191,6 +225,11 @@ export type QueryGetStudentProfileByIdArgs = {
 
 export type QueryGetStudentProfileByQueryArgs = {
   payload?: InputMaybe<GetStudentProfileByQueryInput>;
+};
+
+
+export type QueryQueryBaseCompaniesArgs = {
+  query: Scalars['String'];
 };
 
 export type RegisterAdminInput = {
