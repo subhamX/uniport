@@ -21,7 +21,7 @@ export enum AccessRoleEnum {
 
 export type AddStudentProfileDefinitionInput = {
   block_name: Scalars['String'];
-  field_defs: Array<StudentProfileDefinitionBlockInput>;
+  field_defs: Array<FieldSchemaInput>;
   is_array: Scalars['Boolean'];
   is_freezed: Scalars['Boolean'];
   is_required: Scalars['Boolean'];
@@ -76,6 +76,26 @@ export type FieldData = {
   value: Scalars['FieldValueScalar'];
 };
 
+export type FieldSchema = {
+  __typename?: 'FieldSchema';
+  _id: Scalars['ID'];
+  field_name: Scalars['String'];
+  multi_type: Scalars['Int'];
+  options: Scalars['ArrayScalar'];
+  position: Scalars['Int'];
+  required: Scalars['Boolean'];
+  type: FieldsTypeEnum;
+};
+
+export type FieldSchemaInput = {
+  field_name: Scalars['String'];
+  multi_type: Scalars['Int'];
+  options: Scalars['ArrayScalar'];
+  position: Scalars['Int'];
+  required: Scalars['Boolean'];
+  type: FieldsTypeEnum;
+};
+
 export enum FieldsTypeEnum {
   Date = 'date',
   Email = 'email',
@@ -86,14 +106,22 @@ export enum FieldsTypeEnum {
 }
 
 export type FilteringCondition = {
+  __typename?: 'FilteringCondition';
   block_def_id: Scalars['String'];
-  compare_value?: InputMaybe<Scalars['FieldValueScalar']>;
+  compare_value?: Maybe<Scalars['FieldValueScalar']>;
   field_id: Scalars['String'];
   operator: SupportedFilteringOperator;
 };
 
 export type FilteringConditionGroup = {
-  conditions: Array<FilteringCondition>;
+  conditions: Array<FilteringConditionInput>;
+};
+
+export type FilteringConditionInput = {
+  block_def_id: Scalars['String'];
+  compare_value?: InputMaybe<Scalars['FieldValueScalar']>;
+  field_id: Scalars['String'];
+  operator: SupportedFilteringOperator;
 };
 
 export type FilteringRule = {
@@ -114,6 +142,64 @@ export type GetStudentProfileByQueryInput = {
 export type InviteNewUsersToOrgInput = {
   access_role: AccessRoleEnum;
   user_emails: Array<Scalars['String']>;
+};
+
+export type JobProfile = {
+  __typename?: 'JobProfile';
+  _id: Scalars['String'];
+  additional_questions: Array<FieldSchema>;
+  array_blocks_config: Array<JobProfileArrayBlocksConfig>;
+  camp_id: Scalars['String'];
+  company: Company;
+  created_at: Scalars['String'];
+  creator_name: Scalars['String'];
+  creator_uid: Scalars['String'];
+  current_stage: Scalars['Int'];
+  deadline: Scalars['String'];
+  description: Scalars['String'];
+  is_complete: Scalars['Boolean'];
+  is_published: Scalars['Boolean'];
+  org_id: Scalars['String'];
+  rule_groups: Array<JobProfileRuleGroup>;
+  stipend_high: Scalars['Int'];
+  stipend_low: Scalars['Int'];
+  title: Scalars['String'];
+};
+
+export type JobProfileAdvancedDetailsInput = {
+  additional_questions?: InputMaybe<Array<FieldSchemaInput>>;
+  array_blocks_config?: InputMaybe<Array<JobProfileArrayBlocksConfigInput>>;
+  job_profile_id: Scalars['String'];
+  rule_groups?: InputMaybe<Array<FilteringConditionGroup>>;
+};
+
+export type JobProfileArrayBlocksConfig = {
+  __typename?: 'JobProfileArrayBlocksConfig';
+  _id: Scalars['String'];
+  help_text: Scalars['String'];
+  max_blocks: Scalars['Int'];
+  min_blocks: Scalars['Int'];
+};
+
+export type JobProfileArrayBlocksConfigInput = {
+  _id: Scalars['String'];
+  help_text: Scalars['String'];
+  max_blocks: Scalars['Int'];
+  min_blocks: Scalars['Int'];
+};
+
+export type JobProfileBasicDetailsInput = {
+  description: Scalars['String'];
+  job_profile_id: Scalars['String'];
+  stipend_high: Scalars['Int'];
+  stipend_low: Scalars['Int'];
+  title: Scalars['String'];
+};
+
+export type JobProfileRuleGroup = {
+  __typename?: 'JobProfileRuleGroup';
+  _id: Scalars['String'];
+  conditions: Array<FilteringCondition>;
 };
 
 export type MutateCompanyToOrgInput = {
@@ -139,12 +225,17 @@ export type Mutation = {
   addStudentProfileDefinition: StudentProfileDefinition;
   addStudentsToCampaign: Scalars['Boolean'];
   createANewCampaign: Campaign;
+  createNewJobProfile: JobProfile;
   inviteNewUsersToOrg: Scalars['Boolean'];
   loginExistingUser: User;
   mutateCompanyToOrg: Company;
   mutateStudentProfileBlockData: BlockData;
+  publishJobProfile: Scalars['Boolean'];
   registerAdmin: User;
   registerWithValidInvite: User;
+  updateDeadlineOfJobProfile: Scalars['Boolean'];
+  updateJobProfileAdvancedDetails: JobProfile;
+  updateJobProfileBasicDetails: JobProfile;
 };
 
 
@@ -160,6 +251,11 @@ export type MutationAddStudentsToCampaignArgs = {
 
 export type MutationCreateANewCampaignArgs = {
   campaign_name: Scalars['String'];
+};
+
+
+export type MutationCreateNewJobProfileArgs = {
+  payload: NewJobProfileInput;
 };
 
 
@@ -184,6 +280,11 @@ export type MutationMutateStudentProfileBlockDataArgs = {
 };
 
 
+export type MutationPublishJobProfileArgs = {
+  _id: Scalars['String'];
+};
+
+
 export type MutationRegisterAdminArgs = {
   payload: RegisterAdminInput;
 };
@@ -193,17 +294,46 @@ export type MutationRegisterWithValidInviteArgs = {
   payload?: InputMaybe<RegisterWithValidInviteInput>;
 };
 
+
+export type MutationUpdateDeadlineOfJobProfileArgs = {
+  _id: Scalars['String'];
+  new_deadline: Scalars['String'];
+};
+
+
+export type MutationUpdateJobProfileAdvancedDetailsArgs = {
+  payload: JobProfileAdvancedDetailsInput;
+};
+
+
+export type MutationUpdateJobProfileBasicDetailsArgs = {
+  payload: JobProfileBasicDetailsInput;
+};
+
+export type NewJobProfileInput = {
+  camp_id: Scalars['String'];
+  company_id: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   checkAuthStatus: Scalars['String'];
+  getAllJobProfiles: Array<JobProfile>;
   getCampaignDetailsById: CampaignDetails;
   getCompaniesInOrg: Array<Company>;
+  getJobProfileById: JobProfile;
   getMyCampaigns: Array<Maybe<Campaign>>;
   getStudentProfileById: StudentProfile;
   getStudentProfileByQuery: Array<Maybe<StudentProfile>>;
   getStudentProfileDefinitions: Array<Maybe<StudentProfileDefinition>>;
   getUserDetails?: Maybe<User>;
   queryBaseCompanies: Array<BaseCompany>;
+};
+
+
+export type QueryGetAllJobProfilesArgs = {
+  offset: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
@@ -215,6 +345,11 @@ export type QueryGetCampaignDetailsByIdArgs = {
 export type QueryGetCompaniesInOrgArgs = {
   offset: Scalars['Int'];
   pageSize: Scalars['Int'];
+};
+
+
+export type QueryGetJobProfileByIdArgs = {
+  _id: Scalars['String'];
 };
 
 
@@ -265,7 +400,7 @@ export type StudentProfileDefinition = {
   __typename?: 'StudentProfileDefinition';
   _id: Scalars['ID'];
   block_name: Scalars['String'];
-  field_defs: Array<StudentProfileDefinitionField>;
+  field_defs: Array<FieldSchema>;
   is_array: Scalars['Boolean'];
   is_freezed: Scalars['String'];
   is_required: Scalars['Boolean'];
@@ -273,26 +408,6 @@ export type StudentProfileDefinition = {
   org_id: Scalars['String'];
   position: Scalars['Int'];
   requires_proof: Scalars['Boolean'];
-};
-
-export type StudentProfileDefinitionBlockInput = {
-  field_name: Scalars['String'];
-  multi_type: Scalars['Int'];
-  options: Scalars['ArrayScalar'];
-  position: Scalars['Int'];
-  required: Scalars['Boolean'];
-  type: FieldsTypeEnum;
-};
-
-export type StudentProfileDefinitionField = {
-  __typename?: 'StudentProfileDefinitionField';
-  _id: Scalars['ID'];
-  field_name: Scalars['String'];
-  multi_type: Scalars['Int'];
-  options: Scalars['ArrayScalar'];
-  position: Scalars['Int'];
-  required: Scalars['Boolean'];
-  type: FieldsTypeEnum;
 };
 
 export enum SupportedFilteringOperator {
@@ -310,8 +425,6 @@ export enum SupportedFilteringOperator {
   GreaterThan = 'GREATER_THAN',
   GreaterThanOrEqual = 'GREATER_THAN_OR_EQUAL',
   IsBetween = 'IS_BETWEEN',
-  IsEmpty = 'IS_EMPTY',
-  IsNotEmpty = 'IS_NOT_EMPTY',
   LessThan = 'LESS_THAN',
   LessThanOrEqual = 'LESS_THAN_OR_EQUAL',
   StartsWith = 'STARTS_WITH'

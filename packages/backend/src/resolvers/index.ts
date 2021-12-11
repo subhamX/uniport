@@ -3,6 +3,7 @@ import { FieldValueScalar } from "../scalers/FieldValueScalar";
 import { campaignResolvers } from "./Campaign";
 import { companyResolvers } from "./Company";
 import { inviteResolvers } from "./Invite";
+import { jobProfileResolvers } from "./JobProfile";
 import { studentProfileResolvers } from "./StudentProfile";
 import { studentProfileDefinitionResolver } from "./StudentProfileDefinition";
 import { UserResolver } from "./User";
@@ -20,7 +21,8 @@ export const mergedResolvers = {
 		...studentProfileDefinitionResolver.Query,
 		...campaignResolvers.Query,
 		...studentProfileResolvers.Query,
-		...companyResolvers.Query
+		...companyResolvers.Query,
+		...jobProfileResolvers.Query,
 	},
 	// mutation resolvers
 	Mutation: {
@@ -29,6 +31,8 @@ export const mergedResolvers = {
 		...studentProfileDefinitionResolver.Mutation,
 		...inviteResolvers.Mutation,
 		...studentProfileResolvers.Mutation,
-		...companyResolvers.Mutation
+		...companyResolvers.Mutation,
+		...jobProfileResolvers.Mutation,
 	},
+	JobProfile: jobProfileResolvers.JobProfile
 }

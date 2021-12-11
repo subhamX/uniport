@@ -1,7 +1,7 @@
 import { validateValueWithSupportedBlockType } from "@uniport/common";
 import { UserInputError } from "apollo-server-core";
 import { StudentProfileFieldValueType } from "../models/StudentProfile";
-import { StudentProfileDefinitionFieldDefType } from "../models/StudentProfileDefinition";
+import { FieldSchemaType } from "../models/StudentProfileDefinition";
 
 
 /**
@@ -12,7 +12,7 @@ import { StudentProfileDefinitionFieldDefType } from "../models/StudentProfileDe
  * @param fieldDefinition definition of the field (not of block)
  * @param fieldValue value of the field
  */
- export const isFieldValueValid = (fieldDefinition: StudentProfileDefinitionFieldDefType, fieldValue: StudentProfileFieldValueType) => {
+ export const isFieldValueValid = (fieldDefinition: FieldSchemaType, fieldValue: StudentProfileFieldValueType) => {
 	const blockType = fieldDefinition.type;
 	const multi_type = fieldDefinition.multi_type;
 	const options = fieldDefinition.options;

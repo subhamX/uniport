@@ -17,14 +17,14 @@ export type StudentProfileDefinitionModelType = {
 	is_freezed: Boolean
 	is_required: Boolean
 	requires_proof: Boolean
-	field_defs: StudentProfileDefinitionFieldDefType[]
+	field_defs: FieldSchemaType[]
 }
 
 
 /**
  * Type of StudentProfileDefinition Field
  */
-export type StudentProfileDefinitionFieldDefType = {
+export type FieldSchemaType = {
 	_id: ObjectId,
 	field_name: string,
 	type: SupportedFieldsType,

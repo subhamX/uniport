@@ -1,12 +1,10 @@
-// the following options shall be used only by admin
-
 import { ForbiddenError, UserInputError } from "apollo-server-core";
 import { authenticatedUsersOnly } from "../config/auth/authCheckers";
 import { dbClient } from "../db";
 import { CustomApolloContext } from "../types/CustomApolloContext";
 import { GetStudentProfileByQueryInput, MutateStudentProfileBlockDataInput } from '@uniport/common'
 import { ObjectId } from "mongodb";
-import { StudentProfileDefinitionFieldDefType, StudentProfileDefinitionModelType } from "../models/StudentProfileDefinition";
+import { FieldSchemaType, StudentProfileDefinitionModelType } from "../models/StudentProfileDefinition";
 import * as Yup from 'yup'
 import { StudentProfileBlockDataType, StudentProfileFieldValueType } from "../models/StudentProfile";
 import { isFieldValueValid } from "../utils/isFieldValueValid";
@@ -17,7 +15,8 @@ export const studentProfileResolvers = {
 		 * Method to query all the student records in the organization and send the filtered results
 		 * Only authenticated users with ADMIN scope can perform this operation
 		 *
-		 * We aren't performing any validation, as it makes the filtering process very slow. It's the client duty to pass things rightly. Failing to do it will cause EMPTY results!
+		 * ! We aren't performing any validation, as it makes the filtering process very slow. It's the client duty to pass things rightly. Failing to do it will cause EMPTY results!
+		 * UPDATE: We do have a validation module in JobProfile which can be used to validate the fields
 		 * Do note that all inputs are thoroughly analysed before executing.
 		 *
 		 * Note: for block with is_array=true; we don't allow filtering, but still if someone gives block_def_id and field_id, we shall go ahead and execute the query
@@ -41,7 +40,8 @@ export const studentProfileResolvers = {
 				for (const condition of group.conditions) {
 					// block_id -> student_def_block
 					// field_id -> individual field inside it
-					if ((condition.operator === 'IS_EMPTY' || condition.operator === 'IS_NOT_EMPTY')) {
+					// TODO: When IS_EMPTY, IS_NOT_EMPTY is added
+					if (((condition as any).operator === 'IS_EMPTY' || (condition as any).operator === 'IS_NOT_EMPTY')) {
 						if (condition.compare_value !== undefined) throw new UserInputError(`Operator: ${condition.operator} doesn't require CompareValue`)
 					} else {
 						if (!condition.compare_value) throw new UserInputError(`Operator: ${condition.operator} require CompareValue`)
@@ -203,7 +203,7 @@ export const studentProfileResolvers = {
 				throw new ForbiddenError("The field is freezed and cannot be modified. Contact ADMIN for more support!");
 			}
 
-			const fieldDefs = doc.field_defs as unknown as StudentProfileDefinitionFieldDefType[];
+			const fieldDefs = doc.field_defs as unknown as FieldSchemaType[];
 
 			const studentData = await dbClient.collection('student_profile').find({
 				_id: userId,
@@ -374,8 +374,8 @@ const generateCompareValue = (operator: string, compare_value: StudentProfileFie
 		// validate date
 		if (operator === 'DATE_IS_BETWEEN') {
 			// should be an array
-			if (!Array.isArray(compare_value)) throw new UserInputError(`IS_BETWEEN expects an array`)
-			else if (compare_value.length != 2) throw new UserInputError(`IS_BETWEEN expects an array with exactly 2 elements`)
+			if (!Array.isArray(compare_value)) throw new UserInputError(`DATE_IS_BETWEEN expects an array`)
+			else if (compare_value.length != 2) throw new UserInputError(`DATE_IS_BETWEEN expects an array with exactly 2 elements`)
 			else if (typeof compare_value[0] !== 'string') throw new UserInputError('Date must be in ISO format as a string');
 			compare_value.forEach((e: any) => {
 				if (!Yup.date().isValidSync(e)) throw new UserInputError(`ISO Date string ${e} is invalid`)
@@ -397,7 +397,6 @@ const generateCompareValue = (operator: string, compare_value: StudentProfileFie
 				}
 			}
 		}
-
 	} else if (operator === 'CONTAINS_ALL_OF' ||
 		operator === 'CONTAINS_ANY_OF' ||
 		operator === 'CONTAINS_NONE_OF') {

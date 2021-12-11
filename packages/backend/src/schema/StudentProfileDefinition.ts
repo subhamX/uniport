@@ -16,11 +16,11 @@ export const studentProfileDefinitionSchema = gql`
 		is_required: Boolean!
 		requires_proof: Boolean!
 		# at least one block is required
-		field_defs: [StudentProfileDefinitionField!]!
+		field_defs: [FieldSchema!]!
 	}
 
 
-	type StudentProfileDefinitionField{
+	type FieldSchema{
 		_id: ID!
 		field_name: String!
 		type: FieldsTypeEnum!
@@ -40,7 +40,7 @@ export const studentProfileDefinitionSchema = gql`
 		markdown
 	}
 
-	input StudentProfileDefinitionBlockInput{
+	input FieldSchemaInput{
 		field_name: String!
 		type: FieldsTypeEnum!
 		options: ArrayScalar!
@@ -59,7 +59,7 @@ export const studentProfileDefinitionSchema = gql`
 		is_freezed: Boolean!
 		is_required: Boolean!
 		requires_proof: Boolean!
-		field_defs: [StudentProfileDefinitionBlockInput!]!
+		field_defs: [FieldSchemaInput!]!
 	}
 
 

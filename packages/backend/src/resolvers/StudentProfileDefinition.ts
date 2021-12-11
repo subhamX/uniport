@@ -3,8 +3,8 @@ import { authenticatedUsersOnly } from "../config/auth/authCheckers"
 import { dbClient } from "../db";
 import { CustomApolloContext } from "../types/CustomApolloContext";
 import { ObjectId } from "mongodb";
-import { StudentProfileDefinitionFieldDefType, StudentProfileDefinitionModelType } from "src/models/StudentProfileDefinition";
-import { AddStudentProfileDefinitionInput, StudentProfileDefinitionBlockInput, validateValueWithSupportedBlockType } from "@uniport/common";
+import { FieldSchemaType, StudentProfileDefinitionModelType } from "src/models/StudentProfileDefinition";
+import { AddStudentProfileDefinitionInput, FieldSchemaInput, validateValueWithSupportedBlockType } from "@uniport/common";
 
 
 export const studentProfileDefinitionResolver = {
@@ -45,12 +45,12 @@ export const studentProfileDefinitionResolver = {
 			}
 
 			// push all of them at once
-			let fieldDefs: StudentProfileDefinitionFieldDefType[] = [];
+			let fieldDefs: FieldSchemaType[] = [];
 
 			// 9 fields
 			for (let item of payload.field_defs) {
 				// validate everything. :)
-				validateStudentProfileDefinitionBlock(item);
+				validateStudentProfileDefinitionField(item);
 
 				fieldDefs.push({
 					_id: new ObjectId(),
@@ -87,7 +87,7 @@ export const studentProfileDefinitionResolver = {
  *
  * @param item student profile definition block
  */
-export const validateStudentProfileDefinitionBlock = (item: StudentProfileDefinitionBlockInput) => {
+export const validateStudentProfileDefinitionField = (item: FieldSchemaInput) => {
 	if (item.multi_type === 0 && item.options && item.options.length) {
 		throw new UserInputError("Options cannot be defined for multi_type 0!")
 	} else if (item.multi_type !== 0 && item.type === 'markdown') {
