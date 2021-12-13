@@ -3,6 +3,8 @@
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 
+export const REGISTER_ADMIN='/join'
+
 // just after registration is complete we shall route to this
 export const ADMIN_PRIMARY_DASHBOARD = '/a/dash';
 // when we don't know if we should push to /a/ or /s/

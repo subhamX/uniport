@@ -1,14 +1,10 @@
 import gql from "graphql-tag";
 
 export const registerAdminMutation = gql`
+ # since we are not using any data hence only asking for _id
 	mutation ($registerAdminPayload: RegisterAdminInput!) {
 		registerAdmin(payload: $registerAdminPayload){
-			user_id
-			first_name
-			last_name
-			email_address
-			org_id
-			access_role
+			_id
 		}
 	}
 `;

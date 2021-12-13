@@ -17,12 +17,12 @@ const nonAuthNavItems = [
 	{
 		label: "Login",
 		relative_url: "/login",
-		style: 'border border-white'
+		style: 'btn border border-white hover:text-custom-blue-color hover:bg-white'
 	},
 	{
 		label: "Join Now",
 		relative_url: "/join",
-		style: 'bg-custom-blue-color border border-white hover:text-custom-blue-color hover:bg-white'
+		style: 'btn bg-custom-blue-color border border-white hover:text-custom-blue-color hover:bg-white'
 	},
 ]
 
@@ -74,7 +74,7 @@ const NavItems = () => {
 				return (
 					<div key={e.label}>
 						<Link href={e.relative_url}>
-							<div className={`rounded-lg m-2 py-1 px-2 cursor-pointer ${e.style} text-center`}>
+							<div className={`m-2 px-2 cursor-pointer ${e.style} text-center`}>
 								{e.label}
 							</div>
 						</Link>

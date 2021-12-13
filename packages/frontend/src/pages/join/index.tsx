@@ -9,6 +9,7 @@ import { ADMIN_PRIMARY_DASHBOARD } from "../../config/routes-config";
 import { registerAdminMutation } from "../../graphql/RegisterAdminMutation";
 import withNoAuth from "../../HOC/withNoAuth";
 import Link from 'next/link';
+import { toast } from "react-toastify";
 
 
 const initialValues: RegisterAdminInputForm = {
@@ -36,11 +37,11 @@ const RegisterAdmin = () => {
 				variables: {
 					registerAdminPayload: payload,
 				}
-			}
-			);
-
+			});
+			toast('Registration successful. 🚀🚀');
 		} catch (err) {
 			console.log(`Error: ${err.message}`);
+			toast(err.message);
 		}
 	}
 
@@ -50,25 +51,19 @@ const RegisterAdmin = () => {
 		router.push(ADMIN_PRIMARY_DASHBOARD)
 	}
 
-
 	return (
 		<div>
 			<HeadMeta title='Uniport | Join the Club' />
 			<NonAuthNavbar />
 			<div className='main-container w-full pt-4 overflow-y-scroll pb-20'>
-				<div className="mx-auto p-4 max-w-md shadow-md rounded-md text-left">
-					<div className='text-gray-700 text-3xl font-semibold text-center'>
+				<div className="form-container">
+					<div className='heading-text text-center'>
 						Join Uniport
 					</div>
 
-					<div className='my-3 text-sm text-left text-purple-600 bg-purple-500 bg-opacity-10 border border-purple-400 flex items-center p-4 rounded-md' role="alert">
+					<div className='info-box text-purple-600 bg-purple-500' role="alert">
 						Please note that this registration form is only for institute admins. Incase you are a student and wish to register yourself on the portal, you shall ask for an invite from your institute admin.
 					</div>
-
-					{error ?
-						<div className='my-3 text-sm text-left text-purple-600 bg-purple-500 bg-opacity-10 border border-purple-400 flex items-center p-4 rounded-md'>
-							{error.message}
-						</div> : null}
 
 					{/* Actual Form */}
 					<div>
@@ -87,7 +82,7 @@ const RegisterAdmin = () => {
 										id='first_name'
 										autoComplete='off'
 										placeholder='Steve'
-										className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+										className='form-field'
 									/>
 									<p className="text-red-500 text-xs mt-1">
 										<ErrorMessage name='first_name' />
@@ -103,7 +98,7 @@ const RegisterAdmin = () => {
 										id='last_name'
 										autoComplete='off'
 										placeholder='Kurt'
-										className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+										className='form-field'
 									/>
 									<p className="text-red-500 text-xs mt-1">
 										<ErrorMessage name='last_name' />
@@ -118,7 +113,7 @@ const RegisterAdmin = () => {
 										id='email_address'
 										autoComplete='off'
 										placeholder='steve@mail.com'
-										className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+										className='form-field'
 									/>
 									<p className="text-red-500 text-xs mt-1">
 										<ErrorMessage name='email_address' />
@@ -133,7 +128,7 @@ const RegisterAdmin = () => {
 										id='org_name'
 										autoComplete='off'
 										placeholder='Royal'
-										className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+										className='form-field'
 									/>
 									<p className="text-red-500 text-xs mt-1">
 										<ErrorMessage name='org_name' />
@@ -149,7 +144,7 @@ const RegisterAdmin = () => {
 										id='password'
 										autoComplete='off'
 										placeholder='*******'
-										className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+										className='form-field'
 									/>
 									<p className="text-red-500 text-xs mt-1">
 										<ErrorMessage name='password' />
@@ -165,7 +160,7 @@ const RegisterAdmin = () => {
 										id='password_confirm'
 										autoComplete='off'
 										placeholder='*******'
-										className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+										className='form-field'
 									/>
 									<p className="text-red-500 text-xs mt-1">
 										<ErrorMessage name='password_confirm' />
@@ -173,10 +168,9 @@ const RegisterAdmin = () => {
 								</div>
 
 								<div className="flex items-center justify-between">
-									<button type="submit" disabled={waitingForServerResponse} className="bg-blue-500 disabled:bg-blue-200 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Join Uniport</button>
+									<button type="submit" disabled={waitingForServerResponse} className="btn-primary">Join Uniport</button>
 								</div>
 							</Form>
-
 						</Formik>
 
 						<hr className='mt-2 mb-4' />
@@ -184,7 +178,7 @@ const RegisterAdmin = () => {
 						<div className='flex gap-4 items-center'>
 							Got an invite?
 							<Link href='/join/invited/'>
-							<button type="submit" disabled={waitingForServerResponse} className="bg-indigo-500 disabled:bg-indigo-300 hover:bg-indigo-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">Join with Invite</button>
+								<button type="submit" disabled={waitingForServerResponse} className="btn-secondary">Join with Invite</button>
 							</Link>
 						</div>
 
