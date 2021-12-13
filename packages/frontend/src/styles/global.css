@@ -15,7 +15,7 @@
 }
 
 .btn {
-	@apply py-2 px-4  tracking-wider cursor-pointer;
+	@apply py-2 px-4 my-2 tracking-wider cursor-pointer;
 }
 
 .btn-primary {
@@ -26,7 +26,8 @@
 	@apply btn bg-green-900 border-2 disabled:bg-gray-500 border-green-700 text-white;
 }
 
-.form-field {
+.form-field,
+.textarea-field {
 	tab-size: 4;
 	-webkit-tap-highlight-color: transparent;
 	-webkit-text-size-adjust: 100%;
@@ -53,12 +54,22 @@
 	@apply border-black;
 }
 
+.textarea-field {
+	height: 100px;
+	white-space: normal;
+	padding-right: 8px;
+}
+
 .form-container {
 	@apply relative border-4 border-green-800 p-4 mx-auto max-w-lg text-left;
 }
 
 .heading-text {
 	@apply text-4xl font-black font-heading mb-4;
+}
+
+.subheading-text {
+	@apply text-2xl font-black font-heading mb-4;
 }
 
 .form-container:before {
@@ -84,9 +95,9 @@
 	height: 15px;
 }
 
-/* feel free to change the color */
+/* bg color and text color needs to be defined */
 .info-box {
-	@apply my-3 text-sm text-left bg-opacity-10 border border-green-800 flex items-center p-4;
+	@apply my-3 text-sm text-left bg-opacity-10 border border-green-800 p-4;
 }
 
 body {
@@ -127,4 +138,22 @@ body {
 
 .tag-style {
 	@apply text-xss font-medium  px-1 rounded align-middle;
+}
+
+/* DESCRIPTION CARD */
+
+.description-card-wrapper {
+	@apply rounded-lg py-4 shadow-md shadow-sky-600 border-gray-600 border;
+}
+
+.description-card-wrapper .description-group {
+	@apply px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-3 sm:px-6;
+}
+
+.description-card-wrapper .description-group .description-group-key {
+	@apply text-sm font-medium text-gray-500;
+}
+
+.description-card-wrapper .description-group .description-group-value {
+	@apply mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2;
 }

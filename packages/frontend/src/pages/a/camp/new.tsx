@@ -7,6 +7,8 @@ import { CREATE_A_NEW_CAMPAIGN } from "../../../graphql/CreateANewCampaign";
 import Router from "next/router";
 import { MANAGE_CAMP } from "../../../config/routes-config";
 import { FETCH_MY_CAMPAIGNS } from "../../../graphql/FetchMyCampaigns";
+import { toast } from "react-toastify";
+import router from "next/router";
 
 
 type FormFields = {
@@ -32,13 +34,20 @@ const CreateNewCampaign = () => {
 	});
 
 	const handleSubmit = async (e: FormFields) => {
-		await mutationFn({
-			variables: {
-				...e
-			}
-		})
-	}
+		try {
+			await mutationFn({
+				variables: {
+					...e
+				}
+			})
+			toast('Campaign creation successful! 🎉')
 
+		} catch (err) {
+			toast(err.message, {
+				type: 'error',
+			})
+		}
+	}
 
 	if (data) {
 		// new campaign creation was successful
@@ -53,15 +62,10 @@ const CreateNewCampaign = () => {
 			<Layout>
 				<div className='p-10'>
 					<div className='w-full mt-4'>
-						<div className="mx-auto p-4 max-w-md shadow-md rounded-md text-left">
-							<div className='text-gray-700 text-xl font-semibold text-center mb-4'>
+						<div className="form-container">
+							<div className='heading-text text-center pb-3'>
 								Create a new campaign
 							</div>
-
-							{error ?
-								<div className='my-3 text-sm text-left text-purple-600 bg-purple-500 bg-opacity-10 border border-purple-400 flex items-center p-4 rounded-md'>
-									{error.message}
-								</div> : null}
 
 							<Formik
 								initialValues={initialValues}
@@ -80,7 +84,7 @@ const CreateNewCampaign = () => {
 											id='campaign_name'
 											autoComplete='off'
 											placeholder='Internship Drive 2k22'
-											className='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline'
+											className='form-field'
 										/>
 										<p className="text-red-500 text-xs mt-1">
 											<ErrorMessage name='campaign_name' />
@@ -90,7 +94,7 @@ const CreateNewCampaign = () => {
 									<div className="flex items-center justify-between">
 										<button type="submit"
 											disabled={waitingForServerResponse}
-											className="bg-blue-500 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+											className="btn-primary">Submit</button>
 									</div>
 								</Form>
 							</Formik>

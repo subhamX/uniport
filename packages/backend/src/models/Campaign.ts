@@ -11,6 +11,8 @@ export type CampaignModelType = {
 	campaign_name: string,
 	number_of_students: number,
 	number_of_placed_students: number,
+	number_of_job_profiles: number
+	number_of_offers: number
 	// TODO: Campaign Rules
 	rules: []
 }

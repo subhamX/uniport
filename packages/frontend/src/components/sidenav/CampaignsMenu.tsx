@@ -1,16 +1,16 @@
 import { ADD_A_JOB_PROFILE, CREATE_NEW_CAMPAIGN, MANAGE_CAMP, VIEW_CAMP_ALL_PROFILES, VIEW_CAMP_DASH } from "../../config/routes-config"
-import { NavItem, NavItems } from "./NavItems"
+import { NavItem, NavItems, sideNavItemStyles } from "./NavItems"
 
 // renders all the campaigns of the user along with the options
 export const CampaignsMenu = ({ campaigns, accessRole }) => {
 	return (
 		<>
-			{campaigns && campaigns.length ?
+			{campaigns ?
 				<>
 					<div className='py-1 px-3 my-2 mx-1 text-sm uppercase font-bold'>
 						Campaigns
 					</div>
-					{campaigns.map((e, indx) => {
+					{campaigns.length ? campaigns.map((e, indx) => {
 						return (
 							<div key={indx}>
 								<NavItem
@@ -19,7 +19,7 @@ export const CampaignsMenu = ({ campaigns, accessRole }) => {
 								/>
 							</div>
 						)
-					})}
+					}) : <div className={`${sideNavItemStyles} cursor-default text-gray-400`}>No campaigns found</div>}
 					{/* Create new campaign btn */}
 					{accessRole === 'ADMIN' ? <NavItem
 						label='Create New Campaign'

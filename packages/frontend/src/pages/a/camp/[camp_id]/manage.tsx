@@ -9,23 +9,28 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { AddFilteringFormikField } from "./addprofile";
 import { INVITE_NEW_USERS_MUTATION } from "../../../../graphql/InviteNewUsers";
 import { ADD_STUDENTS_TO_CAMPAIGN_MUTATION } from "../../../../graphql/AddStudentsToCampaign";
-import { AddStudentsToCampaignInput } from "@uniport/common";
+import { AddStudentsToCampaignInput, CampaignDetails } from "@uniport/common";
+import { toast } from "react-toastify";
 
 const ManageCampaign = () => {
 	const router = useRouter();
 
-	let { _id } = router.query;
+	let { camp_id } = router.query;
 
-	// TODO: Initially _id remains undefined. But we still call /graphql/; How to fix it?
-	if (!_id) return null;
+	// Initially camp_id remains undefined. But we still call /graphql/; How to fix it?
+	// So to fix it we are having the following check.
+	if (!camp_id) return null;
 
 	let { data, loading, error } = useQuery(FETCH_CAMPAIGN_DETAILS_BY_ID, {
 		variables: {
-			campaign_id: _id
+			campaign_id: camp_id
 		}
 	});
 
 	const [showAddNewRuleModal, setshowAddNewRuleModal] = useState(false)
+
+
+	const campDetails: CampaignDetails = data.getCampaignDetailsById;
 
 	return (
 		<div>
@@ -37,52 +42,56 @@ const ManageCampaign = () => {
 					{error ? <div>Something went wrong: {error.message}</div> : null}
 
 
-					{data ? <div className='bg-white shadow overflow-hidden sm:rounded-lg px-3 py-5'>
-						<div className='text-2xl font-bold leading-normal mt-0 mb-3 text-purple-800'>
+					{data ? <div>
+						<div className='heading-text mb-3'>
 							Manage Campaign
 						</div>
-						<div className='my-3 text-sm text-left text-blue-600 bg-blue-500 bg-opacity-10 border border-blue-400  p-4 rounded-md'>
+						{/* info box */}
+						<div className='info-box text-blue-600 bg-blue-500'>
 							<span className='text-blue-800 font-medium'>Note on campaign rules:</span> <span>
 								Typically you should all those rules which are part of the college placement policy.
 								Please note that whenever you add a new rule it applies to all future job profiles in the campaign.
 								Incase you wish to add some rules for specific job profiles kindly add that while defining the job profile.
 							</span>
 						</div>
-						<div className="border-t border-gray-200">
-							<dl>
-								<div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-									<dt className="text-sm font-medium text-gray-500">Campaign Name</dt>
-									<dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{data.getCampaignDetailsById.campaign_name}</dd>
-								</div>
-							</dl>
-							<dl>
-								<div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-									<dt className="text-sm font-medium text-gray-500">Campaign Rules</dt>
-									<dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-										{data.getCampaignDetailsById.rules.length ? data.getCampaignDetailsById.rules.map(e => {
-											return (
-												<div>
-													{JSON.stringify(e)}
-												</div>
-											)
-										}) : <div>No rules found</div>}
-									</dd>
-								</div>
-							</dl>
-						</div>
-
-
-						{showAddNewRuleModal ? <AddNewRuleModal open={showAddNewRuleModal} setOpen={setshowAddNewRuleModal} campaign_id={_id as string} /> : null}
 
 
 
-						<div className='flex justify-end'>
-							<div onClick={() => setshowAddNewRuleModal(true)} className='btn bg-blue-500 mt-2  hover:bg-blue-700 text-white text-center font-bold py-2 px-4 rounded'>
-								Add new rule
+						<div className="description-card-wrapper">
+							<div className="description-group">
+								<div className="description-group-key">Campaign Name</div>
+								<div className="description-group-value">{campDetails.campaign_name}</div>
+							</div>
+							<div className="description-group">
+								<div className="description-group-key">Number of students</div>
+								<div className="description-group-value">{campDetails.number_of_students}</div>
+							</div>
+							<div className="description-group">
+								<div className="description-group-key">Number of job offers</div>
+								<div className="description-group-value">{campDetails.number_of_offers}</div>
+							</div>
+							<div className="description-group">
+								<div className="description-group-key">Number of students with at least one offer</div>
+								<div className="description-group-value">{campDetails.number_of_placed_students}</div>
+							</div>
+							<div className="description-group">
+								<div className="description-group-key">Total number of job profiles created</div>
+								<div className="description-group-value">{campDetails.number_of_job_profiles}</div>
+							</div>
+							<div className="description-group">
+								<div className="description-group-key">Campaign Rules</div>
+								<div className="description-group-value">No Rules found</div>
 							</div>
 						</div>
 
-						<InviteUsers _id={_id} />
+
+						<div className='flex justify-end'>
+							<button disabled onClick={() => setshowAddNewRuleModal(true)} className='btn-primary'>
+								Add new rule
+							</button>
+						</div>
+
+						<InviteUsers _id={camp_id} />
 					</div> : null}
 				</div>
 			</Layout>
@@ -93,92 +102,39 @@ const ManageCampaign = () => {
 export default ManageCampaign;
 
 
-// component which shows the modal and asks the user to add a rule to the [campaign_id] passed as parameter
-const AddNewRuleModal = ({ campaign_id, setOpen, open }: { campaign_id: string, setOpen: Dispatch<SetStateAction<boolean>>, open: boolean }) => {
-	const initialValues = {
-		rules: '',
-	}
-	const handleSubmit = (e) => {
-
-	}
-	return (
-		<div>
-			<GenericModal
-				setOpen={setOpen}
-				open={open}>
-				<div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-					<div className="sm:flex sm:items-start">
-						<div>
-							<div className='text-xl mb-4 font-medium'>
-								Add a new rule
-							</div>
-							<Formik
-								initialValues={initialValues}
-								// validationSchema={formValidationSchema}
-								onSubmit={handleSubmit}
-							>
-								<AddFilteringFormikField />
-							</Formik>
-
-						</div>
-					</div>
-				</div>
-
-				{/* ACTION BUTTON GOES HERE */}
-				<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-					<button
-						type="button"
-						className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-						onClick={() => setOpen(false)}
-					>
-						Add rule
-					</button>
-					<button
-						type="button"
-						className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-						onClick={() => setOpen(false)}
-					>
-						Cancel
-					</button>
-				</div>
-
-			</GenericModal>
-		</div>
-	)
-}
-
-
 
 const InviteUsers = ({ _id }) => {
 
 	const [mutationFn, { data, loading, error }] = useMutation(ADD_STUDENTS_TO_CAMPAIGN_MUTATION);
 	const handleSubmit = async (e) => {
 		// TODO: check that individual mails are valid
-		let emails = [];
-		e.user_emails.split(/[\s]+/).map((text: string) => {
-			// validation will be done at server
-			if (text) emails.push(text);
-		})
+		try {
+			let emails = [];
+			e.user_emails.split(/[\s]+/).map((text: string) => {
+				// validation will be done at server
+				if (text) emails.push(text);
+			})
 
-		const payload: AddStudentsToCampaignInput = {
-			student_emails: emails,
-			_id,
-		}
-		await mutationFn({
-			variables: {
-				payload
+			const payload: AddStudentsToCampaignInput = {
+				student_emails: emails,
+				_id,
 			}
-		})
+			await mutationFn({
+				variables: {
+					payload
+				}
+			})
+			toast('Users added successfully');
+		} catch (err) {
+			console.log("Error: ", err)
+			toast(`Something went wrong: ${err.message}`, { type: 'error' });
+		}
 	}
 	return (
 		<>
-			<div className='font-bold text-xl mt-7 mb-3'>
+			<div className='subheading-text mt-7'>
 				Add Students to this campaign
 			</div>
-
-
-			{error ? <div className='my-3 text-sm text-left text-red-600 bg-red-500 bg-opacity-10 border border-red-400 flex items-center p-4 rounded-md'>Something went wrong: {error.message}</div> : null}
-			{data ? <div className='my-3 text-sm text-left text-green-600 bg-green-500 bg-opacity-10 border border-green-400 flex items-center p-4 rounded-md'>Users added successfully</div> : null}
 
 			<Formik
 				initialValues={{ user_emails: '' }}
@@ -193,14 +149,14 @@ const InviteUsers = ({ _id }) => {
 						name="user_emails"
 						rows={4}
 						placeholder='Please enter all emails newline or space separated'
-						className='w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none'
+						className='textarea-field'
 					>
 					</Field>
 
 					<div className="flex items-center justify-end">
 						<button type="submit"
 							disabled={loading}
-							className="btn bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+							className="btn-secondary">Submit</button>
 					</div>
 				</Form>
 			</Formik>

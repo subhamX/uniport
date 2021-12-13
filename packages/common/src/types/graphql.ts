@@ -58,6 +58,9 @@ export type CampaignDetails = {
   __typename?: 'CampaignDetails';
   _id: Scalars['ID'];
   campaign_name: Scalars['String'];
+  number_of_job_profiles: Scalars['Int'];
+  number_of_offers: Scalars['Int'];
+  number_of_placed_students: Scalars['Int'];
   number_of_students: Scalars['Int'];
   rules: Array<Maybe<FilteringRule>>;
 };

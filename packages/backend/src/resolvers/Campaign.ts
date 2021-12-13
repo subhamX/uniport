@@ -69,21 +69,25 @@ export const campaignResolvers = {
 			}
 
 			// get the campaign details
-			const doc = await dbClient.collection('campaign').findOne({
+			const doc: CampaignModelType = await dbClient.collection('campaign').findOne({
 				org_id,
 				_id: new ObjectId(_id)
-			})
+			}) as any
 
 			if (!doc) {
 				throw new ForbiddenError("Invalid campaign id or you don't have access to it");
 			}
 
 			return {
-				_id: doc._id,
+				_id: doc._id.toString(),
 				campaign_name: doc.campaign_name,
 				number_of_students: doc.number_of_students,
 				rules: doc.rules ?? [],
+				number_of_job_profiles: doc.number_of_job_profiles,
+				number_of_offers: doc.number_of_offers,
+				number_of_placed_students: doc.number_of_placed_students
 			};
+
 		}
 	},
 	Mutation: {
@@ -108,6 +112,8 @@ export const campaignResolvers = {
 				campaign_name,
 				number_of_students: 0,
 				number_of_placed_students: 0,
+				number_of_job_profiles: 0,
+				number_of_offers: 0,
 				rules: []
 			};
 

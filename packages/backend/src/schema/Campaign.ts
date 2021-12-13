@@ -11,6 +11,9 @@ export const campaignSchema = gql`
 		_id: ID!
 		campaign_name: String!
 		number_of_students: Int!
+		number_of_placed_students: Int!
+		number_of_job_profiles: Int!
+		number_of_offers: Int!
 		rules: [FilteringRule]!
 	}
 

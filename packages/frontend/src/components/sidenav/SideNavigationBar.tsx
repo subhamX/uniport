@@ -26,16 +26,16 @@ const SideNavigationBar = () => {
 	if (loading) {
 		return (
 			<SideMenuWrapper isSideNavOpen={isSideNavOpen}>
-				Loading...
+				<div className='text-center'>
+					Loading...
+				</div>
 			</SideMenuWrapper>
 		)
 	}
 
+	// campaigns must be defined
 	let campaigns = data.getMyCampaigns; // this is an array
 
-
-
-	// campaings are defined
 	// TODO: Fix the styling of active route of campaigns
 	return (
 		<>

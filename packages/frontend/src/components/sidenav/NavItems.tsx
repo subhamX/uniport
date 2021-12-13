@@ -19,14 +19,14 @@ export const NavItems = ({ items, globalStyle }) => {
 }
 
 
-
+export const sideNavItemStyles='rounded my-2 mx-1 py-1 px-3 cursor-pointer flex items-center mt-1'
 
 export const NavItem = ({ relative_url, label }: { relative_url: string, label: string }) => {
 	const router = useRouter();
 	const activeRoute = router.pathname;
 	return (
 		<Link href={relative_url}>
-			<div className={`rounded-lg my-2 mx-1 py-1 px-3 cursor-pointer flex items-center mt-1 ${activeRoute === relative_url ? 'bg-custom-btn-color-bg-active' : 'hover:bg-custom-btn-color-bg-hover'}`}>
+			<div className={`${sideNavItemStyles} ${activeRoute === relative_url ? 'bg-custom-btn-color-bg-active' : 'hover:bg-custom-btn-color-bg-hover'}`}>
 				{label}
 			</div>
 		</Link>
