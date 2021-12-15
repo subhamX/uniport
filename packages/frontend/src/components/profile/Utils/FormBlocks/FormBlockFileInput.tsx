@@ -8,8 +8,8 @@ export const FormBlockFileInput = ({ id, label }) => {
 
 	return (
 		<div className="mb-4">
-			<div className='grid grid-cols-2 items-center my-2'>
-				<label className="block text-gray-700 text-sm font-bold" htmlFor={id}>
+			<div className='form-inline-group'>
+				<label className="form-label" htmlFor={id}>
 					{label}
 				</label>
 				<input

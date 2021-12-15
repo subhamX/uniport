@@ -78,7 +78,7 @@ const AddProfilesInCamp = () => {
 							<Form className='text-black' autoComplete='off'>
 
 								<div className="mb-4">
-									<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='email_address'>
+									<label className="form-label" htmlFor='email_address'>
 										Company Name
 									</label>
 									<Field name='company_name'
@@ -95,7 +95,7 @@ const AddProfilesInCamp = () => {
 
 
 								<div className="mb-4">
-									<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='stipend_low'>
+									<label className="form-label" htmlFor='stipend_low'>
 										Stipend Low (in Lakhs per annum)
 									</label>
 									<Field name='stipend_low'
@@ -111,7 +111,7 @@ const AddProfilesInCamp = () => {
 								</div>
 
 								<div className="mb-4">
-									<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='stipend_high'>
+									<label className="form-label" htmlFor='stipend_high'>
 										Stipend High (in Lakhs per annum)
 									</label>
 									<Field name='stipend_high'
@@ -126,7 +126,7 @@ const AddProfilesInCamp = () => {
 								</div>
 
 								<div className="mb-4">
-									<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='stipend_breakdown'>
+									<label className="form-label" htmlFor='stipend_breakdown'>
 										Stipend Breakdown
 									</label>
 									<Field name='stipend_breakdown'
@@ -142,7 +142,7 @@ const AddProfilesInCamp = () => {
 								</div>
 
 								{/* <div className="mb-4">
-									<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='filters'>
+									<label className="form-label" htmlFor='filters'>
 										Filters (newlines separated)
 									</label>
 									<Field name='filters'
@@ -160,7 +160,7 @@ const AddProfilesInCamp = () => {
 								<AddFilteringFormikField />
 
 								<div className="mb-4">
-									<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='deadline'>
+									<label className="form-label" htmlFor='deadline'>
 										Deadline									</label>
 									<Field name='deadline'
 										type='date'
@@ -174,7 +174,7 @@ const AddProfilesInCamp = () => {
 									</p>
 								</div>
 								<div className="mb-4">
-									<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='profile_description'>
+									<label className="form-label" htmlFor='profile_description'>
 										Profile Description
 									</label>
 									<Field name='profile_description'
@@ -217,7 +217,7 @@ export default AddProfilesInCamp;
 export const AddFilteringFormikField = () => {
 	return (
 		<div className="mb-4">
-			<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor='filters'>
+			<label className="form-label" htmlFor='filters'>
 				Filters (newlines separated)
 			</label>
 			<Field name='filters'

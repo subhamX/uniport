@@ -239,6 +239,7 @@ export type Mutation = {
   updateDeadlineOfJobProfile: Scalars['Boolean'];
   updateJobProfileAdvancedDetails: JobProfile;
   updateJobProfileBasicDetails: JobProfile;
+  updateStudentProfileDefinition: StudentProfileDefinition;
 };
 
 
@@ -311,6 +312,11 @@ export type MutationUpdateJobProfileAdvancedDetailsArgs = {
 
 export type MutationUpdateJobProfileBasicDetailsArgs = {
   payload: JobProfileBasicDetailsInput;
+};
+
+
+export type MutationUpdateStudentProfileDefinitionArgs = {
+  payload: UpdateStudentProfileDefinitionInput;
 };
 
 export type NewJobProfileInput = {
@@ -432,6 +438,15 @@ export enum SupportedFilteringOperator {
   LessThanOrEqual = 'LESS_THAN_OR_EQUAL',
   StartsWith = 'STARTS_WITH'
 }
+
+export type UpdateStudentProfileDefinitionInput = {
+  _id: Scalars['String'];
+  block_name: Scalars['String'];
+  is_freezed: Scalars['Boolean'];
+  is_required: Scalars['Boolean'];
+  position: Scalars['Int'];
+  requires_proof: Scalars['Boolean'];
+};
 
 export type User = {
   __typename?: 'User';

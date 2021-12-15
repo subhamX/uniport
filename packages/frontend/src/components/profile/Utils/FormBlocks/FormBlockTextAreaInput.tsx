@@ -4,7 +4,7 @@ import { ErrorMessage, Field } from "formik"
 export const FormBlockTextAreaInput = ({ placeholder, id, label }) => {
 	return (
 		<div className="mb-4">
-			<label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={id}>
+			<label className="form-label" htmlFor={id}>
 				{label}
 			</label>
 			<Field name={id}
@@ -20,8 +20,6 @@ export const FormBlockTextAreaInput = ({ placeholder, id, label }) => {
 				<ErrorMessage name={id} />
 			</p>
 		</div>
-
-
 	)
 }
 

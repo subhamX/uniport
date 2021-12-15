@@ -15,7 +15,7 @@ const UniversalForm = ({ initialValues, formFieldsValidationSchema, handleSubmit
                 {formFields.map((e, indx) => {
                     return (
                         <div className="mb-4" key={indx}>
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={e.id}>
+                            <label className="form-label" htmlFor={e.id}>
                                 {e.label}
                             </label>
                             <Field name={e.id} type={e.type}

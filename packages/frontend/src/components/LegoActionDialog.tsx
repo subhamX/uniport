@@ -68,8 +68,8 @@ const LEGOActionDialog = ({ setOpen, open, initialValues, title, formSchema, sub
 												{formSchema.map((e, indx) => {
 													return (
 														<div className="mb-4" key={indx}>
-															<div className='grid grid-cols-2 items-center my-2'>
-																<label className="block text-gray-700 text-sm font-bold" htmlFor={e.id}>
+															<div className='form-inline-group'>
+																<label className="form-label" htmlFor={e.id}>
 																	{e.label}
 																</label>
 																<Field

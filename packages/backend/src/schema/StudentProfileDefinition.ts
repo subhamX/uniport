@@ -62,6 +62,15 @@ export const studentProfileDefinitionSchema = gql`
 		field_defs: [FieldSchemaInput!]!
 	}
 
+	input UpdateStudentProfileDefinitionInput {
+		_id: String!
+		position: Int!
+		block_name: String!
+		is_freezed: Boolean!
+		is_required: Boolean!
+		requires_proof: Boolean!
+	}
+
 
 	type Query{
 		# any authenticated user can get the profile definitions
@@ -70,8 +79,12 @@ export const studentProfileDefinitionSchema = gql`
 
 	type Mutation{
 		# Only admin can add fields
-		# editing isn't allowed for now
 		addStudentProfileDefinition(payload: AddStudentProfileDefinitionInput!): StudentProfileDefinition!
+
+		# editing is allowed for very basic fields for now. Since changing the datatype etc will cause errors
+		# campaign rules also depends on this, and any breaking changes here, will cause whole thing to break
+		# hence updating things like is_array and any attribute of field is restricted for now!
+		updateStudentProfileDefinition(payload: UpdateStudentProfileDefinitionInput!): StudentProfileDefinition!
 	}
 
 `

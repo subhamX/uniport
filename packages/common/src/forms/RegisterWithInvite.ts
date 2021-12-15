@@ -17,7 +17,6 @@ export const registerWithValidInviteInputValidationSchema: yup.SchemaOf<Register
 
 
 
-
 // for frontend
 export type RegisterWithValidInviteInputForm = RegisterWithValidInviteInput & {
 	password_confirm: string;

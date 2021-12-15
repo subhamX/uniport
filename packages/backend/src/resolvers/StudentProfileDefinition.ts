@@ -1,10 +1,11 @@
-import {  ForbiddenError, UserInputError } from "apollo-server-errors";
+import { ForbiddenError, UserInputError } from "apollo-server-errors";
 import { authenticatedUsersOnly } from "../config/auth/authCheckers"
 import { dbClient } from "../db";
 import { CustomApolloContext } from "../types/CustomApolloContext";
 import { ObjectId } from "mongodb";
 import { FieldSchemaType, StudentProfileDefinitionModelType } from "src/models/StudentProfileDefinition";
-import { AddStudentProfileDefinitionInput, FieldSchemaInput, validateValueWithSupportedBlockType } from "@uniport/common";
+import { AddStudentProfileDefinitionInput, FieldSchemaInput, UpdateStudentProfileDefinitionInput, validateValueWithSupportedBlockType } from "@uniport/common";
+import * as Yup from 'yup'
 
 
 export const studentProfileDefinitionResolver = {
@@ -44,13 +45,19 @@ export const studentProfileDefinitionResolver = {
 				throw new UserInputError("There should be at least one block inside structure")
 			}
 
+			// naive validation for now. As most of the checking is already done by graphql
+			if (payload.block_name.length < 4) throw new UserInputError('Block name must be of length >=4')
+
+
 			// push all of them at once
 			let fieldDefs: FieldSchemaType[] = [];
 
 			// 9 fields
 			for (let item of payload.field_defs) {
 				// validate everything. :)
+				// the following validates if the options are of specified type or not too!
 				validateStudentProfileDefinitionField(item);
+				if (item.field_name.length < 4) throw new UserInputError(`Field name ${item.field_name} must be of length >=4`)
 
 				fieldDefs.push({
 					_id: new ObjectId(),
@@ -77,7 +84,35 @@ export const studentProfileDefinitionResolver = {
 			await dbClient.collection('student_profile_definition').insertOne(doc);
 
 			return doc;
+		},
+		updateStudentProfileDefinition: async (_: any, { payload }: { payload: UpdateStudentProfileDefinitionInput }, ctx: CustomApolloContext) => {
+			// check auth status
+			authenticatedUsersOnly(ctx.req);
+
+			// must be an admin
+			if (ctx.req.user?.access_role !== 'ADMIN') {
+				throw new ForbiddenError("You need to be admin to perform this action")
+			}
+
+			if (payload.block_name.length < 4) throw new UserInputError('Block name must be of length >=4')
+
+			const res = await dbClient.collection('student_profile_definition').findOneAndUpdate({
+				_id: new ObjectId(payload._id)
+			}, {
+				$set: {
+					position: payload.position,
+					block_name: payload.block_name,
+					is_freezed: payload.is_freezed,
+					is_required: payload.is_required,
+					requires_proof: payload.requires_proof,
+				}
+			}, { returnDocument: 'after' });
+
+			if (!res.value) throw new UserInputError('Invalid _id or access denied')
+
+			return res.value;
 		}
+
 	}
 }
 

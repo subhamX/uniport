@@ -1,9 +1,11 @@
 import gql from "graphql-tag";
 
 
-export const GET_STUDENT_PROFILE_DEFINITIONS = gql`
-	query getStudentProfileDefinitions{
-    getStudentProfileDefinitions{
+export const UPDATE_STUDENT_PROFILE_DEFINITION = gql`
+	mutation updateStudentProfileDefinition($payload: UpdateStudentProfileDefinitionInput!) {
+		updateStudentProfileDefinition(
+			payload: $payload
+		) {
 			org_id
 			_id
 			position
@@ -12,7 +14,7 @@ export const GET_STUDENT_PROFILE_DEFINITIONS = gql`
 			is_freezed
 			is_required
 			requires_proof
-			field_defs{
+			field_defs {
 				_id
 				field_name
 				type

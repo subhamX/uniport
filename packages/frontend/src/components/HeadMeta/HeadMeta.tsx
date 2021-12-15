@@ -1,6 +1,9 @@
 import Head from 'next/head'
 
-// Meta to add open graph tags etc (in future)
+/**
+ * Component to
+ * TODO: add open graph tags etc
+ */
 const HeadMeta = ({ title }) => {
 	return (
 		<Head >

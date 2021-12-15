@@ -3,12 +3,14 @@
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 
-export const REGISTER_ADMIN='/join'
+export const REGISTER_ADMIN = '/join'
+
+export const REGISTER_WITH_UNIQUE_TOKEN = (unique_token: string) => `/join/invited/${unique_token}`
 
 // just after registration is complete we shall route to this
 export const ADMIN_PRIMARY_DASHBOARD = '/a/dash';
 // when we don't know if we should push to /a/ or /s/
-export const BRIGE_DASHBOARD = '/dash';
+export const BRIDGE_DASHBOARD = '/dash';
 
 
 export const CREATE_NEW_CAMPAIGN = '/a/camp/new';
@@ -17,6 +19,7 @@ export const CREATE_NEW_CAMPAIGN = '/a/camp/new';
 export const MANAGE_CAMP = (campaign_id: string) => `/a/camp/${campaign_id}/manage`;
 export const VIEW_CAMP_DASH = (campaign_id: string) => CAMPAIGN_DASHBOARD(campaign_id, 'STUDENT');
 
+export const ADD_STUDENT_PROFILE_DEFINITION = '/a/student-profile-definitions/add';
 export const MANAGE_STUDENT_PROFILE_DEFINITIONS = '/a/student-profile-definitions';
 
 
@@ -49,7 +52,6 @@ export const FETCH_STUDENT_PROFILE_DATA_ENDPOINT = new URL('s/profile', SERVER_U
 // ensure that [payload] contains [student_id]
 // add [block_index] too if you want to edit
 export const ADD_STUDENT_PROFILE_BLOCK = async (payload: any) => {
-	console.log("PUSHING", payload);
 	let formData = new FormData();
 	for (let key in payload) {
 		formData.append(key, payload[key])
