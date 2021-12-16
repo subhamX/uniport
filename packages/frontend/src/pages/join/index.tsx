@@ -46,7 +46,7 @@ const RegisterAdmin = () => {
 			toast("Registration successful. 🚀🚀");
 		} catch (err) {
 			console.log(`Error: ${err.message}`);
-			toast(err.message, {type: "error"});
+			toast(err.message, { type: "error" });
 		}
 	};
 
@@ -196,12 +196,14 @@ const RegisterAdmin = () => {
 						<div className="flex gap-4 items-center">
 							Got an invite?
 							<Link href="/join/invited/">
-								<ButtonSecondary
-									type="submit"
-									disabled={waitingForServerResponse}
-								>
-									Join with Invite
-								</ButtonSecondary>
+								<div>
+									<ButtonSecondary
+										type="submit"
+										disabled={waitingForServerResponse}
+									>
+										Join with Invite
+									</ButtonSecondary>
+								</div>
 							</Link>
 						</div>
 					</div>

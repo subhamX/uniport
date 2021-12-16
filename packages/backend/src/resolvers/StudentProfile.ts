@@ -81,42 +81,45 @@ export const studentProfileResolvers = {
 				]
 			})
 
+			const mongoDbFilters = [{
+				$match: {
+					$or: filterGroups.map(group => ({ $and: group }))
+				}
+			},
+			{
+				$facet: facetObject
+			},
+			{
+				$project: {
+					result: {
+						$concatArrays: filterGroups.map((_, indx) => `$GROUP_${indx}`)
+					}
+				}
+			},
+			{ $unwind: "$result" },
+			{
+				$replaceRoot: { newRoot: "$result" }
+			},
+			{
+				$group: {
+					_id: "$_id",
+					first_name: { $first: "$first_name" },
+					blocks_data: { $first: "$blocks_data" },
+					email_address: { $first: "$email_address" },
+					last_name: { $first: "$last_name" },
+					campaigns: { $first: "$campaigns" },
+					org_id: { $first: "$org_id" },
+					"matched_groups": { "$addToSet": "$matched_group" }
+				}
+			}]
 			const cursor = dbClient.collection('student_profile').aggregate([
-				{
-					$match: {
-						$or: filterGroups.map(group => ({ $and: group }))
-					}
-				},
-				{
-					$facet: facetObject
-				},
-				{
-					$project: {
-						result: {
-							$concatArrays: filterGroups.map((_, indx) => `$GROUP_${indx}`)
-						}
-					}
-				},
-				{ $unwind: "$result" },
-				{
-					$replaceRoot: { newRoot: "$result" }
-				},
-				{
-					$group: {
-						_id: "$_id",
-						first_name: { $first: "$first_name" },
-						blocks_data: { $first: "$blocks_data" },
-						email_address: { $first: "$email_address" },
-						last_name: { $first: "$last_name" },
-						campaigns: { $first: "$campaigns" },
-						org_id: { $first: "$org_id" },
-						"matched_groups": { "$addToSet": "$matched_group" }
-					}
-				},
+				...(filterGroups.length ? mongoDbFilters : []),
 				// sort
 				{ $sort: { first_name: 1, last_name: 1, _id: 1, } },
 				// offset
-				{ $skip: payload.offset },
+				{
+					$skip: payload.offset
+				},
 				// limit
 				{ $limit: limit }
 			]);

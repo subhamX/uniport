@@ -8,7 +8,7 @@ export const ButtonInvertedPrimary = (
 ) => (
 	<button
 		{...props}
-		className="btn  border-2 disabled:bg-gray-500 border-green-700 text-black bg-white"
+		className="btn py-2 px-3   border-2 disabled:bg-gray-500 border-green-700 text-black bg-white"
 	>
 		{props.children}
 	</button>

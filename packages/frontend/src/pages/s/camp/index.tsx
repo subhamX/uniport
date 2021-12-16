@@ -40,7 +40,7 @@ const StudentCampChoose = () => {
 							return (
 								<div className="" key={indx}>
 									<Link href={CAMPAIGN_DASHBOARD(e._id, user.access_role)}>
-										<div className="btn text-base bg-white px-4 py-2 flex items-center my-2 rounded-lg shadow">
+										<div className="btn py-2 px-3  text-base bg-white px-4 py-2 flex items-center my-2 rounded-lg shadow">
 											<div className="w-24 pr-5">
 												<Image src={require('../../../assets/images/workspace.svg')} width='50' height='50' className="rounded" />
 											</div>

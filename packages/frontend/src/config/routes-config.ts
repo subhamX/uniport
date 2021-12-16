@@ -22,6 +22,8 @@ export const VIEW_CAMP_DASH = (campaign_id: string) => CAMPAIGN_DASHBOARD(campai
 export const ADD_STUDENT_PROFILE_DEFINITION = '/a/student-profile-definitions/add';
 export const MANAGE_STUDENT_PROFILE_DEFINITIONS = '/a/student-profile-definitions';
 
+export const ALL_STUDENTS = '/a/students';
+
 
 // student first screen
 export const STUDENT_CAMP_CHOOSE_ROUTE = '/s/camp'

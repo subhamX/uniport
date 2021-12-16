@@ -45,7 +45,7 @@ export const studentProfileSchema = gql`
 
 	type Query{
 		# although we are giving full data. Use it cautiously and fetch the required fields only
-		getStudentProfileByQuery(payload: GetStudentProfileByQueryInput): [StudentProfile]!
+		getStudentProfileByQuery(payload: GetStudentProfileByQueryInput!): [StudentProfile]!
 		# get Student Profile by ID
 		getStudentProfileById(_id: String!): StudentProfile!
 	}

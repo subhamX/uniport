@@ -1,4 +1,4 @@
-import { ADMIN_PRIMARY_DASHBOARD, ALL_COMPANIES_ROUTE, MANAGE_STUDENT_PROFILE_DEFINITIONS } from "../../config/routes-config"
+import { ADMIN_PRIMARY_DASHBOARD, ALL_COMPANIES_ROUTE, ALL_STUDENTS, MANAGE_STUDENT_PROFILE_DEFINITIONS } from "../../config/routes-config"
 import { NavItems } from "./NavItems"
 
 
@@ -23,7 +23,7 @@ export const AdditionalOptions = ({ accessRole }) => {
 			},
 			{
 				label: "Enrolled Students",
-				relative_url: "###",
+				relative_url: ALL_STUDENTS,
 			},
 			{
 				label: "Invite Users",

@@ -74,7 +74,7 @@ const NavItems = () => {
 				return (
 					<div key={e.label}>
 						<Link href={e.relative_url}>
-							<div className={`m-2 px-2 cursor-pointer ${e.style} text-center`}>
+							<div className={`m-2 px-2 py-1 cursor-pointer ${e.style} text-center`}>
 								{e.label}
 							</div>
 						</Link>

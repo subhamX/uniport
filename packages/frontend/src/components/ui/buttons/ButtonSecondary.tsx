@@ -8,7 +8,7 @@ export const ButtonSecondary = (
 ) => (
 	<button
 		{...props}
-		className="btn bg-sky-500 border-2 disabled:bg-gray-500 border-sky-700 text-white"
+		className="btn py-2 px-3  bg-sky-500 border-2 disabled:bg-gray-500 border-sky-700 text-white"
 	>
 		{props.children}
 	</button>

@@ -10,7 +10,7 @@
 @tailwind utilities;
 
 .btn {
-	@apply py-2 px-3 my-2 text-sm tracking-wider cursor-pointer;
+	@apply my-2 text-sm tracking-wider cursor-pointer;
 }
 
 .form-label {

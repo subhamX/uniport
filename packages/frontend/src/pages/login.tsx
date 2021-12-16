@@ -110,7 +110,7 @@ const Login = () => {
 
 					<div className="w-full mt-4">
 						<button
-							className="btn flex gap-3 text-left bg-red-600 hover:bg-red-800 text-white w-full"
+							className="btn py-2 px-3  flex gap-3 text-left bg-red-600 hover:bg-red-800 text-white w-full"
 							type="button"
 						>
 							<Image
