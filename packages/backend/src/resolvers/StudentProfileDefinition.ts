@@ -5,7 +5,6 @@ import { CustomApolloContext } from "../types/CustomApolloContext";
 import { ObjectId } from "mongodb";
 import { FieldSchemaType, StudentProfileDefinitionModelType } from "src/models/StudentProfileDefinition";
 import { AddStudentProfileDefinitionInput, FieldSchemaInput, UpdateStudentProfileDefinitionInput, validateValueWithSupportedBlockType } from "@uniport/common";
-import * as Yup from 'yup'
 
 
 export const studentProfileDefinitionResolver = {

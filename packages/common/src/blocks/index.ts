@@ -11,6 +11,17 @@ export const supportedFieldsArray = <const>[
 	'markdown'
 ]
 
+// to be used by frontend to have default values while allowing students/admin to add a data block
+// ! Must be used for multi-type===0 only!
+export const supportedFieldsDefaultValues = {
+	'text': "",
+	'date': new Date().toDateString(),
+	'email': "",
+	'integer': 0,
+	'float': 0.1,
+	'markdown': "",
+}
+
 export type SupportedFieldsType = typeof supportedFieldsArray[number]
 
 /**

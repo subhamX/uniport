@@ -32,7 +32,7 @@ export const studentProfileSchema = gql`
 	}
 
 	type FieldData {
-		_id: ID! # field_id
+		_id: String! # field_id
 		value: FieldValueScalar!
 	}
 

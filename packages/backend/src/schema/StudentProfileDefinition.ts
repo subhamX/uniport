@@ -12,7 +12,7 @@ export const studentProfileDefinitionSchema = gql`
 		position: Int!
 		is_array: Boolean!
 		block_name: String!
-		is_freezed: String!
+		is_freezed: Boolean!
 		is_required: Boolean!
 		requires_proof: Boolean!
 		# at least one block is required
