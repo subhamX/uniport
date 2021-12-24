@@ -1,9 +1,7 @@
 import HeadMeta from "../HeadMeta/HeadMeta";
 import NoAuthNavbar from "../NonAuthNavbar/NonAuthNavbar";
-import Image from "next/image";
 import Link from "next/link";
 import { REGISTER_ADMIN } from "../../config/routes-config";
-import { ActionButton } from "../ui/buttons/ActionButton";
 
 const Landing = () => {
 	return (
@@ -12,30 +10,27 @@ const Landing = () => {
 			<NoAuthNavbar />
 			<WavyDesignContainer>
 				<div className="ui-landing max-w-6xl">
-					<div className="flex flex-col md:grid md:grid-cols-2 mx-auto gap-7">
-						<div>
-							<div className="text-4xl md:text-5xl pb-4 font-heading font-black">
+					<div className="max-w-screen-xl px-4 py-24 mx-auto sm:px-6 lg:px-8 lg:flex lg:items-center">
+						<div className="max-w-3xl mx-auto text-center">
+							<div className="text-3xl font-extrabold text-transparent sm:text-6xl bg-clip-text bg-gradient-to-r from-green-400 via-blue-500 to-purple-600">
 								Manage Campus Recruitment seamlessly
 							</div>
-							<div className="text-lg  pb-6">
+							<div className="max-w-xl mx-auto mt-6 text-lg">
 								A fully customizable{" "}
 								<span className="text-yellow-600">port</span>al for the{" "}
 								<span className="text-yellow-600">uni</span>versities to manage
-								campus recruitment seamlessly.
+								campus recruitment and streamline hiring workflows.
 							</div>
-							<ActionButton>
-								<Link href={REGISTER_ADMIN}>Get started for free</Link>
-							</ActionButton>
+
+							<div className="mt-8 sm:justify-center sm:flex gap-10">
+								<div className="block uppercase px-2 py-3 font-medium bg-black  border-black  border-2 hover:bg-gray-700 w-56 text-white">
+									<Link href={REGISTER_ADMIN}>Get started for free</Link>
+								</div>
+								<div className="block uppercase px-2 py-3 font-medium border-black border-2 hover:bg-gray-700 hover:text-white w-40 text-black">
+									<Link href='#'>Contact Us</Link>
+								</div>
+							</div>
 						</div>
-						<div className="w-5/6">
-							<Image
-								src={require("../../assets/images/landing.svg")}
-								layout="responsive"
-								height="210"
-								width="280"
-							/>
-						</div>
-						{/* <div className='rounded-full py-2 px-5 uppercase text-base font-bold tracking-wider cursor-pointer bg-green-500 hover:bg-green-700   text-white'>Join with Invite</div> */}
 					</div>
 				</div>
 			</WavyDesignContainer>
@@ -59,3 +54,7 @@ const WavyDesignContainer = ({ children }) => {
 		</>
 	);
 };
+
+
+
+

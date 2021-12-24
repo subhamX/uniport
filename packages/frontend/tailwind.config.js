@@ -34,7 +34,7 @@ module.exports = {
 				'bg-color': "#fffcee"
 			},
 			fontFamily: {
-				heading: ['Arapey'],
+				heading: ['Inter'],
 				body: ['Inter']
 			},
 			fontSize: {

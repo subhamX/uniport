@@ -40,11 +40,10 @@ Uniport is built using the following technologies. All of them are written in ty
 1. Next.js
 2. GraphQL
 3. Node.js
-4. Apache Cassandra
+4. Mongo DB
 
 ## Modules
 The code sample contains the following four modules:
-* [Database](./database/): Contains the Apache-Cassandra data model
 * [Frontend](./packages/frontend/): Contains the NextJS frontend application
 * [Backend](./packages/backend/):  Contains an express apollo GraphQL server
 * [Shared](./packages/common/):  Contains the common validators, LEGOs definitions etc which are used by both frontend and backend modules
@@ -53,15 +52,4 @@ The code sample contains the following four modules:
 
 ![](./docs/workflow.png)
 
-## Currently supported LEGOs
-Uniport is a modular application where the admin has the power to customize the platform to their needs. For now, the application supports the following types(refer to the image below). They cover most of the cases and can be modified by the admin based on their needs. Each of the LEGO is capable of handling multiple cases. For example: **Single Select** can be used for **Gender**, **Country**, **any single correct objective question**.
-
-> 💡 If you have some cases that cannot be modelled using the existing LEGOs, please do share them with us by [creating an issue](https://github.com/subhamX/uniport/issues). We shall add that soon.
-
-
-> Note that LEGOs like **Education**, **Work Experience** have multiple elements nested inside them (like percent_score, school_name, start_date etc...). And the data corresponding to these LEGOs isn't stored using the unscalable **entity attribute value model**. Instead, it is **modelled** in an intelligent way using the **Apache Cassandra collections and UDTs**. It's great, isn't it? ⚡⚡
-
-![](./docs/legos.PNG)
-
-
-> 🪐 Some core modules are not yet integrated. We shall deploy the project once they are complete.
+> 🪐 Some core modules are not yet integrated to frontend. We shall deploy the project once they are complete.
