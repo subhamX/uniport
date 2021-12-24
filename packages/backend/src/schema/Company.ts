@@ -20,7 +20,7 @@ export const companySchema = gql`
 		getCompaniesInOrg(pageSize: Int!, offset: Int!): [Company!]!
 	}
 
-	input MutateCompanyToOrgInput{
+	input MutateCompanyDetailsInput{
 		# _id must be mentioned in edit mode
 		_id: String
 		name: String!
@@ -29,6 +29,6 @@ export const companySchema = gql`
 
 	type Mutation{
 		# add company to org
-		mutateCompanyToOrg(companyDetails: MutateCompanyToOrgInput!): Company!
+		mutateCompanyDetails(companyDetails: MutateCompanyDetailsInput!): Company!
 	}
 `

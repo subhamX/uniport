@@ -81,39 +81,45 @@ export const studentProfileResolvers = {
 				]
 			})
 
-			const mongoDbFilters = [{
-				$match: {
-					$or: filterGroups.map(group => ({ $and: group }))
-				}
-			},
-			{
-				$facet: facetObject
-			},
-			{
-				$project: {
-					result: {
-						$concatArrays: filterGroups.map((_, indx) => `$GROUP_${indx}`)
+			const mongoDbFilters = [
+				{
+					$match: {
+						org_id: ctx.req.user.org_id
+					},
+				},
+				{
+					$match: {
+						$or: filterGroups.map(group => ({ $and: group }))
 					}
-				}
-			},
-			{ $unwind: "$result" },
-			{
-				$replaceRoot: { newRoot: "$result" }
-			},
-			{
-				$group: {
-					_id: "$_id",
-					first_name: { $first: "$first_name" },
-					blocks_data: { $first: "$blocks_data" },
-					email_address: { $first: "$email_address" },
-					last_name: { $first: "$last_name" },
-					campaigns: { $first: "$campaigns" },
-					org_id: { $first: "$org_id" },
-					"matched_groups": { "$addToSet": "$matched_group" }
-				}
-			}]
+				},
+				{
+					$facet: facetObject
+				},
+				{
+					$project: {
+						result: {
+							$concatArrays: filterGroups.map((_, indx) => `$GROUP_${indx}`)
+						}
+					}
+				},
+				{ $unwind: "$result" },
+				{
+					$replaceRoot: { newRoot: "$result" }
+				},
+				{
+					$group: {
+						_id: "$_id",
+						first_name: { $first: "$first_name" },
+						blocks_data: { $first: "$blocks_data" },
+						email_address: { $first: "$email_address" },
+						last_name: { $first: "$last_name" },
+						campaigns: { $first: "$campaigns" },
+						org_id: { $first: "$org_id" },
+						"matched_groups": { "$addToSet": "$matched_group" }
+					}
+				}]
 			const cursor = dbClient.collection('student_profile').aggregate([
-				...(filterGroups.length ? mongoDbFilters : []),
+				...(filterGroups.length ? mongoDbFilters : [mongoDbFilters[0]]),
 				// sort
 				{ $sort: { first_name: 1, last_name: 1, _id: 1, } },
 				// offset
@@ -145,6 +151,8 @@ export const studentProfileResolvers = {
 				// using org_id to ensure isolation between orgs
 				org_id: new ObjectId(ctx.req.user.org_id)
 			})
+
+			if(!doc) throw new ForbiddenError('Invalid access')
 
 			return doc;
 		}

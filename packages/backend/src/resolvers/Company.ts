@@ -1,4 +1,4 @@
-import { MutateCompanyToOrgInput } from "@uniport/common";
+import { MutateCompanyDetailsInput } from "@uniport/common";
 import { ForbiddenError, UserInputError } from "apollo-server-core";
 import { ObjectId } from "mongodb";
 import { genericCompanyLogoUrl } from "../config/constants";
@@ -48,7 +48,7 @@ export const companyResolvers = {
 		 *
 		 * Only ADMIN can access this!
 		 */
-		mutateCompanyToOrg: async (_: any, { companyDetails }: { companyDetails: MutateCompanyToOrgInput }, ctx: CustomApolloContext) => {
+		mutateCompanyDetails: async (_: any, { companyDetails }: { companyDetails: MutateCompanyDetailsInput }, ctx: CustomApolloContext) => {
 			authenticatedUsersOnly(ctx.req);
 
 			if (ctx.req.user?.access_role !== 'ADMIN') {
